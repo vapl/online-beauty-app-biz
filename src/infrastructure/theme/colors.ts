@@ -60,4 +60,5 @@ export const darkColors = {
   white: "#000000",
   background: "#111111",
   text: "#FFFFFF",
+  error: "#F44336",
 };

@@ -55,5 +55,6 @@
   "confirm_email": "Подтвердить электронную почту",
   "confirm_phone": "Подтвердить телефонный номер",
   "code_resend_notification": "Код будет повторно отправлен через",
-  "paste_code": "Вставить код"
+  "paste_code": "Вставить код",
+  "conf_code_isnt_match": "Неправельный код"
 }

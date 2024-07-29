@@ -55,5 +55,6 @@
   "confirm_email": "Apstiprināt e-pastu",
   "confirm_phone": "Apstiprināt tālruņa numuru",
   "code_resent_notification": "Atkārtoti tiks nosūtīts pēc",
-  "paste_code": "Iekopēt kodu"
+  "paste_code": "Iekopēt kodu",
+  "conf_code_isnt_match": "Nepareizs kods"
 }
