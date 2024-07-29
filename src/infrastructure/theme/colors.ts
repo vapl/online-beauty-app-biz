@@ -13,9 +13,9 @@ export const lightColors = {
     lightPink: "#FEF1F2",
   },
   status: {
-    warning: "#F44336",
+    error: "#F44336",
     success: "#90EE90",
-    info: "#FFEB3B",
+    warning: "#FFEB3B",
   },
   grey: {
     100: "#111111",
@@ -45,9 +45,9 @@ export const darkColors = {
     lightPink: "#FEF1F2",
   },
   status: {
-    warning: "#F44336",
+    error: "#F44336",
     success: "#90EE90",
-    info: "#FFEB3B",
+    warning: "#FFEB3B",
   },
   grey: {
     100: "#F9FAFA",

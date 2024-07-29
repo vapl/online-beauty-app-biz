@@ -5,14 +5,14 @@ import { space } from "./spacing";
 import { sizes } from "./sizes";
 
 export const lightTheme: DefaultTheme = {
-  colors: { ...lightColors, error: lightColors.status.warning },
+  colors: { ...lightColors, error: lightColors.status.error },
   typography: typography,
   sizes: sizes,
   space: space,
 };
 
 export const darkTheme: DefaultTheme = {
-  colors: { ...darkColors, error: lightColors.status.warning },
+  colors: { ...darkColors, error: lightColors.status.error },
   typography: typography,
   sizes: sizes,
   space: space,

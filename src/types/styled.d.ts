@@ -17,9 +17,9 @@ declare module "styled-components/native" {
         lightPink: string;
       };
       status: {
-        warning: string;
+        error: string;
         success: string;
-        info: string;
+        warning: string;
       };
       grey: {
         100: string;

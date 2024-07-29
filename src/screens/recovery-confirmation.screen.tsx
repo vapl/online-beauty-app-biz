@@ -61,7 +61,7 @@ const HelpTextWrapper = styled(View)`
 
 const InfoText = styled(HelperText)`
   ${(props) => props.theme.typography.bodyMedium};
-  color: ${(props) => props.theme.colors.status.warning};
+  color: ${(props) => props.theme.colors.status.error};
 `;
 
 const InputBody = styled(View)`
@@ -87,10 +87,10 @@ const CodeInput = styled(TextInput).attrs<CodeInputProps>((props) => ({
   selectionColor: props.theme.colors.primary.dark,
   cursorColor: props.theme.colors.primary.dark,
   outlineColor: props.hasError
-    ? props.theme.colors.status.warning
+    ? props.theme.colors.status.error
     : props.theme.colors.primary.dark,
   activeOutlineColor: props.hasError
-    ? props.theme.colors.status.warning
+    ? props.theme.colors.status.error
     : props.theme.colors.primary.dark,
   textColor: props.theme.colors.primary.dark,
   outlineStyle: {

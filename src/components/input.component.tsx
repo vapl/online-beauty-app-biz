@@ -15,16 +15,16 @@ const StyledInput = styled(TextInput).attrs<StyledInputProps>((props) => ({
   selectionColor: props.theme.colors.primary.dark,
   cursorColor: props.theme.colors.primary.dark,
   outlineColor: props.hasError
-    ? props.theme.colors.status.warning
+    ? props.theme.colors.status.error
     : props.theme.colors.primary.dark,
   activeOutlineColor: props.hasError
-    ? props.theme.colors.status.warning
+    ? props.theme.colors.status.error
     : props.theme.colors.primary.dark,
   textColor: props.hasError
-    ? props.theme.colors.status.warning
+    ? props.theme.colors.status.error
     : props.theme.colors.primary.dark,
   underlineStyle: {
-    borderColor: props.theme.colors.status.warning,
+    borderColor: props.theme.colors.status.error,
   },
   outlineStyle: {
     borderRadius: 27,
@@ -78,7 +78,7 @@ const ErrorWrapper = styled(View)`
 
 const InfoText = styled(HelperText)`
   ${(props) => props.theme.typography.bodySmall};
-  color: ${(props) => props.theme.colors.status.warning};
+  color: ${(props) => props.theme.colors.status.error};
 `;
 
 interface InputProps {
