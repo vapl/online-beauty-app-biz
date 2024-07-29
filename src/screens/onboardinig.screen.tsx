@@ -14,7 +14,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Button } from "react-native-paper";
-import LanguagePicker from "../components/LanguagePicker";
+import LanguagePicker from "../components/language-picker.component";
 import { useNavigation } from "@react-navigation/native";
 import {
   OnboardingScreenNavigationProp,

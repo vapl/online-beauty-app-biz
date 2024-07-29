@@ -15,9 +15,9 @@ import {
 import styled, { useTheme } from "styled-components/native";
 import Button from "../components/button.component";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { TextInput } from "react-native-paper";
+import { HelperText, TextInput } from "react-native-paper";
 import { useTranslation } from "react-i18next";
-import Space from "../components/Spacer";
+import Space from "../components/spacer.component";
 import * as Clipboard from "expo-clipboard";
 import { Text } from "../components/text.component";
 
@@ -52,6 +52,18 @@ const FormWrapper = styled(View)`
   justify-content: space-between;
 `;
 
+const HelpTextWrapper = styled(View)`
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: space;
+`;
+
+const InfoText = styled(HelperText)`
+  ${(props) => props.theme.typography.bodyMedium};
+  color: ${(props) => props.theme.colors.status.warning};
+`;
+
 const InputBody = styled(View)`
   flex: 1;
   justify-content: center;
@@ -66,12 +78,20 @@ const InputWrapper = styled(View)`
   gap: 16px;
 `;
 
-const CodeInput = styled(TextInput).attrs((props) => ({
+interface CodeInputProps {
+  hasError?: boolean;
+}
+
+const CodeInput = styled(TextInput).attrs<CodeInputProps>((props) => ({
   mode: "outlined",
   selectionColor: props.theme.colors.primary.dark,
   cursorColor: props.theme.colors.primary.dark,
-  outlineColor: props.theme.colors.primary.dark,
-  activeOutlineColor: props.theme.colors.primary.dark,
+  outlineColor: props.hasError
+    ? props.theme.colors.status.warning
+    : props.theme.colors.primary.dark,
+  activeOutlineColor: props.hasError
+    ? props.theme.colors.status.warning
+    : props.theme.colors.primary.dark,
   textColor: props.theme.colors.primary.dark,
   outlineStyle: {
     borderRadius: 8,
@@ -101,11 +121,13 @@ const RecoveryConfirmationScreen: React.FC<
   const { email, phone } = route.params || {};
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
   const [code, setCode] = useState<string>("");
+  const [randomCode, setRandomCode] = useState<string>("");
   const inputs = useRef<RNTextInput[]>([]);
   const [isClipboardContent, setIsClipboardContent] = useState<boolean>(false);
   const [clipboardContent, setClipboardContent] = useState<string>("");
-  const [timeLeft, setTimeLeft] = useState<number>(180);
+  const [timeLeft, setTimeLeft] = useState<number>(10);
   const theme = useTheme();
+  const [errorMessage, setErrorMesage] = useState<string>("");
 
   useEffect(() => {
     setButtonDisabled(code.length !== 4);
@@ -126,16 +148,26 @@ const RecoveryConfirmationScreen: React.FC<
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setTimeLeft((prevTime) => (prevTime > 0 ? prevTime - 1 : 180));
+      setTimeLeft((prevTime) => {
+        if (prevTime > 0) {
+          return prevTime - 1;
+        } else {
+          const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
+          setRandomCode(randomCode);
+          console.log(randomCode);
+          return 10;
+        }
+      });
     }, 1000);
     return () => clearInterval(intervalId);
-  });
+  }, []);
 
   const handleCodeChange = (index: number, value: string) => {
     if (value.length > 1) return;
     const newCode = code.split("");
     newCode[index] = value;
     setCode(newCode.join(""));
+    setErrorMesage("");
 
     // Move to the next input if a character is entered
     if (value && index < inputs.current.length - 1) {
@@ -182,8 +214,14 @@ const RecoveryConfirmationScreen: React.FC<
   };
 
   const handleSubmit = () => {
+    if (code !== randomCode) {
+      setErrorMesage(t("conf_code_isnt_match"));
+      setCode("");
+      return;
+    }
     console.log("Code entered:", code);
     setCode("");
+    setErrorMesage("");
   };
 
   const formatTime = (seconds: number) => {
@@ -199,7 +237,10 @@ const RecoveryConfirmationScreen: React.FC<
       <SafeArea>
         <ScreenContainer>
           <Header>
-            <Text fontVariant="h3">{t("email_confirmation_title")}</Text>
+            <Text fontVariant="h3">
+              {email && t("email_confirmation_title")}
+              {phone && t("phone_confirmation_title")}
+            </Text>
             <Text fontVariant="bodyMedium">
               {email && t("email_confirmation_description") + " "}
               {phone && t("phone_confirmation_description") + " "}
@@ -221,18 +262,27 @@ const RecoveryConfirmationScreen: React.FC<
             >
               <FormWrapper>
                 <InputBody>
-                  {isClipboardContent && (
-                    <>
-                      <Button
-                        label={t("paste_code")}
-                        mode="text"
-                        onPress={handlePaste}
-                      />
-                    </>
-                  )}
+                  <HelpTextWrapper>
+                    <View>
+                      <InfoText type="error" visible={!!errorMessage}>
+                        {errorMessage}
+                      </InfoText>
+                    </View>
+
+                    {isClipboardContent && (
+                      <>
+                        <Button
+                          label={t("paste_code")}
+                          mode="text"
+                          onPress={handlePaste}
+                        />
+                      </>
+                    )}
+                  </HelpTextWrapper>
                   <InputWrapper>
                     {[0, 1, 2, 3].map((i) => (
                       <CodeInput
+                        hasError={!!errorMessage}
                         key={i}
                         ref={(el: RNTextInput) => (inputs.current[i] = el!)}
                         value={code[i] || ""}

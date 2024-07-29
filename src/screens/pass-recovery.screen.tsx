@@ -11,12 +11,10 @@ import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { parsePhoneNumberFromString as parsePhoneNumber } from "libphonenumber-js";
-import { StackNavigationProp } from "@react-navigation/stack";
-
 import { RecoveryConfirmationScreenNavigationProp } from "../types/navigationTypes";
 import Button from "../components/button.component";
-import Input from "../components/Input";
-import Space from "../components/Spacer";
+import Input from "../components/input.component";
+import Space from "../components/spacer.component";
 
 //////////// Styling start ///////////////
 

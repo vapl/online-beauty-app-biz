@@ -46,6 +46,7 @@ export type LoginScreenProps = {
 };
 
 export type RegisterScreenProps = {
+  navigate(arg0: string): unknown;
   navigation: RegisterScreenNavigationProp;
   route: RouteProp<RootStackParamList, "Register">;
 };

@@ -8,8 +8,9 @@ import styled, { useTheme } from "styled-components/native";
 import Button from "../components/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../components/Input";
+import Input from "../components/input.component";
 import { Text } from "../components/text.component";
+import { SnackbarMessage } from "../components/snackbar.component";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -194,7 +195,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
             </View>
           </FormWrapper>
           <FooterContainer>
-            <Text fontVariant="bodyLarge">{t("do_not_have_account")}</Text>
+            <Text fontVariant="bodyMedium">{t("do_not_have_account")}</Text>
             <RegisterButton
               label={t("register")}
               mode="text"

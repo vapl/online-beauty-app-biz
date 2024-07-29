@@ -6,15 +6,13 @@ import {
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
-import {
-  RegisterScreenProps,
-  OnboardingScreenNavigationProp,
-} from "../types/navigationTypes";
+import { RegisterScreenProps } from "../types/navigationTypes";
 import styled from "styled-components/native";
 import Button from "../components/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../components/Input";
+import Input from "../components/input.component";
+import { parsePhoneNumber } from "libphonenumber-js";
 
 //////////// Styling start ///////////////
 
@@ -126,7 +124,7 @@ const FooterText = styled.Text`
 
 const RegisterScreen: React.FC<RegisterScreenProps> = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation<OnboardingScreenNavigationProp>();
+  const navigation = useNavigation<RegisterScreenProps>();
   const [name, setName] = useState<string>("");
   const [surname, setSurname] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
@@ -165,7 +163,15 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
     if (value.trim() === "") {
       return "*" + t("phone_required");
     }
-    return undefined;
+
+    const phoneNumber = parsePhoneNumber(value, {
+      defaultCallingCode: callingCode,
+    });
+    if (phoneNumber && phoneNumber?.isValid()) {
+      return undefined;
+    } else {
+      return t("invalid_phone");
+    }
   };
 
   const validateEmail = (value: string) => {
@@ -223,7 +229,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
       setPhone("");
       setPassword("");
     }
-    navigation.navigate("Login");
     return;
   };
 

@@ -32,6 +32,7 @@ declare module "styled-components/native" {
       white: string;
       background: string;
       text: string;
+      error: string;
     };
     typography: {
       h1: {
