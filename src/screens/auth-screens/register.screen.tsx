@@ -6,13 +6,19 @@ import {
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
-import { RegisterScreenProps } from "../types/navigationTypes";
+import {
+  RegisterScreenNavigationProp,
+  RegisterScreenProps,
+} from "../../types/navigationTypes";
 import styled from "styled-components/native";
-import Button from "../components/button.component";
+import Button from "../../components/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../components/input.component";
+import Input from "../../components/input.component";
 import { parsePhoneNumber } from "libphonenumber-js";
+import { Text } from "../../components/text.component";
+import { useTheme } from "styled-components/native";
+import { registerUser } from "../../../api/auth";
 
 //////////// Styling start ///////////////
 
@@ -38,14 +44,6 @@ const Header = styled(View)`
   padding-top: ${(props) => props.theme.space.xxl}px;
   padding-bottom: ${(props) => props.theme.space.md}px;
   gap: ${(props) => props.theme.space.xs}px;
-`;
-
-const Title = styled.Text`
-  ${(props) => props.theme.typography.h3};
-`;
-
-const TitleDescription = styled.Text`
-  ${(props) => props.theme.typography.bodyMedium};
 `;
 
 const FormWrapper = styled(View)`
@@ -123,8 +121,9 @@ const FooterText = styled.Text`
 ////////////  Styling end  ///////////////
 
 const RegisterScreen: React.FC<RegisterScreenProps> = () => {
+  const theme = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation<RegisterScreenProps>();
+  const navigation = useNavigation<RegisterScreenNavigationProp>();
   const [name, setName] = useState<string>("");
   const [surname, setSurname] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
@@ -216,13 +215,9 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
       !surnameValidationError &&
       !phoneValidationError
     ) {
+      // Register functionality with firebase
+      registerUser(email, password);
       console.log("Form submitted");
-      console.log(
-        "name: " + name,
-        "surname: " + surname,
-        "email: " + email,
-        "number: " + callingCode + phone
-      );
       setName("");
       setSurname("");
       setEmail("");
@@ -237,10 +232,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
       <SafeArea>
         <ScreenContainer>
           <Header>
-            <Title>{t("register_welcome_title")}</Title>
-            <TitleDescription>
+            <Text fontVariant="h3">{t("register_welcome_title")}</Text>
+            <Text fontVariant="bodyMedium">
               {t("register_welcome_description")}
-            </TitleDescription>
+            </Text>
           </Header>
           <FormWrapper>
             <ScrollView
@@ -306,22 +301,24 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                     required
                   />
                   <RegulationsWrapper>
-                    <RegulationsText
-                      style={{ alignItems: "center", justifyContent: "center" }}
-                    >
-                      {t("register_terms_start")}
-                    </RegulationsText>
-                    <TermsButton
-                      label={t("terms_of_use")}
-                      mode="text"
-                      onPress={() => {}}
-                    />
-                    <RegulationsText>{t("and")}</RegulationsText>
-                    <PolicyButton
-                      label={t("privacy_policy")}
-                      mode="text"
-                      onPress={() => {}}
-                    />
+                    <Text fontVariant="bodyMedium">
+                      {t("register_terms_start")}{" "}
+                      <Text
+                        fontVariant="buttonMedium"
+                        color={theme.colors.secondary.dark}
+                        onPress={() => {}}
+                      >
+                        {t("terms_of_use")}{" "}
+                      </Text>
+                      <Text>{t("and")}</Text>{" "}
+                      <Text
+                        fontVariant="buttonMedium"
+                        color={theme.colors.secondary.dark}
+                        onPress={() => {}}
+                      >
+                        {t("privacy_policy")}
+                      </Text>
+                    </Text>
                   </RegulationsWrapper>
                 </InputWrapper>
               </KeyboardAvoidingView>
@@ -346,14 +343,19 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
             </ButtonsWrapper>
           </FormWrapper>
           <FooterContainer>
-            <FooterText>{t("already_have_account")}</FooterText>
-            <LoginButton
-              label={t("login")}
-              mode="text"
-              onPress={() => {
-                navigation.navigate("Login");
-              }}
-            />
+            <Text fontVariant="bodyMedium">
+              {t("already_have_account")}
+              <Text
+                onPress={() => {
+                  navigation.navigate("Login");
+                }}
+                fontVariant="buttonMedium"
+                color={theme.colors.secondary.dark}
+              >
+                {"  "}
+                {t("login")}
+              </Text>
+            </Text>
           </FooterContainer>
         </ScreenContainer>
       </SafeArea>

@@ -22,6 +22,8 @@
   "email_confirmation_description": "Please, enter the code you received in your email",
   "phone_confirmation_title": "Phone confirmation,",
   "phone_confirmation_description": "Please, enter the code you received on your phone",
+  "new_password_title": "New password,",
+  "new_password_description": "Now you can create a new password and confirm it.",
   "login": "Login",
   "register": "Register",
   "choose_language": "Choose language",
@@ -32,6 +34,8 @@
   "phone_input": "Phone number",
   "email": "Email",
   "password": "Password",
+  "new_password": "New password",
+  "new_password_confirmation": "Confirm new password",
   "invalid_email": "Invalid email",
   "invalid_password": "Invalid password",
   "existing_email": "Email already exists",
@@ -54,7 +58,9 @@
   "invalid_phone": "Invalid phone number",
   "confirm_email": "Confirm Email",
   "confirm_phone": "Confirm Phone Number",
+  "confirm_new_password": "Confirm New Password",
   "code_resend_notification": "The code will be resent after",
   "paste_code": "Paste code",
-  "conf_code_isnt_match": "Invalid code"
+  "conf_code_isnt_match": "Invalid code",
+  "passwords_dont_match": "Passwords don't match"
 }

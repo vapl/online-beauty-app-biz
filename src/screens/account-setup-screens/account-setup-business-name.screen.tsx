@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { SafeAreaView, StatusBar, View } from "react-native";
 import {
-  LoginScreenProps,
-  OnboardingScreenNavigationProp,
-} from "../types/navigationTypes";
+  AccountSetupBusinessNameScreenProps,
+  AccountSetupBusinessNameScreenNavigationProp,
+} from "../../types/navigationTypes";
 import styled, { useTheme } from "styled-components/native";
-import Button from "../components/button.component";
+import Button from "../../components/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../components/input.component";
-import { Text } from "../components/text.component";
-import { SnackbarMessage } from "../components/snackbar.component";
+import Input from "../../components/input.component";
+import { Text } from "../../components/text.component";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -82,9 +81,12 @@ const FooterContainer = styled.View`
   gap: ${(props) => props.theme.space.sm}px;
 `;
 
-const LoginScreen: React.FC<LoginScreenProps> = () => {
+const AccountSetupBusinessNameScreen: React.FC<
+  AccountSetupBusinessNameScreenProps
+> = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation<OnboardingScreenNavigationProp>();
+  const navigation =
+    useNavigation<AccountSetupBusinessNameScreenNavigationProp>();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
@@ -195,14 +197,19 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
             </View>
           </FormWrapper>
           <FooterContainer>
-            <Text fontVariant="bodyMedium">{t("do_not_have_account")}</Text>
-            <RegisterButton
-              label={t("register")}
-              mode="text"
-              onPress={() => {
-                navigation.navigate("Register");
-              }}
-            />
+            <Text fontVariant="bodyMedium">
+              {t("do_not_have_account")}
+              <Text
+                fontVariant="buttonMedium"
+                color={theme.colors.secondary.dark}
+                onPress={() => {
+                  navigation.navigate("Register");
+                }}
+              >
+                {"  "}
+                {t("register")}
+              </Text>
+            </Text>
           </FooterContainer>
         </ScreenContainer>
       </SafeArea>
@@ -210,4 +217,4 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
   );
 };
 
-export default LoginScreen;
+export default AccountSetupBusinessNameScreen;

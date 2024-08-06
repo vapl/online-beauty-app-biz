@@ -1,10 +1,15 @@
+import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 import styled, { DefaultTheme } from "styled-components/native";
-import { typography } from "../infrastructure/theme/typography";
 
-const defaultTextStyle = (theme: DefaultTheme) => `
+interface TextProps {
+  textAlign?: "left" | "center" | "right";
+}
+
+const defaultTextStyle = (theme: DefaultTheme, props: TextProps) => `
   font-family: ${theme.typography.bodyMedium.fontFamily};
   font-size: ${theme.typography.bodyMedium.fontSize}px;
   color: ${theme.colors.grey[100]};
+  text-align: ${props.textAlign};
   flex-wrap: wrap;
   margin-top: 0px;
   margin-bottom: 0px;
@@ -85,11 +90,14 @@ const variants = {
   h6,
 };
 
-export const Text = styled.Text<{
+export const Text = styled.Text.attrs(() => ({
+  style: { backgroundColor: "transparent" },
+}))<{
   fontVariant?: keyof typeof variants;
   color?: string;
+  textAlign?: "left" | "center" | "right";
 }>`
-  ${({ theme }) => defaultTextStyle(theme)}
+  ${({ theme, textAlign }) => defaultTextStyle(theme, { textAlign })}
   ${({ fontVariant, theme }) =>
     fontVariant && variants[fontVariant] ? variants[fontVariant](theme) : ""}
   ${({ color }) => (color ? `color: ${color};` : "")}

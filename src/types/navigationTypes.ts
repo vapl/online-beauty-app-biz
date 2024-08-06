@@ -10,6 +10,9 @@ export type RootStackParamList = {
   Register: undefined;
   PassRecovery: undefined;
   RecoveryConfirmation: { email?: string; phone?: string } | undefined;
+  NewPassword: undefined;
+  Main: undefined;
+  AccountSetupBusinessName: undefined;
 };
 
 // Navigācijas props tips katram ekrānam
@@ -33,6 +36,18 @@ export type RecoveryConfirmationScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "RecoveryConfirmation"
 >;
+export type NewPasswordScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "NewPassword"
+>;
+export type MainScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Main"
+>;
+export type AccountSetupBusinessNameScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "AccountSetupBusinessName"
+>;
 
 // Ekrāna props tips katram ekrānam
 export type OnboardingScreenProps = {
@@ -46,7 +61,6 @@ export type LoginScreenProps = {
 };
 
 export type RegisterScreenProps = {
-  navigate(arg0: string): unknown;
   navigation: RegisterScreenNavigationProp;
   route: RouteProp<RootStackParamList, "Register">;
 };
@@ -59,4 +73,19 @@ export type PassRecoveryScreenProps = {
 export type RecoveryConfirmationScreenProps = {
   navigation: RecoveryConfirmationScreenNavigationProp;
   route: RouteProp<RootStackParamList, "RecoveryConfirmation">;
+};
+
+export type NewPasswordScreenProps = {
+  navigation: NewPasswordScreenNavigationProp;
+  route: RouteProp<RootStackParamList, "NewPassword">;
+};
+
+export type MainScreenProps = {
+  navigation: MainScreenNavigationProp;
+  route: RouteProp<RootStackParamList, "Main">;
+};
+
+export type AccountSetupBusinessNameScreenProps = {
+  navigation: AccountSetupBusinessNameScreenNavigationProp;
+  route: RouteProp<RootStackParamList, "AccountSetupBusinessName">;
 };

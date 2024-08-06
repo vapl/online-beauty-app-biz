@@ -9,6 +9,8 @@ import i18n from "./src/i18n";
 import { ThemeProvider } from "styled-components/native";
 import { AppRegistry, Switch } from "react-native";
 import { lightTheme, darkTheme } from "./src/infrastructure/theme/theme";
+import changeNavigationBarColor from "react-native-navigation-bar-color";
+import { StatusBar } from "react-native";
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -25,6 +27,8 @@ export default function App() {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(false);
 
+  const theme = isDarkTheme ? darkTheme : lightTheme;
+
   useEffect(() => {
     async function loadResourcesAndDataAsync() {
       try {
@@ -40,13 +44,21 @@ export default function App() {
     loadResourcesAndDataAsync();
   }, []);
 
+  useEffect(() => {
+    changeNavigationBarColor(theme.colors.background, theme === darkTheme);
+  }, [isDarkTheme]);
+
   if (!dataLoaded) {
     return null; // Return null to render nothing while loading
   }
 
   return (
-    <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
+    <ThemeProvider theme={theme}>
       <I18nextProvider i18n={i18n}>
+        <StatusBar
+          barStyle={isDarkTheme ? "light-content" : "dark-content"}
+          backgroundColor={theme.colors.background}
+        />
         <AppNavigator />
         <Switch
           value={isDarkTheme}

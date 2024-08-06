@@ -3,11 +3,16 @@ import styled, { useTheme } from "styled-components/native";
 import { View, Platform } from "react-native";
 import { HelperText, TextInput } from "react-native-paper";
 import { useTranslation } from "react-i18next";
-import CountryPicker, { CountryCode } from "react-native-country-picker-modal";
+import CountryPicker, {
+  CountryCode,
+  DARK_THEME,
+} from "react-native-country-picker-modal";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { darkTheme } from "../infrastructure/theme/theme";
 
 interface StyledInputProps {
   hasError?: boolean;
+  disabled?: boolean;
 }
 
 const StyledInput = styled(TextInput).attrs<StyledInputProps>((props) => ({
@@ -30,15 +35,17 @@ const StyledInput = styled(TextInput).attrs<StyledInputProps>((props) => ({
     borderRadius: 27,
     paddingTop: 0,
   },
+  editable: !props.disabled,
 }))`
   flex-grow: 1;
   padding-left: ${(props) => props.theme.space.md}px;
   padding-right: ${(props) => props.theme.space.md}px;
-  background-color: ${(props) => props.theme.colors.white};
+  background-color: ${(props) =>
+    props.disabled ? props.theme.colors.grey[20] : props.theme.colors.white};
   ${(props) => props.theme.typography.bodyLarge};
 `;
 
-const CountryCodePicker = styled(CountryPicker).attrs(() => ({
+const CountryCodePicker = styled(CountryPicker).attrs((props) => ({
   withModal: true,
   withAlphaFilter: false,
   withCallingCode: true,
@@ -126,6 +133,7 @@ interface InputProps {
     | "yahoo"
     | "done"
     | "emergency-call";
+  disabled?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -146,13 +154,14 @@ const Input: React.FC<InputProps> = ({
   returnKeyType,
   countryCodePicker = false,
   setCallingCode,
+  disabled = false,
 }) => {
+  const theme = useTheme();
   const { t } = useTranslation();
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [secureText, setSecureText] = useState<boolean>(secureTextEntry);
   const [countryCode, setCountryCode] = useState<CountryCode>("LV");
   const [pickerVisible, setPickerVisible] = useState<boolean>(false);
-  const theme = useTheme();
 
   const handleEmailInputValue = (text: string) => {
     const filteredText = text.replace(/[^\w@.-]/g, "");
@@ -207,6 +216,7 @@ const Input: React.FC<InputProps> = ({
           {countryCodePicker && (
             <CountryCodePickerWrapper>
               <CountryCodePicker
+                theme={theme === darkTheme ? DARK_THEME : undefined}
                 countryCode={countryCode}
                 onSelect={handleCountrySelect}
                 visible={pickerVisible}
@@ -258,6 +268,7 @@ const Input: React.FC<InputProps> = ({
                 : { paddingLeft: 16 }
             }
             right={getRightIcon()}
+            disabled={disabled}
           />
         </InputWrapper>
         {errorMessage && (

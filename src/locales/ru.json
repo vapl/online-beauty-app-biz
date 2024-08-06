@@ -22,6 +22,8 @@
   "email_confirmation_description": "Пожалуйста, введите код, который вы получили на свою электронную почту",
   "phone_confirmation_title": "Подтверждение телефона",
   "phone_confirmation_description": "Пожалуйста, введите код, который вы получили на свой телефон",
+  "new_password_title": "Новый пароль",
+  "new_password_description": "Теперь вы можете создать новый пароль и подтвердить  его.",
   "login": "Авторизоваться",
   "register": "Регистрация",
   "choose_language": "Выбор языка",
@@ -32,6 +34,8 @@
   "phone_input": "Номер телефона",
   "email": "E-почта",
   "password": "Пароль",
+  "new_password": "Новый пароль",
+  "new_password_confirmation": "Подтвердите новый пароль",
   "invalid_email": "Неправильная электронная почта",
   "invalid_password": "Неправильный пароль",
   "existing_email": "Такая электронная почта уже зарегистрирована",
@@ -54,7 +58,9 @@
   "invalid_phone": "Неправельный номер телефона",
   "confirm_email": "Подтвердить электронную почту",
   "confirm_phone": "Подтвердить телефонный номер",
+  "confirm_new_password": "Подтвердите новый пароль",
   "code_resend_notification": "Код будет повторно отправлен через",
   "paste_code": "Вставить код",
-  "conf_code_isnt_match": "Неправельный код"
+  "conf_code_isnt_match": "Неправельный код",
+  "passwords_dont_match": "Пароли не совпадают"
 }

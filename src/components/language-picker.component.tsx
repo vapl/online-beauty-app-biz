@@ -4,7 +4,12 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { typography } from "../infrastructure/theme/typography";
 
-const LanguagePicker: React.FC = () => {
+interface LanguagePickerProps {
+  color?: string;
+}
+
+const LanguagePicker: React.FC<LanguagePickerProps> = ({ color }) => {
+  const theme = useTheme();
   const { i18n } = useTranslation();
   const [selectedLanguage, setSelectedLanguage] = useState("lv"); // Default to Latvian
 
@@ -13,21 +18,19 @@ const LanguagePicker: React.FC = () => {
     i18n.changeLanguage(language);
   };
 
-  const theme = useTheme();
-
   useEffect(() => {
     setSelectedLanguage(i18n.language);
   }, [i18n.language]);
 
   const pickerStyle = {
     inputIOS: {
-      color: theme.colors.white,
+      color: color,
       ...typography.buttonMedium,
       marginTop: 9,
       marginBottom: 9,
     },
     inputAndroid: {
-      color: theme.colors.white,
+      color: color,
       ...typography.buttonMedium,
       headlessAndroidContainer: false,
     },

@@ -22,6 +22,8 @@
   "email_confirmation_description": "Lūdzu, ievadiet kodu, kuru saņēmāt savā e-pastā",
   "phone_confirmation_title": "Tālruņa apstiprinājums",
   "phone_confirmation_description": "Lūdzu, ievadiet kodu, kuru saņēmāt savā tālrunī",
+  "new_password_title": "Jaunā parole",
+  "new_password_description": "Tagad jūs varat izveidot jaunu paroli un apstiprināt to.",
   "login": "Ielogoties",
   "register": "Reģistrēties",
   "choose_language": "Izvēlēties valodu",
@@ -32,6 +34,8 @@
   "phone_input": "Mobilais tālrunis",
   "email": "E-pasts",
   "password": "Parole",
+  "new_password": "Jaunā parole",
+  "new_password_confirmation": "Apstipriniet jauno paroli",
   "invalid_email": "Nepareizs e-pasts",
   "invalid_password": "Nepareiza parole",
   "existing_email": "Šāds e-pasts jau ir reģistrēts",
@@ -54,7 +58,9 @@
   "invalid_phone": "Nepareizs tālruņa numurs",
   "confirm_email": "Apstiprināt e-pastu",
   "confirm_phone": "Apstiprināt tālruņa numuru",
+  "confirm_new_password": "Apstiprināt jauno paroli",
   "code_resent_notification": "Atkārtoti tiks nosūtīts pēc",
   "paste_code": "Iekopēt kodu",
-  "conf_code_isnt_match": "Nepareizs kods"
+  "conf_code_isnt_match": "Nepareizs kods",
+  "passwords_dont_match": "Paroles nesakrīt"
 }

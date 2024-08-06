@@ -11,10 +11,11 @@ import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { parsePhoneNumberFromString as parsePhoneNumber } from "libphonenumber-js";
-import { RecoveryConfirmationScreenNavigationProp } from "../types/navigationTypes";
-import Button from "../components/button.component";
-import Input from "../components/input.component";
-import Space from "../components/spacer.component";
+import { RecoveryConfirmationScreenNavigationProp } from "../../types/navigationTypes";
+import Button from "../../components/button.component";
+import Input from "../../components/input.component";
+import Space from "../../components/spacer.component";
+import { Text } from "../../components/text.component";
 
 //////////// Styling start ///////////////
 
@@ -72,6 +73,7 @@ const RegisterButton = styled(Button)``;
 ////////////  Styling end  ///////////////
 
 const PassRecoveryScreen: React.FC = () => {
+  const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<RecoveryConfirmationScreenNavigationProp>();
   const [phone, setPhone] = useState<string>("");
@@ -114,7 +116,7 @@ const PassRecoveryScreen: React.FC = () => {
 
   const validatePhone = (value: string) => {
     if (value.trim() === "") {
-      return "phone_required";
+      return t("phone_required");
     }
 
     const phoneNumber = parsePhoneNumber(value, {
@@ -168,10 +170,10 @@ const PassRecoveryScreen: React.FC = () => {
       <SafeArea>
         <ScreenContainer>
           <Header>
-            <Title>{t("forgot_password_title")}</Title>
-            <TitleDescription>
+            <Text fontVariant="h3">{t("forgot_password_title")}</Text>
+            <Text fontVariant="bodyMedium">
               {t("forgot_password_description")}
-            </TitleDescription>
+            </Text>
           </Header>
           <KeyboardAvoidingView
             style={{ flex: 1 }}

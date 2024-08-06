@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import styled, { useTheme } from "styled-components/native";
+import styled, { useTheme, ThemeProvider } from "styled-components/native";
 import {
-  View,
   StyleSheet,
   StatusBar,
   SafeAreaView,
@@ -14,19 +13,20 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Button } from "react-native-paper";
-import LanguagePicker from "../components/language-picker.component";
+import LanguagePicker from "../../components/language-picker.component";
+import { Text } from "../../components/text.component";
 import { useNavigation } from "@react-navigation/native";
 import {
   OnboardingScreenNavigationProp,
   OnboardingScreenProps,
-} from "../types/navigationTypes";
+} from "../../types/navigationTypes";
 import { useTranslation } from "react-i18next";
-import { space } from "../infrastructure/theme/spacing";
 
-import onboardingBg1 from "../../assets/images/onboarding/onboarding-1.png";
-import onboardingBg2 from "../../assets/images/onboarding/onboarding-2.png";
-import onboardingBg3 from "../../assets/images/onboarding/onboarding-3.png";
-import onboardingBg4 from "../../assets/images/onboarding/onboarding-4.png";
+import onboardingBg1 from "../../../assets/images/onboarding/onboarding-1.png";
+import onboardingBg2 from "../../../assets/images/onboarding/onboarding-2.png";
+import onboardingBg3 from "../../../assets/images/onboarding/onboarding-3.png";
+import onboardingBg4 from "../../../assets/images/onboarding/onboarding-4.png";
+import { darkTheme, lightTheme } from "../../infrastructure/theme/theme";
 
 const onboardingBg1Typed: ImageSourcePropType =
   onboardingBg1 as ImageSourcePropType;
@@ -90,17 +90,6 @@ const ContentWrapper = styled.View`
   margin-bottom: ${(props) => props.theme.space.xl}px;
 `;
 
-const Title = styled.Text`
-  ${(props) => props.theme.typography.h3};
-  color: ${(props) => props.theme.colors.white};
-`;
-
-const Description = styled.Text`
-  ${(props) => props.theme.typography.bodyLarge};
-  color: ${(props) => props.theme.colors.white};
-  text-align: center;
-`;
-
 const ButtonsWrapper = styled.View`
   flex-direction: row;
   align-items: stretch;
@@ -116,6 +105,17 @@ const DefaultButton = styled(Button).attrs((props) => ({
   },
 }))`
   border-radius: 27px;
+`;
+
+const StatusNavContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 8px;
+  width: 54px;
+  margin-left: ${(props) => props.theme.space.xl}px;
+  margin-right: ${(props) => props.theme.space.xl}px;
+  margin-bottom: 32px;
 `;
 
 const NextButton = styled(DefaultButton).attrs((props) => ({
@@ -164,10 +164,6 @@ const FooterContainer = styled.View`
   gap: ${(props) => props.theme.space.sm}px;
 `;
 
-const FooterText = styled.Text`
-  color: ${(props) => props.theme.colors.white};
-`;
-
 //////////// Styling end ///////////////
 
 interface SlidesProps {
@@ -182,7 +178,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = () => {
   const navigation = useNavigation<OnboardingScreenNavigationProp>();
   const [currentSlide, setCurrentSlide] = useState(0);
   const progress = useSharedValue(0);
-  const theme = useTheme();
+  let theme = useTheme();
+  theme = lightTheme;
 
   const slides: SlidesProps[] = [
     {
@@ -240,7 +237,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = () => {
 
   const renderStatusNav = () => {
     return (
-      <View style={styles.statusNavContainer}>
+      <StatusNavContainer>
         {slides.slice(0, slides.length - 1).map((slide, index) => {
           const animatedStyle = useAnimatedStyle(() => ({
             backgroundColor:
@@ -263,7 +260,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = () => {
             />
           );
         })}
-      </View>
+      </StatusNavContainer>
     );
   };
 
@@ -273,7 +270,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = () => {
         <Overlay />
         <SafeArea>
           <HeaderContainer>
-            <LanguagePicker />
+            <LanguagePicker color={theme.colors.white} />
             <SkipButton
               onPress={() => {
                 navigation.navigate("Login");
@@ -284,8 +281,20 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = () => {
           </HeaderContainer>
           <BodyContainer>
             <ContentWrapper>
-              <Title>{slides[currentSlide].title}</Title>
-              <Description>{slides[currentSlide].text}</Description>
+              <Text
+                fontVariant="h3"
+                color={theme.colors.white}
+                textAlign="center"
+              >
+                {slides[currentSlide].title}
+              </Text>
+              <Text
+                fontVariant="bodyLarge"
+                color={theme.colors.white}
+                textAlign="center"
+              >
+                {slides[currentSlide].text}
+              </Text>
             </ContentWrapper>
             {renderStatusNav()}
             <ButtonsWrapper>
@@ -313,7 +322,13 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = () => {
             </ButtonsWrapper>
           </BodyContainer>
           <FooterContainer>
-            <FooterText>{t("already_have_account")}</FooterText>
+            <Text
+              fontVariant="bodyMedium"
+              color={theme.colors.white}
+              textAlign="left"
+            >
+              {t("already_have_account")}
+            </Text>
             <LoginButton
               onPress={() => {
                 navigation.navigate("Login");
@@ -329,14 +344,6 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = () => {
 };
 
 const styles = StyleSheet.create({
-  statusNavContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    height: 8,
-    width: 54,
-    marginVertical: space.xl,
-  },
   statusNavItem: {
     height: 8,
     borderRadius: 50,

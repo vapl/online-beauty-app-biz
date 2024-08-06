@@ -9,17 +9,19 @@ import {
   TextInput as RNTextInput,
 } from "react-native";
 import {
+  RecoveryConfirmationScreenNavigationProp,
   RecoveryConfirmationScreenProps,
   RootStackParamList,
-} from "../types/navigationTypes";
+} from "../../types/navigationTypes";
 import styled, { useTheme } from "styled-components/native";
-import Button from "../components/button.component";
+import Button from "../../components/button.component";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { HelperText, TextInput } from "react-native-paper";
 import { useTranslation } from "react-i18next";
-import Space from "../components/spacer.component";
+import Space from "../../components/spacer.component";
 import * as Clipboard from "expo-clipboard";
-import { Text } from "../components/text.component";
+import { Text } from "../../components/text.component";
+import { sendVerificationCode } from "../../../api/auth";
 
 //////////// Styling start ///////////////
 
@@ -115,17 +117,17 @@ const RecoveryConfirmationScreen: React.FC<
   RecoveryConfirmationScreenProps
 > = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation<RecoveryConfirmationScreenProps>();
+  const navigation = useNavigation<RecoveryConfirmationScreenNavigationProp>();
   const route =
     useRoute<RouteProp<RootStackParamList, "RecoveryConfirmation">>();
   const { email, phone } = route.params || {};
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
   const [code, setCode] = useState<string>("");
-  const [randomCode, setRandomCode] = useState<string>("");
+  const [randomCode, setRandomCode] = useState<string>("1234");
   const inputs = useRef<RNTextInput[]>([]);
   const [isClipboardContent, setIsClipboardContent] = useState<boolean>(false);
   const [clipboardContent, setClipboardContent] = useState<string>("");
-  const [timeLeft, setTimeLeft] = useState<number>(10);
+  const [timeLeft, setTimeLeft] = useState<number>(180);
   const theme = useTheme();
   const [errorMessage, setErrorMesage] = useState<string>("");
 
@@ -152,10 +154,9 @@ const RecoveryConfirmationScreen: React.FC<
         if (prevTime > 0) {
           return prevTime - 1;
         } else {
-          const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
-          setRandomCode(randomCode);
-          console.log(randomCode);
-          return 10;
+          sendVerificationCode(email, phone);
+          console.log(sendVerificationCode(email, phone));
+          return 180;
         }
       });
     }, 1000);
@@ -219,7 +220,9 @@ const RecoveryConfirmationScreen: React.FC<
       setCode("");
       return;
     }
+
     console.log("Code entered:", code);
+    navigation.navigate("NewPassword");
     setCode("");
     setErrorMesage("");
   };
