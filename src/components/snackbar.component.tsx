@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Snackbar as Snack } from "react-native-paper";
 import styled, { useTheme } from "styled-components/native";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -52,6 +52,7 @@ interface SnackProps {
   children?: string;
   label?: string;
   visible?: boolean;
+  duration?: number;
   onPress?: () => void;
 }
 
@@ -66,6 +67,7 @@ export const SnackbarMessage: React.FC<SnackProps> = ({
   status = "success",
   label = "UNDO",
   visible = false,
+  duration,
   onPress,
 }) => {
   const theme = useTheme();
@@ -76,9 +78,12 @@ export const SnackbarMessage: React.FC<SnackProps> = ({
     setIsVisible(visible);
   }, [visible]);
 
-  const handlePress = () => {
-    setIsVisible(!visible);
-  };
+  const handlePress = useCallback(() => {
+    setIsVisible(false);
+    if (onPress) {
+      onPress();
+    }
+  }, [onPress]);
 
   const statusStyles: { [key in SnackProps["status"]]: StatusStylesProps } = {
     error: {
@@ -107,6 +112,7 @@ export const SnackbarMessage: React.FC<SnackProps> = ({
           visible={isVisible}
           onDismiss={onDismissSnackbar}
           bgColor={bgColor}
+          duration={duration}
           action={{
             label: label,
             onPress: handlePress,

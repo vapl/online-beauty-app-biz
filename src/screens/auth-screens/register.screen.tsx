@@ -18,7 +18,11 @@ import Input from "../../components/input.component";
 import { parsePhoneNumber } from "libphonenumber-js";
 import { Text } from "../../components/text.component";
 import { useTheme } from "styled-components/native";
-import { registerUser } from "../../../api/auth";
+import {
+  registerUser,
+  checkIfEmailExists,
+  sendEmailVerification,
+} from "../../../api/auth";
 
 //////////// Styling start ///////////////
 
@@ -64,7 +68,6 @@ const EmailInput = styled(Input)``;
 const PhoneInput = styled(Input)``;
 const PasswordInput = styled(Input)``;
 
-const LoginButton = styled(Button)``;
 const RegisterButton = styled(Button)``;
 const SocialButton = styled(Button)``;
 
@@ -74,14 +77,6 @@ const RegulationsWrapper = styled(View)`
   padding: ${(props) => props.theme.space.sm}px 0
     ${(props) => props.theme.space.sm}px 0;
 `;
-
-const RegulationsText = styled.Text`
-  ${(props) => props.theme.typography.bodyMedium};
-  align-self: center;
-`;
-
-const TermsButton = styled(Button)``;
-const PolicyButton = styled(Button)``;
 
 const ButtonsWrapper = styled(View)`
   padding-top: ${(props) => props.theme.space.md}px;
@@ -112,10 +107,6 @@ const FooterContainer = styled.View`
   margin-top: ${(props) => props.theme.space.lg}px;
   margin-bottom: ${(props) => props.theme.space.lg}px;
   gap: ${(props) => props.theme.space.sm}px;
-`;
-
-const FooterText = styled.Text`
-  color: ${(props) => props.theme.colors.grey[100]};
 `;
 
 ////////////  Styling end  ///////////////
@@ -195,7 +186,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
     return undefined;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const nameValidationError = validateName(name);
     const surnameValidationError = validateSurname(surname);
     const emailValidationError = validateEmail(email);
@@ -216,8 +207,22 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
       !phoneValidationError
     ) {
       // Register functionality with firebase
-      registerUser(email, password);
-      console.log("Form submitted");
+      try {
+        await registerUser({
+          email,
+          password,
+          name,
+          surname,
+          phone,
+        });
+        await sendEmailVerification(email);
+      } catch (error: any) {
+        if (error.code === "auth/email-already-in-use") {
+          setEmailError(t("email_already_in_use"));
+          return;
+        }
+      }
+
       setName("");
       setSurname("");
       setEmail("");
@@ -249,6 +254,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                     value={name}
                     onChangeText={setName}
                     validate={validateName}
+                    autoCapitalize="sentences"
                     label={t("name_input")}
                     iconLeft="account"
                     textContentType="givenName"
@@ -260,6 +266,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                     value={surname}
                     onChangeText={setSurname}
                     validate={validateSurname}
+                    autoCapitalize="sentences"
                     label={t("surname_input")}
                     iconLeft="account"
                     textContentType="familyName"

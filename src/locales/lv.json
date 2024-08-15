@@ -62,5 +62,11 @@
   "code_resent_notification": "Atkārtoti tiks nosūtīts pēc",
   "paste_code": "Iekopēt kodu",
   "conf_code_isnt_match": "Nepareizs kods",
-  "passwords_dont_match": "Paroles nesakrīt"
+  "passwords_dont_match": "Paroles nesakrīt",
+  "email_not_found": "E-pasts netika atrasts.",
+  "password_reset_email_sent": "Paroles atjaunošanas saite ir nosūtīta uz jūsu e-pastu {email}. Lūdzu, pārbaudiet savu iesūtni.",
+  "error_sending_reset_email": "Radās kļūda, nosūtot paroles atjaunošanas saiti. Lūdzu, mēģiniet vēlreiz.",
+  "email_already_in_use": "Šis e-pasts jau tiek izmantots",
+  "invalid_credential": "Pieteikšanās neizdevās. Lūdzu, pārbaudiet savus pieteikšanās datus un mēģiniet vēlreiz.",
+  "too_many_requests": "Piekļuve šim kontam ir īslaicīgi atspējota, jo ir veikti pārāk daudzi neveiksmīgi pieteikšanās mēģinājumi. Lūdzu, mēģiniet vēlreiz vēlāk."
 }

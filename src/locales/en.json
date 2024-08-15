@@ -62,5 +62,11 @@
   "code_resend_notification": "The code will be resent after",
   "paste_code": "Paste code",
   "conf_code_isnt_match": "Invalid code",
-  "passwords_dont_match": "Passwords don't match"
+  "passwords_dont_match": "Passwords don't match",
+  "email_not_found": "Email not found",
+  "password_reset_email_sent": "Password reset link has been sent to your email {email}. Please check your inbox.",
+  "error_sending_reset_email": "There was an error sending the password reset link. Please try again.",
+  "email_already_in_use": "This email is already in use",
+  "invalid_credential": "Login failed. Please check your credentials and try again.",
+  "too_many_requests": "Access to this account has been temporarily disabled due to many failed login attempts. Try again later"
 }

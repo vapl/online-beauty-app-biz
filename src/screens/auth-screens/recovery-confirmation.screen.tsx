@@ -21,7 +21,6 @@ import { useTranslation } from "react-i18next";
 import Space from "../../components/spacer.component";
 import * as Clipboard from "expo-clipboard";
 import { Text } from "../../components/text.component";
-import { sendVerificationCode } from "../../../api/auth";
 
 //////////// Styling start ///////////////
 
@@ -154,8 +153,6 @@ const RecoveryConfirmationScreen: React.FC<
         if (prevTime > 0) {
           return prevTime - 1;
         } else {
-          sendVerificationCode(email, phone);
-          console.log(sendVerificationCode(email, phone));
           return 180;
         }
       });
@@ -222,7 +219,6 @@ const RecoveryConfirmationScreen: React.FC<
     }
 
     console.log("Code entered:", code);
-    navigation.navigate("NewPassword");
     setCode("");
     setErrorMesage("");
   };

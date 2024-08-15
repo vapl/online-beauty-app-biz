@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, StatusBar, View } from "react-native";
 import {
   LoginScreenProps,
@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import Input from "../../components/input.component";
 import { Text } from "../../components/text.component";
 import { loginUser } from "../../../api/auth";
+import { SnackbarMessage } from "../../components/snackbar.component";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -83,6 +84,7 @@ const FooterContainer = styled.View`
 `;
 
 const LoginScreen: React.FC<LoginScreenProps> = () => {
+  const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const [email, setEmail] = useState<string>("");
@@ -91,7 +93,9 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
   const [passwordError, setPasswordError] = useState<string | undefined>(
     undefined
   );
-  const theme = useTheme();
+  const [snackBarMessage, setSnackBarMessage] = useState<string | undefined>(
+    undefined
+  );
 
   const validateEmail = (value: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -109,12 +113,11 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
     } else if (value.length < 6) {
       return "password_too_short";
     }
-    setEmail("");
-    setPassword("");
     return undefined;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setSnackBarMessage(undefined);
     const emailValidationError = validateEmail(email);
     const passwordValidationError = validatePassword(password);
 
@@ -122,15 +125,33 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
     setPasswordError(passwordValidationError);
 
     if (!emailValidationError && !passwordValidationError) {
-      console.log("Form submitted");
-      loginUser(email, password);
-      navigation.navigate("Main");
+      try {
+        await loginUser(email, password);
+        navigation.navigate("Main");
+      } catch (error: any) {
+        console.error("Login failed: ", error.code);
+        if (error.code === "auth/invalid-credential") {
+          setSnackBarMessage(t("invalid_credential"));
+        }
+        if (error.code === "auth/too-many-requests") {
+          setSnackBarMessage(t("too_many_requests"));
+        }
+      }
     }
+    console.log(snackBarMessage);
   };
 
   return (
     <Background>
       <SafeArea>
+        <SnackbarMessage
+          status={"error"}
+          label="OK"
+          duration={5000}
+          visible={!!snackBarMessage}
+        >
+          {snackBarMessage}
+        </SnackbarMessage>
         <ScreenContainer>
           <Header>
             <Text fontVariant="h3">{t("login_welcome_title")}</Text>
