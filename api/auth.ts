@@ -8,10 +8,11 @@ import {
   onAuthStateChanged,
   User,
   signInWithEmailLink,
+  sendEmailVerification,
 } from "firebase/auth";
 import { auth, functions, firestore } from "./firebaseConfig";
 import { httpsCallable } from "firebase/functions";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 
 interface VerificationCodeResponse {
   success: boolean;
@@ -41,15 +42,17 @@ const registerUser = async (props: RegisterUserProps) => {
       name: props.name,
       surname: props.surname,
       phone: props.phone,
-      userType: props.userType,
+      userType: props.userType || "specialists",
       profileImage: "",
       createdAt: new Date(),
       verified: false,
     };
 
     await setDoc(doc(firestore, "users", user.uid), userData);
+    await sendEmailVerification(user);
     return user;
   } catch (error) {
+    console.error("Error sending verification link: ", error);
     throw error;
   }
 };
@@ -89,17 +92,14 @@ const resetPassword = async (email: string) => {
 };
 
 //Send email verification function
-const sendEmailVerification = async (
-  email: string
-): Promise<VerificationCodeResponse> => {
-  const actionCodeSettings = {
-    url: "http://172.20.10.2:8081/new-password",
-    handleCodeInApp: true,
-  };
+const sendVerificationEmail = async (user: User, language: string) => {
   try {
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    // Set Firebase language
+    auth.languageCode = language;
+    await sendEmailVerification(user);
     return { success: true, message: "Verification email sent." };
   } catch (error) {
+    console.error("Error sending verification email: ", error);
     throw error;
   }
 };
@@ -108,12 +108,19 @@ const sendEmailVerification = async (
 const verifyEmailLink = async (email: string, emailLink: string) => {
   try {
     if (isSignInWithEmailLink(auth, emailLink)) {
-      await signInWithEmailLink(auth, email, emailLink);
+      // Sign in the user with the email link
+      const userCredential = await signInWithEmailLink(auth, email, emailLink);
+      const user = userCredential.user;
+
+      // Update the user's document in Firestore to set 'verified' to true
+      const userRef = doc(firestore, "users", user.uid);
+      await updateDoc(userRef, { verified: true });
       return { success: true, message: "Email verified" };
     } else {
       throw new Error("Invalid email link");
     }
   } catch (error) {
+    console.error("Error verifying email: ", error);
     throw error;
   }
 };
@@ -136,7 +143,7 @@ export {
   loginUser,
   logoutUser,
   resetPassword,
-  sendEmailVerification,
+  sendVerificationEmail,
   verifyEmailLink,
   auth,
   authStateListener,

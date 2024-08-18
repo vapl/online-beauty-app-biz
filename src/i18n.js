@@ -30,7 +30,7 @@ getLanguage().then((language) => {
       },
       lng: language,
       fallbackLng: "en",
-      debug: true,
+      debug: false,
       interpolation: {
         escapeValue: false,
       },

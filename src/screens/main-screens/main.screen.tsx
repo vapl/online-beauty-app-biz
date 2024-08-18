@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, StatusBar, View } from "react-native";
 import {
   MainScreenNavigationProp,
   MainScreenProps,
 } from "../../types/navigationTypes";
 import styled, { useTheme } from "styled-components/native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Text } from "../../components/text.component";
 import Button from "../../components/button.component";
-import { logoutUser } from "../../../api/auth";
+import { authStateListener, logoutUser } from "../../../api/auth";
+import { HelperText } from "react-native-paper";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -34,10 +35,24 @@ const Header = styled(View)`
   gap: ${(props) => props.theme.space.sm}px;
 `;
 
-const LoginScreen: React.FC<MainScreenProps> = () => {
+const MainScreen: React.FC<MainScreenProps> = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigation = useNavigation<MainScreenNavigationProp>();
+  const [message, setMessage] = useState<string>("");
+
+  useEffect(() => {
+    const unsubcribe = authStateListener((user) => {
+      if (user) {
+        if (!user.emailVerified) {
+          setMessage("Please verify your email to access all features.");
+        }
+      } else {
+        navigation.navigate("Login");
+      }
+    });
+    return () => unsubcribe();
+  }, [navigation]);
 
   const handleLogout = async () => {
     try {
@@ -51,6 +66,9 @@ const LoginScreen: React.FC<MainScreenProps> = () => {
   return (
     <Background>
       <SafeArea>
+        <HelperText type="error" visible={true}>
+          {message}
+        </HelperText>
         <ScreenContainer>
           <Header>
             <Text fontVariant="h3">MAIN SCREEN</Text>
@@ -62,4 +80,4 @@ const LoginScreen: React.FC<MainScreenProps> = () => {
   );
 };
 
-export default LoginScreen;
+export default MainScreen;

@@ -2,15 +2,24 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
+import {
+  FIREBASE_API_KEY,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID,
+  FIREBASE_MEASUREMENT_ID,
+} from "@env";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB4uAda6fK5KI8rQLXQZW93jz1AILaSI78",
-  authDomain: "onlinebeautyapp-e572d.firebaseapp.com",
-  projectId: "onlinebeautyapp-e572d",
-  storageBucket: "onlinebeautyapp-e572d.appspot.com",
-  messagingSenderId: "796785992105",
-  appId: "1:796785992105:web:516582b0f183812c05e4b8",
-  measurementId: "G-0CDE7PVD83",
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+  appId: FIREBASE_APP_ID,
+  measurementId: FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);

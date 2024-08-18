@@ -18,11 +18,7 @@ import Input from "../../components/input.component";
 import { parsePhoneNumber } from "libphonenumber-js";
 import { Text } from "../../components/text.component";
 import { useTheme } from "styled-components/native";
-import {
-  registerUser,
-  checkIfEmailExists,
-  sendEmailVerification,
-} from "../../../api/auth";
+import { registerUser, sendVerificationEmail } from "../../../api/auth";
 
 //////////// Styling start ///////////////
 
@@ -215,7 +211,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
           surname,
           phone,
         });
-        await sendEmailVerification(email);
       } catch (error: any) {
         if (error.code === "auth/email-already-in-use") {
           setEmailError(t("email_already_in_use"));

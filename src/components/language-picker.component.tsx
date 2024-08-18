@@ -3,6 +3,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { typography } from "../infrastructure/theme/typography";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface LanguagePickerProps {
   color?: string;
@@ -13,14 +14,22 @@ const LanguagePicker: React.FC<LanguagePickerProps> = ({ color }) => {
   const { i18n } = useTranslation();
   const [selectedLanguage, setSelectedLanguage] = useState("lv"); // Default to Latvian
 
-  const onChangeLanguage = (language: string) => {
+  const onChangeLanguage = async (language: string) => {
     setSelectedLanguage(language);
     i18n.changeLanguage(language);
+    await AsyncStorage.setItem("userLanguage", language);
   };
 
   useEffect(() => {
-    setSelectedLanguage(i18n.language);
-  }, [i18n.language]);
+    const loadLanguage = async () => {
+      const savedLanguage = await AsyncStorage.getItem("userLanguage");
+      if (savedLanguage) {
+        i18n.changeLanguage(savedLanguage);
+        setSelectedLanguage(savedLanguage);
+      }
+    };
+    loadLanguage();
+  }, []);
 
   const pickerStyle = {
     inputIOS: {
