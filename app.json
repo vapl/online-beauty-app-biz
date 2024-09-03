@@ -1,27 +1,35 @@
 {
   "expo": {
-    "name": "online-beauty-app-biz",
-    "slug": "Online Beauty App for Business",
+    "name": "Online Beauty App for Business",
+    "slug": "online-beauty-app-biz",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "onlinebeautyapp",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vapl.onlinebeautyappbiz"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.vapl.onlinebeautyappbiz"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ae2e80e7-0bfa-40fb-af04-6e568f61f38a"
+      }
     }
   }
 }

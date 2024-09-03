@@ -41,7 +41,9 @@ const StyledInput = styled(TextInput).attrs<StyledInputProps>((props) => ({
   padding-left: ${(props) => props.theme.space.md}px;
   padding-right: ${(props) => props.theme.space.md}px;
   background-color: ${(props) =>
-    props.disabled ? props.theme.colors.grey[20] : props.theme.colors.white};
+    props.disabled
+      ? props.theme.colors.grey[20]
+      : props.theme.colors.background};
   ${(props) => props.theme.typography.bodyLarge};
 `;
 

@@ -1,23 +1,56 @@
-import React, { useEffect, useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { authStateListener } from "../../api/auth";
+import React, { useContext, useEffect, useState } from "react";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import AppStack from "./AppStack";
 import AuthStack from "./AuthStack";
+import SetupStatusBanner from "../components/complete-setup-banner.component";
+import { SafeAreaView } from "react-native";
+import styled, { useTheme } from "styled-components/native";
+import * as Linking from "expo-linking";
+import OnboardingBusinessSetupStack from "./OnboardingBusinessSetupStack";
+import { UserContext } from "../context/UserProvider";
+import LoadingSpinner from "../components/loading.spinner";
+
+const SafeArea = styled(SafeAreaView)`
+  flex: 1;
+  background-color: ${(props) => props.theme.colors.background};
+`;
 
 const AppNavigator: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const theme = useTheme();
+  const userContext = useContext(UserContext);
 
-  useEffect(() => {
-    const unsubscribe = authStateListener((user) => {
-      setIsAuthenticated(!!user);
-    });
+  if (!userContext) return null;
+  const { firstLogin, isAuthenticated, isLoading } = userContext;
+  if (isLoading) return <LoadingSpinner />;
 
-    return unsubscribe;
-  }, []);
+  const linking = {
+    prefixes: [Linking.createURL("/"), "exp://"],
+    config: {
+      screens: {
+        VerifyEmail: "verify-email",
+        Login: "login",
+      },
+    },
+  };
 
   return (
-    <NavigationContainer>
-      {isAuthenticated ? <AppStack /> : <AuthStack />}
+    <NavigationContainer linking={linking}>
+      {isAuthenticated ? (
+        <>
+          <SafeArea>
+            {firstLogin ? (
+              <OnboardingBusinessSetupStack />
+            ) : (
+              <>
+                <SetupStatusBanner />
+                <AppStack />
+              </>
+            )}
+          </SafeArea>
+        </>
+      ) : (
+        <AuthStack />
+      )}
     </NavigationContainer>
   );
 };

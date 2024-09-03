@@ -11,14 +11,15 @@ import {
   RegisterScreenProps,
 } from "../../types/navigationTypes";
 import styled from "styled-components/native";
-import Button from "../../components/button.component";
+import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Input from "../../components/input.component";
 import { parsePhoneNumber } from "libphonenumber-js";
 import { Text } from "../../components/text.component";
 import { useTheme } from "styled-components/native";
-import { registerUser, sendVerificationEmail } from "../../../api/auth";
+import { registerUser } from "../../services/authService";
+import { SnackbarMessage } from "../../components/snackbar.component";
 
 //////////// Styling start ///////////////
 
@@ -126,6 +127,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
   const [passwordError, setPasswordError] = useState<string | undefined>(
     undefined
   );
+  const [snackBarMessage, setSnackBarMessage] = useState<string>("");
 
   useEffect(() => {
     callingCode;
@@ -209,20 +211,25 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
           password,
           name,
           surname,
-          phone,
+          phone: callingCode + phone,
         });
+
+        setSnackBarMessage(t("successfull_registration_message"));
+
+        setName("");
+        setSurname("");
+        setEmail("");
+        setPhone("");
+        setPassword("");
+        setTimeout(() => {
+          setSnackBarMessage("");
+        }, 5000);
       } catch (error: any) {
         if (error.code === "auth/email-already-in-use") {
           setEmailError(t("email_already_in_use"));
           return;
         }
       }
-
-      setName("");
-      setSurname("");
-      setEmail("");
-      setPhone("");
-      setPassword("");
     }
     return;
   };
@@ -230,6 +237,14 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
   return (
     <Background>
       <SafeArea>
+        <SnackbarMessage
+          status={"success"}
+          label="OK"
+          duration={5000}
+          visible={!!snackBarMessage}
+        >
+          {snackBarMessage}
+        </SnackbarMessage>
         <ScreenContainer>
           <Header>
             <Text fontVariant="h3">{t("register_welcome_title")}</Text>

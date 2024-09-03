@@ -24,6 +24,8 @@
   "phone_confirmation_description": "Lūdzu, ievadiet kodu, kuru saņēmāt savā tālrunī",
   "new_password_title": "Jaunā parole",
   "new_password_description": "Tagad jūs varat izveidot jaunu paroli un apstiprināt to.",
+  "account_setup_business_name_title": "Kāds ir tava uzņēmuma nosaukums?",
+  "account_setup_business_name_description": "Šis ir zīmola nosaukums, ko redzēs tavi klienti. Tavu juridisko nosaukumu varēs pievienot vēlāk.",
   "login": "Ielogoties",
   "register": "Reģistrēties",
   "choose_language": "Izvēlēties valodu",
@@ -64,9 +66,15 @@
   "conf_code_isnt_match": "Nepareizs kods",
   "passwords_dont_match": "Paroles nesakrīt",
   "email_not_found": "E-pasts netika atrasts.",
-  "password_reset_email_sent": "Paroles atjaunošanas saite ir nosūtīta uz jūsu e-pastu {email}. Lūdzu, pārbaudiet savu iesūtni.",
+  "password_reset_email_sent": "Paroles atjaunošanas saite ir nosūtīta uz jūsu e-pastu {{email}}. Lūdzu, pārbaudiet savu iesūtni.",
   "error_sending_reset_email": "Radās kļūda, nosūtot paroles atjaunošanas saiti. Lūdzu, mēģiniet vēlreiz.",
   "email_already_in_use": "Šis e-pasts jau tiek izmantots",
   "invalid_credential": "Pieteikšanās neizdevās. Lūdzu, pārbaudiet savus pieteikšanās datus un mēģiniet vēlreiz.",
-  "too_many_requests": "Piekļuve šim kontam ir īslaicīgi atspējota, jo ir veikti pārāk daudzi neveiksmīgi pieteikšanās mēģinājumi. Lūdzu, mēģiniet vēlreiz vēlāk."
+  "too_many_requests": "Piekļuve šim kontam ir īslaicīgi atspējota, jo ir veikti pārāk daudzi neveiksmīgi pieteikšanās mēģinājumi. Lūdzu, mēģiniet vēlreiz vēlāk.",
+  "successfull_registration_message": "Reģistrācija veiksmīga! Apstiprinājuma saite ir nosūtīta uz jūsu e-pastu. Lūdzu, pārbaudiet savu iesūtni un apstipriniet savu e-pasta adresi, lai aktivizētu savu kontu.",
+  "placeholder_business_name": "Uzņēmuma nosaukums",
+  "placeholder_homepage": "Mājas lapa",
+  "button_next": "Nākamais",
+  "invalid_web_page_value": "Nederīgs URL formāts. Pārliecinieties, ka tas sākas ar 'www.' un ietver derīgu domēnu, piemēram, '.lv' vai '.com'.",
+  "account_settings": "Konta iestatījumi"
 }

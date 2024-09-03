@@ -8,10 +8,11 @@ import RegisterScreen from "../screens/auth-screens/register.screen";
 import PassRecoveryScreen from "../screens/auth-screens/pass-recovery.screen";
 import RecoveryConfirmationScreen from "../screens/auth-screens/recovery-confirmation.screen";
 import NewPasswordScreen from "../screens/auth-screens/new-password.screen";
+import VerifyEmailScreen from "../screens/auth-screens/verify.email.screen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-const AppNavigator: React.FC = () => {
+const AuthStack: React.FC = () => {
   return (
     <Stack.Navigator initialRouteName="Onboarding">
       <Stack.Screen
@@ -44,8 +45,13 @@ const AppNavigator: React.FC = () => {
         component={NewPasswordScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="VerifyEmail"
+        component={VerifyEmailScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
 
-export default AppNavigator;
+export default AuthStack;

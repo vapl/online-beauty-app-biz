@@ -7,16 +7,21 @@ import {
   ScrollView,
   Platform,
 } from "react-native";
+import LoadingSpinner from "../../components/loading.spinner";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { parsePhoneNumberFromString as parsePhoneNumber } from "libphonenumber-js";
 import { RecoveryConfirmationScreenNavigationProp } from "../../types/navigationTypes";
-import Button from "../../components/button.component";
+import Button from "../../components/button/button.component";
 import Input from "../../components/input.component";
 import Space from "../../components/spacer.component";
 import { Text } from "../../components/text.component";
-import { checkIfEmailExists, resetPassword } from "../../../api/auth";
+import {
+  auth,
+  checkIfEmailExists,
+  resetPassword,
+} from "../../services/authService";
 import { SnackbarMessage } from "../../components/snackbar.component";
 
 //////////// Styling start ///////////////
@@ -43,14 +48,6 @@ const Header = styled(View)`
   padding-top: ${(props) => props.theme.space.xxl}px;
   padding-bottom: ${(props) => props.theme.space.md}px;
   gap: ${(props) => props.theme.space.sm}px;
-`;
-
-const Title = styled.Text`
-  ${(props) => props.theme.typography.h3};
-`;
-
-const TitleDescription = styled.Text`
-  ${(props) => props.theme.typography.bodyMedium};
 `;
 
 const FormWrapper = styled(View)`
@@ -95,9 +92,8 @@ const PassRecoveryScreen: React.FC = () => {
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
   const [inputOption, setInputOption] = useState<string>("use_phone");
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
-  const [snackBarMessage, setSnackBarMessage] = useState<string | undefined>(
-    undefined
-  );
+  const [snackBarMessage, setSnackBarMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (inputOption === "use_email") {
@@ -172,34 +168,33 @@ const PassRecoveryScreen: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    setSnackBarMessage("");
     if (inputOption === "use_phone") {
       const emailValidationError = validateEmail(email);
       setEmailError(emailValidationError);
       setPhoneError(undefined);
 
       if (!emailValidationError) {
-        const emailExistsresult = await checkIfEmailExists(email);
-        const emailExists = emailExistsresult as unknown as { exists: boolean };
-        if (!emailExists.exists) {
-          setEmailError(t("email_not_found"));
-          return;
-        }
-
+        setIsLoading(true);
         try {
-          const result = await resetPassword(email);
-          if (result.success) {
-            setSnackBarMessage(
-              t("password_reset_email_sent", {
-                email: obfuscateContactInfo(email),
-              })
-            );
-            setEmail("");
-          } else {
-            setEmailError(result.message || t("error_sending_reset_email"));
-          }
+          setSnackBarMessage(
+            t("password_reset_email_sent", {
+              email: obfuscateContactInfo(email),
+            })
+          );
+          await resetPassword(email);
         } catch (error) {
           console.error(t("error_sending_reset_email"), error);
           setEmailError(t("error_sending_reset_email"));
+        } finally {
+          setIsLoading(false);
+          console.log("Snackbar: ", snackBarMessage);
+
+          setTimeout(() => {
+            navigation.navigate("Login");
+          }, 5000);
+
+          setEmail("");
         }
       }
     } else {
@@ -217,7 +212,6 @@ const PassRecoveryScreen: React.FC = () => {
         }
       }
     }
-    setSnackBarMessage(undefined);
     return;
   };
 
@@ -225,11 +219,14 @@ const PassRecoveryScreen: React.FC = () => {
     <Background>
       <SafeArea>
         <SnackbarMessage
-          status={"success"}
+          status={"warning"}
           label="OK"
-          duration={20000}
+          duration={5000}
           visible={!!snackBarMessage}
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => {
+            setSnackBarMessage("");
+            navigation.navigate("Login");
+          }}
         >
           {snackBarMessage}
         </SnackbarMessage>
@@ -287,6 +284,7 @@ const PassRecoveryScreen: React.FC = () => {
                     onPress={toggleInputOption}
                   />
                 </InputWrapper>
+                {isLoading && <LoadingSpinner />}
                 <View>
                   <RegisterButton
                     label={t("send_code")}

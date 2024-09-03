@@ -14,7 +14,7 @@ import {
   RootStackParamList,
 } from "../../types/navigationTypes";
 import styled, { useTheme } from "styled-components/native";
-import Button from "../../components/button.component";
+import Button from "../../components/button/button.component";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { HelperText, TextInput } from "react-native-paper";
 import { useTranslation } from "react-i18next";

@@ -1,42 +1,40 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { RootStackParamList } from "../types/navigationTypes";
+import {
+  AccountSetupBusinessNameScreenNavigationProp,
+  AppStackParamList,
+  RootStackParamList,
+} from "../types/navigationTypes";
 import MainScreen from "../screens/main-screens/main.screen";
-import AccountSetupBusinessNameScreen from "../screens/account-setup-screens/account-setup-business-name.screen";
-// import AccountSetupServicesScreen from "../screens/account-setup-services.screen";
-// import AccountSetupTeamScreen from "../screens/account-setup-team.screen";
-// import AccountSetupLocationScreen from "../screens/account-setup-location.screen";
+import { useTheme } from "styled-components/native";
+import { useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
+import OnboardingBusinessSetupStack from "./OnboardingBusinessSetupStack";
 
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<AppStackParamList>();
 
 const AppStack: React.FC = () => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
   return (
-    <Stack.Navigator initialRouteName="Main">
+    <Stack.Navigator
+      initialRouteName="Main"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: theme.colors.background,
+        },
+        headerTintColor: theme.colors.text,
+        headerTitleAlign: "center",
+      }}
+    >
       <Stack.Screen
         name="Main"
         component={MainScreen}
-        options={{ headerShown: true }}
+        options={{
+          headerShown: true,
+        }}
       />
-      <Stack.Screen
-        name="AccountSetupBusinessName"
-        component={AccountSetupBusinessNameScreen}
-        options={{ headerShown: false }}
-      />
-      {/* <Stack.Screen
-        name="AccountSetupServices"
-        component={AccountSetupServicesScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="AccountSetupTeam"
-        component={AccountSetupTeamScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="AccountSetupLocation"
-        component={AccountSetupLocationScreen}
-        options={{ headerShown: false }}
-      /> */}
     </Stack.Navigator>
   );
 };

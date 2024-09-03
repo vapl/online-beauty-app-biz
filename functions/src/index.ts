@@ -6,60 +6,60 @@ import * as nodemailer from "nodemailer";
 
 admin.initializeApp();
 
-interface RegisterUserProps {
-  email: string;
-  password: string;
-  name: string;
-  surname: string;
-  userType: "client" | "specialist";
-}
+// interface RegisterUserProps {
+//   email: string;
+//   password: string;
+//   name: string;
+//   surname: string;
+//   userType: "client" | "specialist";
+// }
 
-// Register user function
-export const registerUser = functions.https.onCall(
-  async (data: RegisterUserProps) => {
-    const { email, password, name, surname, userType } = data;
-    console.log("Registering user with email:", email);
+// // Register user function
+// export const registerUser = functions.https.onCall(
+//   async (data: RegisterUserProps) => {
+//     const { email, password, name, surname, userType } = data;
+//     console.log("Registering user with email:", email);
 
-    try {
-      // Create the user with Firebase Authentication
-      const userCredential = await admin.auth().createUser({ email, password });
-      const user = userCredential;
+//     try {
+//       // Create the user with Firebase Authentication
+//       const userCredential = await admin.auth().createUser({ email, password });
+//       const user = userCredential;
 
-      console.log("User created successfully with UID:", user.uid);
+//       console.log("User created successfully with UID:", user.uid);
 
-      // Prepare user data to save in Firestore
-      const userData = {
-        email: user.email,
-        name: name,
-        surname: surname,
-        userType: userType,
-        profileImage: "",
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      };
+//       // Prepare user data to save in Firestore
+//       const userData = {
+//         email: user.email,
+//         name: name,
+//         surname: surname,
+//         userType: userType,
+//         profileImage: "",
+//         createdAt: admin.firestore.FieldValue.serverTimestamp(),
+//       };
 
-      // Save user data in Firestore under the 'users' collection using UID as the document ID
-      await admin.firestore().collection("users").doc(user.uid).set(userData);
+//       // Save user data in Firestore under the 'users' collection using UID as the document ID
+//       await admin.firestore().collection("users").doc(user.uid).set(userData);
 
-      console.log("User data saved in Firestore.");
+//       console.log("User data saved in Firestore.");
 
-      return { uid: user.uid, email: user.email };
-    } catch (error: any) {
-      if (error.code === "auth/email-already-exists") {
-        throw new functions.https.HttpsError(
-          "already-exists",
-          "The email is already in use by another account"
-        );
-      } else if (error.code === "auth/invalid-password") {
-        throw new functions.https.HttpsError(
-          "invalid-argument",
-          "The email is already in use by another account"
-        );
-      } else {
-        throw new functions.https.HttpsError("internal", error.message);
-      }
-    }
-  }
-);
+//       return { uid: user.uid, email: user.email };
+//     } catch (error: any) {
+//       if (error.code === "auth/email-already-exists") {
+//         throw new functions.https.HttpsError(
+//           "already-exists",
+//           "The email is already in use by another account"
+//         );
+//       } else if (error.code === "auth/invalid-password") {
+//         throw new functions.https.HttpsError(
+//           "invalid-argument",
+//           "The email is already in use by another account"
+//         );
+//       } else {
+//         throw new functions.https.HttpsError("internal", error.message);
+//       }
+//     }
+//   }
+// );
 
 // Configure the email transporter
 const transporter = nodemailer.createTransport({

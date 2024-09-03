@@ -5,12 +5,12 @@ import {
   LoginScreenNavigationProp,
 } from "../../types/navigationTypes";
 import styled, { useTheme } from "styled-components/native";
-import Button from "../../components/button.component";
+import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Input from "../../components/input.component";
 import { Text } from "../../components/text.component";
-import { loginUser } from "../../../api/auth";
+import { loginUser, useGoogleSignIn } from "../../services/authService";
 import { SnackbarMessage } from "../../components/snackbar.component";
 
 const SafeArea = styled(SafeAreaView)`
@@ -97,6 +97,8 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
     undefined
   );
 
+  const { promptAsync } = useGoogleSignIn();
+
   const validateEmail = (value: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (value.trim() === "") {
@@ -138,7 +140,6 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
         }
       }
     }
-    console.log(snackBarMessage);
   };
 
   return (
@@ -213,7 +214,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
                 label={t("onboarding_button_join_google")}
                 mode="outlined"
                 icon="google"
-                onPress={() => {}}
+                onPress={() => promptAsync()}
               />
             </View>
           </FormWrapper>

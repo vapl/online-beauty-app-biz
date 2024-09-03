@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -7,8 +7,8 @@ import {
   View,
 } from "react-native";
 import {
-  AccountSetupBusinessNameScreenProps,
-  AccountSetupBusinessNameScreenNavigationProp,
+  AccountSetupLocationScreenProps,
+  AccountSetupLocationScreenNavigationProp,
 } from "../../types/navigationTypes";
 import styled, { useTheme } from "styled-components/native";
 import Button from "../../components/button/button.component";
@@ -17,12 +17,6 @@ import { useTranslation } from "react-i18next";
 import Input from "../../components/input.component";
 import { Text } from "../../components/text.component";
 import StatusNav from "../../components/status-navbar";
-import { UserContext } from "../../context/UserProvider";
-import { BusinessContext } from "../../context/BusinessProvider";
-import {
-  getBusinessInfo,
-  updateBusinessInfo,
-} from "../../services/businessService";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -55,27 +49,20 @@ const InputWrapper = styled(View)`
 const EmailInput = styled(Input)``;
 const PasswordInput = styled(Input)``;
 
-const AccountSetupBusinessNameScreen: React.FC<
-  AccountSetupBusinessNameScreenProps
+const LoginButton = styled(Button)``;
+
+const AccountSetupLocationScreen: React.FC<
+  AccountSetupLocationScreenProps
 > = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const navigation =
-    useNavigation<AccountSetupBusinessNameScreenNavigationProp>();
+  const navigation = useNavigation<AccountSetupLocationScreenNavigationProp>();
   const [businessName, setBusinessName] = useState<string>("");
   const [webPage, setWebpage] = useState<string>("");
   const [businessNameError, setBusinessNameError] = useState<string>();
   const [webPageError, setWebPageError] = useState<string>();
-  const currentStep = 0;
+  const currentStep = 4;
   const totalSteps = 5;
-
-  const userContext = useContext(UserContext);
-  const businessContext = useContext(BusinessContext);
-  if (!userContext) return;
-  const { user } = userContext;
-
-  if (!businessContext) return null;
-  const { businessInfo, isLoading, isError } = businessContext;
 
   const validateWebPageName = (value: string) => {
     const regex = /^www\.[a-zA-Z0-9_-]+\.[a-zA-Z]{2,3}(\/[a-zA-Z0-9_-]+)*\/?$/;
@@ -84,32 +71,13 @@ const AccountSetupBusinessNameScreen: React.FC<
     }
   };
 
-  useEffect(() => {
-    if (businessInfo) {
-      setBusinessName(businessInfo.businessName || "");
-      setWebpage(businessInfo.website || "");
-    }
-  }, [businessInfo]);
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const webPageValidationError = validateWebPageName(webPage);
+
     setWebPageError(webPageValidationError);
-    if (webPageValidationError) return;
-
-    try {
-      if (user) {
-        updateBusinessInfo(user.uid, {
-          businessName: businessName,
-          website: webPage,
-        });
-        navigation.navigate("AccountSetupServices");
-      } else {
-        throw new Error("User is not authenticated.");
-      }
-    } catch (error) {
-      console.error("Error updating business information: ", error);
+    if (!webPageValidationError) {
+      console.log("Form submitted.");
     }
-
     return;
   };
 
@@ -169,7 +137,7 @@ const AccountSetupBusinessNameScreen: React.FC<
             </KeyboardAvoidingView>
           </ScrollView>
           <View>
-            <Button
+            <LoginButton
               label={t("button_next")}
               mode="contained"
               onPress={handleSubmit}
@@ -181,4 +149,4 @@ const AccountSetupBusinessNameScreen: React.FC<
   );
 };
 
-export default AccountSetupBusinessNameScreen;
+export default AccountSetupLocationScreen;

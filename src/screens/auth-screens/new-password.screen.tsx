@@ -14,7 +14,7 @@ import {
   NewPasswordScreenNavigationProp,
   NewPasswordScreenProps,
 } from "../../types/navigationTypes";
-import Button from "../../components/button.component";
+import Button from "../../components/button/button.component";
 import Input from "../../components/input.component";
 import Space from "../../components/spacer.component";
 import { Text } from "../../components/text.component";
