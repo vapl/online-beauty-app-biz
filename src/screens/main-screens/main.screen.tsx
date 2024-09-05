@@ -22,6 +22,8 @@ import { getUserData } from "../../services/userService";
 import { firestore } from "../../api/firebaseConfig";
 import { doc, updateDoc } from "firebase/firestore";
 import { UserContext } from "../../context/UserProvider";
+import { SnackbarMessage } from "../../components/snackbar.component";
+import { handleError } from "../../utils/errorHandler";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -51,6 +53,7 @@ interface UserData {
   surname?: string;
   email?: string;
   phone?: string;
+  firstLogin?: boolean;
 }
 
 const MainScreen: React.FC<MainScreenProps> = () => {
@@ -60,9 +63,10 @@ const MainScreen: React.FC<MainScreenProps> = () => {
   const navigation = useNavigation<AppStackNavigationProp>();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [snackBarMessage, setSnackBarMessage] = useState<string>("");
   const userContext = useContext(UserContext);
   if (!userContext) return;
-  const { user, isEmailVerified } = userContext;
+  const { user, isEmailVerified, firstLogin } = userContext;
 
   const fetchUserData = async () => {
     const userData = await getUserData();
@@ -71,14 +75,14 @@ const MainScreen: React.FC<MainScreenProps> = () => {
 
   useEffect(() => {
     fetchUserData();
-  }, [user]);
+  }, [user, userData]);
 
   const handleLogout = async () => {
     try {
       await logoutUser();
       navigation.navigate("Login");
     } catch (error) {
-      console.error("Logout error: ", error);
+      handleError(error, "Logout error: ");
     }
   };
 
@@ -86,9 +90,11 @@ const MainScreen: React.FC<MainScreenProps> = () => {
     if (user) {
       try {
         await sendVerificationEmail(user, language);
-        alert("Verification email sent.");
+        setSnackBarMessage(
+          "The verification link has been sent to your email."
+        );
       } catch (error) {
-        console.error("Failed to send verification email:", error);
+        handleError(error, "Failed to send verification email");
       }
     }
   };
@@ -96,11 +102,21 @@ const MainScreen: React.FC<MainScreenProps> = () => {
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchUserData();
+    await user?.reload();
+    console.log("first login: ", userData?.firstLogin);
     setRefreshing(false);
   };
 
   return (
     <SafeArea>
+      <SnackbarMessage
+        status={"warning"}
+        label="OK"
+        duration={5000}
+        visible={!!snackBarMessage}
+      >
+        {snackBarMessage}
+      </SnackbarMessage>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         refreshControl={

@@ -21,6 +21,7 @@ import {
 } from "@env";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { handleError } from "../utils/errorHandler";
 
 interface RegisterUserProps {
   email: string;
@@ -58,7 +59,7 @@ const registerUser = async (props: RegisterUserProps) => {
     await sendEmailVerification(user);
     return user;
   } catch (error) {
-    console.error("Error sending verification link: ", error);
+    handleError(error, "Error sending verification link: ");
     throw error;
   }
 };
@@ -87,7 +88,7 @@ const useGoogleSignIn = () => {
   });
   useEffect(() => {
     const signInWithGoogle = async () => {
-      console.log("Google Sign-In Response: ", response); // Add this line
+      console.log("Google Sign-In Response: ", response);
       if (response?.type === "success") {
         const { id_token } = response.params;
 
@@ -110,10 +111,10 @@ const useGoogleSignIn = () => {
             { merge: true }
           );
         } catch (error) {
-          console.error("Error during Google Sign-In: ", error);
+          handleError(error, "During Google Sign-In: ");
         }
       } else if (response?.type === "error") {
-        console.error("Error Sign-In Error: ", response.error);
+        handleError(response.error, "Error Sign-In Error: ");
       }
     };
 
@@ -151,7 +152,7 @@ const sendVerificationEmail = async (user: User, language: string) => {
     await sendEmailVerification(user);
     return { success: true, message: "Verification email sent." };
   } catch (error) {
-    console.error("Error sending verification email: ", error);
+    handleError(error, "Error sending verification email: ");
     throw error;
   }
 };

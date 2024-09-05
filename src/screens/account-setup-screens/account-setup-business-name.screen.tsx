@@ -23,6 +23,7 @@ import {
   getBusinessInfo,
   updateBusinessInfo,
 } from "../../services/businessService";
+import { handleError } from "../../utils/errorHandler";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -107,7 +108,7 @@ const AccountSetupBusinessNameScreen: React.FC<
         throw new Error("User is not authenticated.");
       }
     } catch (error) {
-      console.error("Error updating business information: ", error);
+      handleError(error, "Error updating business information: ");
     }
 
     return;

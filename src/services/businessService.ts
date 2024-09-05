@@ -1,6 +1,7 @@
 import { firestore } from "../api/firebaseConfig";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { BusinessInfoProps } from "../types/business";
+import { handleError } from "../utils/errorHandler";
 
 // Update business information
 export const updateBusinessInfo = async (
@@ -38,7 +39,7 @@ export const updateBusinessInfo = async (
       );
     }
   } catch (error) {
-    console.error("Error updating business information", error);
+    handleError(error, "Error updating business information");
   }
 };
 
@@ -51,7 +52,6 @@ export const getBusinessInfo = async (
     const userDocRef = doc(firestore, "users", userId);
     const userDoc = await getDoc(userDocRef);
     const businessId = userDoc.exists() ? userDoc.data()?.businessId : null;
-
     if (businessId) {
       const businessDataDocRef = doc(
         firestore,
@@ -66,7 +66,7 @@ export const getBusinessInfo = async (
     }
     return null;
   } catch (error) {
-    console.error("Error fetching business information", error);
+    handleError(error, "Error fetching business information");
     return null;
   }
 };

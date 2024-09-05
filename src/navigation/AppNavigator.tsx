@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import AppStack from "./AppStack";
 import AuthStack from "./AuthStack";
-import SetupStatusBanner from "../components/complete-setup-banner.component";
+import AccountVerificationBanner from "../components/complete-setup-banner.component";
 import { SafeAreaView } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import * as Linking from "expo-linking";
@@ -20,7 +20,8 @@ const AppNavigator: React.FC = () => {
   const userContext = useContext(UserContext);
 
   if (!userContext) return null;
-  const { firstLogin, isAuthenticated, isLoading } = userContext;
+  const { firstLogin, isAuthenticated, isLoading, isEmailVerified, user } =
+    userContext;
   if (isLoading) return <LoadingSpinner />;
 
   const linking = {
@@ -42,7 +43,7 @@ const AppNavigator: React.FC = () => {
               <OnboardingBusinessSetupStack />
             ) : (
               <>
-                <SetupStatusBanner />
+                {!isEmailVerified && <AccountVerificationBanner />}
                 <AppStack />
               </>
             )}

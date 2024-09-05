@@ -23,6 +23,7 @@ import {
   resetPassword,
 } from "../../services/authService";
 import { SnackbarMessage } from "../../components/snackbar.component";
+import { handleError } from "../../utils/errorHandler";
 
 //////////// Styling start ///////////////
 
@@ -184,7 +185,7 @@ const PassRecoveryScreen: React.FC = () => {
           );
           await resetPassword(email);
         } catch (error) {
-          console.error(t("error_sending_reset_email"), error);
+          handleError(error, t("error_sending_reset_email"));
           setEmailError(t("error_sending_reset_email"));
         } finally {
           setIsLoading(false);
@@ -207,7 +208,7 @@ const PassRecoveryScreen: React.FC = () => {
           console.log("The code has been sent to " + callingCode + phone);
           setPhone("");
         } catch (error) {
-          console.log("Error sending verification code: ", error);
+          handleError(error, "Error sending verification code: ");
           setPhoneError(t("error_sending_code"));
         }
       }

@@ -15,14 +15,13 @@ const NotificationContent = styled(Text)`
   color: ${(props) => props.theme.colors.white};
 `;
 
-const SetupStatusBanner: React.FC = () => {
+const AccountVerificationBanner: React.FC = () => {
   const [content, setContent] = useState<string | null>(null);
 
   const userContext = useContext(UserContext);
   if (!userContext) return;
   const { user, isEmailVerified } = userContext;
 
-  console.log("verified?: ", isEmailVerified);
   useEffect(() => {
     if (!isEmailVerified) {
       setContent("Please verify your email to access all features.");
@@ -41,4 +40,4 @@ const SetupStatusBanner: React.FC = () => {
   );
 };
 
-export default SetupStatusBanner;
+export default AccountVerificationBanner;

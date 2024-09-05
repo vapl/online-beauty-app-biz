@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
   AppStackNavigationProp,
@@ -15,7 +15,9 @@ import AccountSetupLocationScreen from "../screens/account-setup-screens/account
 import { UserContext } from "../context/UserProvider";
 import { updateUser } from "../services/userService";
 import AppStack from "./AppStack";
-import SetupStatusBanner from "../components/complete-setup-banner.component";
+import AccountVerificationBanner from "../components/complete-setup-banner.component";
+import AccountSetupStack from "../components/account-setup-stack.component";
+import { handleError } from "../utils/errorHandler";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -42,7 +44,7 @@ const OnboardingBusinessSetupStack: React.FC = () => {
         })
       );
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      handleError(error, "Ffetching user data:");
     }
   };
 
@@ -129,18 +131,10 @@ const OnboardingBusinessSetupStack: React.FC = () => {
           ),
         }}
       />
-
       <Stack.Screen
         name="AppStack"
-        component={() => (
-          <>
-            <SetupStatusBanner />
-            <AppStack />
-          </>
-        )}
-        options={{
-          headerShown: false,
-        }}
+        component={AccountSetupStack}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

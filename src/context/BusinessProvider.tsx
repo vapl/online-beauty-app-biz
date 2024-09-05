@@ -19,19 +19,10 @@ export const BusinessProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const userContext = useContext(UserContext);
 
-  if (!userContext || !userContext.user) {
-    return (
-      <BusinessContext.Provider
-        value={{ businessInfo: null, isLoading: false, isError: true }}
-      >
-        {children}
-      </BusinessContext.Provider>
-    );
-  }
-
-  const { user } = userContext;
+  const user = userContext?.user ?? null;
 
   const queryFn = async (): Promise<BusinessInfoProps | null> => {
+    if (!user) return null;
     const info = await getBusinessInfo(user.uid);
     return info ?? null;
   };
@@ -39,7 +30,7 @@ export const BusinessProvider: React.FC<{ children: ReactNode }> = ({
   const { data, isLoading, isError } = useQuery<
     BusinessInfoProps | null,
     Error
-  >({ queryKey: ["businessInfo", user.uid], queryFn, enabled: !!user });
+  >({ queryKey: ["businessInfo", user?.uid], queryFn, enabled: !!user });
 
   const businessInfo = data ?? null;
 

@@ -16,7 +16,7 @@ export type AuthStackParamList = {
 export type RootStackParamList = {
   AppStack: undefined;
   AuthStack: undefined;
-  // OnboardingBusinessSetupStack: undefined;
+  OnboardingBusinessSetupStack: undefined;
 
   Onboarding: undefined;
   Login: undefined;

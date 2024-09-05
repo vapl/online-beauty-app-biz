@@ -2,7 +2,8 @@ import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { auth, firestore } from "../api/firebaseConfig";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { updateUser } from "../services/userService";
+import { getUserData, updateUser } from "../services/userService";
+import { handleError } from "../utils/errorHandler";
 
 interface UserContextProps {
   user: User | null;
@@ -34,24 +35,21 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         setUser(currentUser);
 
         try {
-          setIfEmailVerified(currentUser.emailVerified || false);
-
           // Fetch user data from Firestore
-          const userDocref = doc(firestore, "users", currentUser.uid);
-          const userDoc = await getDoc(userDocref);
-
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            setFirstLogin(userData.firstLogin ?? true);
+          const userData = await getUserData();
+          if (userData) {
+            setFirstLogin(userData.firstLogin ?? false);
+            setIfEmailVerified(currentUser.emailVerified || false);
 
             if (currentUser.emailVerified && !userData.verified) {
               await updateUser(currentUser.uid, { verified: true });
             }
           } else {
-            setFirstLogin(true);
+            console.error("No user data found.");
+            setFirstLogin(false);
           }
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          handleError(error, "Fetching user data:");
           setFirstLogin(true);
         }
       } else {
@@ -65,17 +63,17 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      const intervalId = setInterval(async () => {
-        await user.reload();
-        if (user.emailVerified !== isEmailVerified) {
-          setIfEmailVerified(user.emailVerified);
-        }
-      }, 5000);
-      return () => clearInterval(intervalId);
-    }
-  }, [user, isEmailVerified]);
+  // useEffect(() => {
+  //   if (user && !isEmailVerified) {
+  //     const intervalId = setInterval(async () => {
+  //       await user.reload();
+  //       if (user.emailVerified && !isEmailVerified) {
+  //         setIfEmailVerified(true);
+  //       }
+  //     }, 10000);
+  //     return () => clearInterval(intervalId);
+  //   }
+  // }, [user, isEmailVerified]);
 
   return (
     <UserContext.Provider
