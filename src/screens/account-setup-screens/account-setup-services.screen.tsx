@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -17,6 +17,10 @@ import { useTranslation } from "react-i18next";
 import Input from "../../components/input.component";
 import { Text } from "../../components/text.component";
 import StatusNav from "../../components/status-navbar";
+import ServiceCard from "../../components/service-card.component";
+import { getBeautyServices } from "../../../data/beautyServices";
+import { UserContext } from "../../context/UserProvider";
+import { updateBusinessInfo } from "../../services/businessService";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -38,18 +42,23 @@ const ScreenContainer = styled(View)`
 const Header = styled(View)`
   justify-content: flex-start;
   gap: ${(props) => props.theme.space.sm}px;
+  margin-bottom: 20px;
 `;
 
 const InputWrapper = styled(View)`
+  flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: stretch;
   gap: ${(props) => props.theme.space.sm}px;
 `;
 
-const EmailInput = styled(Input)``;
-const PasswordInput = styled(Input)``;
+const CustomServiceInput = styled(Input)``;
+const NextButton = styled(Button)``;
 
-const LoginButton = styled(Button)``;
+const Footer = styled(View)`
+  margin-top: 20px;
+`;
 
 const AccountSetupServicesScreen: React.FC<
   AccountSetupServicesScreenProps
@@ -57,29 +66,57 @@ const AccountSetupServicesScreen: React.FC<
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<AccountSetupServicesScreenNavigationProp>();
-  const [businessName, setBusinessName] = useState<string>("");
-  const [webPage, setWebpage] = useState<string>("");
-  const [businessNameError, setBusinessNameError] = useState<string>();
-  const [webPageError, setWebPageError] = useState<string>();
+  const [selectedServices, setSelectedServices] = useState<number[]>([]);
+  const [customServiceInput, setCustomServiceInput] = useState<string>("");
+  const [showCustomServiceInput, setShowCustomServiceInput] =
+    useState<boolean>(false);
+  const services = getBeautyServices(t);
+
+  const userContext = useContext(UserContext);
+  if (!userContext) return;
+  const { user } = userContext;
   const currentStep = 1;
   const totalSteps = 5;
 
-  const validateWebPageName = (value: string) => {
-    const regex = /^www\.[a-zA-Z0-9_-]+\.[a-zA-Z]{2,3}(\/[a-zA-Z0-9_-]+)*\/?$/;
-    if (value && !regex.test(value)) {
-      return t("invalid_web_page_value");
+  const getChoiceStatus = (serviceKey: number) => {
+    const index = selectedServices.indexOf(serviceKey);
+    return index === -1 ? "" : (index + 1).toString();
+  };
+
+  const toggleServiceSelection = (serviceKey: number) => {
+    if (selectedServices.length >= 4 && !selectedServices.includes(serviceKey))
+      return;
+
+    let updatedServices: number[];
+
+    if (selectedServices.includes(serviceKey)) {
+      updatedServices = selectedServices.filter((key) => key !== serviceKey);
+    } else {
+      updatedServices = [...selectedServices, serviceKey];
     }
+
+    setSelectedServices(updatedServices);
+
+    const isCustomSelected = updatedServices.some(
+      (key) =>
+        services.find((service) => service.key === key)?.label ===
+        t("services_other")
+    );
+
+    setShowCustomServiceInput(isCustomSelected);
   };
 
   const handleSubmit = () => {
-    navigation.navigate("AccountSetupTeam");
-    const webPageValidationError = validateWebPageName(webPage);
+    const selectedServiceLabels = selectedServices.map((serviceKey) => {
+      const service = services.find((s) => s.key === serviceKey);
+      return service ? service.label : "";
+    });
 
-    setWebPageError(webPageValidationError);
-    if (!webPageValidationError) {
-      console.log("Form submitted.");
+    if (user) {
+      updateBusinessInfo(user.uid, {
+        services: selectedServiceLabels,
+      });
     }
-    return;
   };
 
   return (
@@ -88,11 +125,9 @@ const AccountSetupServicesScreen: React.FC<
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
           <Header>
-            <Text fontVariant="h3">
-              {t("account_setup_business_name_title")}
-            </Text>
+            <Text fontVariant="h3">{t("account_setup_services_title")}</Text>
             <Text fontVariant="bodyMedium">
-              {t("account_setup_business_name_description")}
+              {t("account_setup_services_description")}
             </Text>
           </Header>
           <ScrollView
@@ -102,48 +137,52 @@ const AccountSetupServicesScreen: React.FC<
             contentContainerStyle={{
               justifyContent: "center",
               paddingBottom: 150,
-              flex: 1,
+              flexGrow: 1,
             }}
           >
             <KeyboardAvoidingView contentContainerStyle={{ flexGrow: 1 }}>
               <InputWrapper>
-                <EmailInput
-                  value={businessName}
-                  onChangeText={setBusinessName}
-                  label={t("placeholder_business_name")}
-                  iconLeft="briefcase-variant-outline"
-                  autoCapitalize="sentences"
-                  keyboardType="default"
-                  textContentType="none"
-                  errorMessage={businessNameError}
-                  autoCorrect={false}
-                  required
-                  onSubmitEditing={() => handleSubmit()}
-                  returnKeyType="next"
-                />
-                <PasswordInput
-                  value={webPage}
-                  onChangeText={setWebpage}
-                  label={t("placeholder_homepage")}
-                  iconLeft="web"
-                  keyboardType="default"
-                  textContentType="none"
-                  errorMessage={webPageError}
-                  autoCorrect={true}
-                  required
-                  onSubmitEditing={() => handleSubmit()}
-                  returnKeyType="done"
-                />
+                {services.map((service) => (
+                  <ServiceCard
+                    key={service.key}
+                    choiceStatus={getChoiceStatus(service.key)}
+                    icon={service.icon}
+                    label={service.label}
+                    selected={selectedServices.includes(service.key)}
+                    isMainService={selectedServices[0] === service.key}
+                    onPress={() => {
+                      toggleServiceSelection(service.key);
+                    }}
+                  />
+                ))}
+                {showCustomServiceInput && (
+                  <CustomServiceInput
+                    value={customServiceInput}
+                    onChangeText={setCustomServiceInput}
+                    label={t("custom_service_input_label")}
+                    iconLeft="card-plus-outline"
+                    keyboardType="default"
+                    textContentType="none"
+                    autoCorrect={true}
+                    required
+                    onSubmitEditing={() => handleSubmit()}
+                    returnKeyType="done"
+                  />
+                )}
               </InputWrapper>
             </KeyboardAvoidingView>
           </ScrollView>
-          <View>
-            <LoginButton
+          <Footer>
+            <NextButton
               label={t("button_next")}
               mode="contained"
               onPress={handleSubmit}
+              disabled={
+                selectedServices.length < 1 ||
+                (!customServiceInput && showCustomServiceInput)
+              }
             />
-          </View>
+          </Footer>
         </ScreenContainer>
       </SafeArea>
     </Background>
