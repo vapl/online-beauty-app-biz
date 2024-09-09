@@ -28,6 +28,8 @@
   "account_setup_business_name_description": "This is the brand name that your clients will see. You can add your legal name later.",
   "account_setup_services_title": "What services do you offer",
   "account_setup_services_description": "Select the main service you offer to your clients and up to 3 related services.",
+  "account_setup_team_title": "What is your team's lineup?",
+  "account_setup_team_description": "That will help us set up the calendar correctly.",
   "login": "Login",
   "register": "Register",
   "choose_language": "Choose language",

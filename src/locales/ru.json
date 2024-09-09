@@ -28,6 +28,8 @@
   "account_setup_business_name_description": "Это название бренда, которое увидят ваши клиенты. Вы можете добавить юридическое название позже.",
   "account_setup_services_title": "Какие услуги ты предлагаешь?",
   "account_setup_services_description": "Выбери основную услугу, которую ты предлагаешь своим клиентам, и до 3 сопутствующих услуг.",
+  "account_setup_team_title": "Каков состав вашей команды?",
+  "account_setup_team_description": "Это поможет нам правильно настроить календарь.",
   "login": "Авторизоваться",
   "register": "Регистрация",
   "choose_language": "Выбор языка",

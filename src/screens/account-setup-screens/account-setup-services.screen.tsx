@@ -21,6 +21,7 @@ import ServiceCard from "../../components/service-card.component";
 import { getBeautyServices } from "../../../data/beautyServices";
 import { UserContext } from "../../context/UserProvider";
 import { updateBusinessInfo } from "../../services/businessService";
+import { BusinessContext } from "../../context/BusinessProvider";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -70,13 +71,33 @@ const AccountSetupServicesScreen: React.FC<
   const [customServiceInput, setCustomServiceInput] = useState<string>("");
   const [showCustomServiceInput, setShowCustomServiceInput] =
     useState<boolean>(false);
+  const [isLoadedFromDB, setIsLoadedFromDB] = useState(false);
   const services = getBeautyServices(t);
 
   const userContext = useContext(UserContext);
+  const businessContext = useContext(BusinessContext);
   if (!userContext) return;
+  if (!businessContext) return;
   const { user } = userContext;
+  const { businessInfo } = businessContext;
   const currentStep = 1;
   const totalSteps = 5;
+
+  useEffect(() => {
+    if (!businessInfo?.services || !services || isLoadedFromDB) return;
+
+    // Izveido masīvu ar indeksiem, kas atbilst pakalpojumu atslēgām
+    const savedServices: number[] = businessInfo.services
+      .map((service) => {
+        const foundService = services.find((s) => s.label === service);
+        return foundService ? foundService.key : -1; // Atgriež `key` vai -1, ja pakalpojums nav atrasts
+      })
+      .filter((key) => key !== -1); // Noņem `-1` vērtības (ja pakalpojumi nav atrasti)
+
+    // Iestata izvēlētos pakalpojumus tikai pirmo reizi
+    setSelectedServices(savedServices);
+    setIsLoadedFromDB(true); // Iestatām, ka pakalpojumi ir ielādēti
+  }, [businessInfo, services, isLoadedFromDB]);
 
   const getChoiceStatus = (serviceKey: number) => {
     const index = selectedServices.indexOf(serviceKey);
@@ -117,6 +138,8 @@ const AccountSetupServicesScreen: React.FC<
         services: selectedServiceLabels,
       });
     }
+
+    navigation.navigate("AccountSetupTeam");
   };
 
   return (

@@ -28,6 +28,8 @@
   "account_setup_business_name_description": "Šis ir zīmola nosaukums, ko redzēs tavi klienti. Tavu juridisko nosaukumu varēs pievienot vēlāk.",
   "account_setup_services_title": "Kādus pakalpojumus tu piedāvā?",
   "account_setup_services_description": "Izvēlies galveno pakalpojumu ko tu piedāvā saviem klientiem un līdz 3 saistošus pakalpojumus.",
+  "account_setup_team_title": "Kāds ir jūsu komandas sastāvs?",
+  "account_setup_team_description": "Tas palīdzēs mums pareizi iestatīt kalendāru.",
   "login": "Ielogoties",
   "register": "Reģistrēties",
   "choose_language": "Izvēlēties valodu",
