@@ -4,7 +4,7 @@ export interface BusinessInfoProps {
   website?: string;
   businessTypes?: string[];
   services?: string[];
-  teamSize?: number;
+  teamSize?: string;
   employeeIds?: string[];
   location?: {
     address?: string;

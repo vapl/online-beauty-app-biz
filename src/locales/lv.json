@@ -96,5 +96,7 @@
   "services_makeup": "Meikaps",
   "services_lashes_brows": "Skropstu pieaudzēšana un uzacu korekcija",
   "services_solarium": "Solārijs",
-  "services_other": "Cits"
+  "services_other": "Cits",
+  "team_single": "Tikai es",
+  "team_employees": "darbinieki"
 }

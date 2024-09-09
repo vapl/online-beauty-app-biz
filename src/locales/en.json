@@ -96,5 +96,7 @@
   "services_makeup": "Makeup",
   "services_lashes_brows": "Lash Extensions and Brow Shaping",
   "services_solarium": "Solarium",
-  "services_other": "Other"
+  "services_other": "Other",
+  "team_single": "Just me",
+  "team_employees": "employees"
 }

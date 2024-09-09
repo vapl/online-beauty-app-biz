@@ -96,5 +96,7 @@
   "services_makeup": "Макияж",
   "services_lashes_brows": "Наращивание ресниц и коррекция бровей",
   "services_solarium": "Солярий",
-  "services_other": "Другое"
+  "services_other": "Другое",
+  "team_single": "Только я",
+  "team_employees": "работников"
 }

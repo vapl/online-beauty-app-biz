@@ -1,15 +1,24 @@
 import styled, { useTheme } from "styled-components/native";
-import { Button as PaperButton } from "react-native-paper";
+import { Button as PaperButton, RadioButton } from "react-native-paper";
 import { typography } from "../../infrastructure/theme/typography";
+import { ViewStyle } from "react-native";
 
-export const StyledButton = styled(PaperButton).attrs(() => ({
-  contentStyle: {
-    height: 54,
-  },
-  labelStyle: {
-    ...typography.buttonLarge,
-  },
-}))`
+export interface StyledButtonProps {
+  justifyContent?: ViewStyle["justifyContent"];
+  disabled?: boolean;
+}
+
+export const StyledButton = styled(PaperButton).attrs<StyledButtonProps>(
+  (props) => ({
+    contentStyle: {
+      height: 54,
+      justifyContent: props.justifyContent || "center",
+    },
+    labelStyle: {
+      ...typography.buttonLarge,
+    },
+  })
+)<StyledButtonProps>`
   border-radius: 27px;
   background-color: ${(props) =>
     props.disabled
@@ -42,20 +51,31 @@ export const ContainedButton = styled(StyledButton).attrs((props) => ({
   flex-grow: 1;
 `;
 
-export const OutlinedButton = styled(StyledButton).attrs((props) => ({
-  mode: "outlined",
-  textColor: props.disabled
-    ? props.theme.colors.grey[60]
-    : props.theme.colors.primary.dark,
-  contentStyle: {
-    width: undefined,
-    height: 52,
-  },
-}))`
+export const OutlinedButton = styled(StyledButton).attrs<StyledButtonProps>(
+  (props) => ({
+    mode: "outlined",
+    textColor: props.disabled
+      ? props.theme.colors.grey[60]
+      : props.theme.colors.primary.dark,
+    contentStyle: {
+      width: undefined,
+      height: 52,
+      justifyContent: props.justifyContent,
+    },
+  })
+)<StyledButtonProps>`
   background-color: undefined;
   border-color: ${(props) =>
     props.disabled
       ? props.theme.colors.grey[60]
       : props.theme.colors.primary.dark};
   width: undefined;
+  justify-content: center;
 `;
+
+export const RadioButtonCustom = styled(RadioButton.Android).attrs((props) => ({
+  color: props.disabled
+    ? props.theme.colors.grey[60]
+    : props.theme.colors.primary.dark,
+  uncheckedColor: props.theme.colors.grey[60],
+}))``;

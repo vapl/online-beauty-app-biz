@@ -137,9 +137,8 @@ const AccountSetupServicesScreen: React.FC<
       updateBusinessInfo(user.uid, {
         services: selectedServiceLabels,
       });
+      navigation.navigate("AccountSetupTeam");
     }
-
-    navigation.navigate("AccountSetupTeam");
   };
 
   return (

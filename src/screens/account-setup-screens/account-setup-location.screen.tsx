@@ -61,7 +61,7 @@ const AccountSetupLocationScreen: React.FC<
   const [webPage, setWebpage] = useState<string>("");
   const [businessNameError, setBusinessNameError] = useState<string>();
   const [webPageError, setWebPageError] = useState<string>();
-  const currentStep = 4;
+  const currentStep = 3;
   const totalSteps = 5;
 
   const validateWebPageName = (value: string) => {

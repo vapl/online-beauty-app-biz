@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -14,9 +14,11 @@ import styled, { useTheme } from "styled-components/native";
 import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../../components/input.component";
 import { Text } from "../../components/text.component";
 import StatusNav from "../../components/status-navbar";
+import { UserContext } from "../../context/UserProvider";
+import { BusinessContext } from "../../context/BusinessProvider";
+import { updateBusinessInfo } from "../../services/businessService";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -46,38 +48,59 @@ const InputWrapper = styled(View)`
   gap: ${(props) => props.theme.space.sm}px;
 `;
 
-const EmailInput = styled(Input)``;
-const PasswordInput = styled(Input)``;
+const NextButton = styled(Button)``;
+const RadioButton = styled(Button)``;
 
-const LoginButton = styled(Button)``;
+interface TeamVariantsProps {
+  value: number;
+  variant: string;
+}
 
 const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<AccountSetupTeamScreenNavigationProp>();
-  const [businessName, setBusinessName] = useState<string>("");
-  const [webPage, setWebpage] = useState<string>("");
-  const [businessNameError, setBusinessNameError] = useState<string>();
-  const [webPageError, setWebPageError] = useState<string>();
-  const currentStep = 3;
+  const [checkedValue, setCheckedValue] = useState<number | null>(null);
+  const userContext = useContext(UserContext);
+  const businessContext = useContext(BusinessContext);
+  if (!userContext || !businessContext) return;
+  const { user } = userContext;
+  const { businessInfo } = businessContext;
+  const currentStep = 2;
   const totalSteps = 5;
 
-  const validateWebPageName = (value: string) => {
-    const regex = /^www\.[a-zA-Z0-9_-]+\.[a-zA-Z]{2,3}(\/[a-zA-Z0-9_-]+)*\/?$/;
-    if (value && !regex.test(value)) {
-      return t("invalid_web_page_value");
-    }
+  const teamVariants: TeamVariantsProps[] = [
+    {
+      value: 1,
+      variant: t("team_single"),
+    },
+    {
+      value: 2,
+      variant: "2-3 " + t("team_employees"),
+    },
+    {
+      value: 3,
+      variant: "4-6 " + t("team_employees"),
+    },
+    {
+      value: 4,
+      variant: "6+ " + t("team_employees"),
+    },
+  ];
+
+  const handleSelection = (value: number) => {
+    setCheckedValue(value);
   };
 
   const handleSubmit = () => {
-    navigation.navigate("AccountSetupLocation");
-    const webPageValidationError = validateWebPageName(webPage);
-
-    setWebPageError(webPageValidationError);
-    if (!webPageValidationError) {
-      console.log("Form submitted.");
+    const selectedTeamSize = teamVariants.find(
+      (variant) => variant.value === checkedValue
+    );
+    if (user) {
+      updateBusinessInfo(user.uid, { teamSize: selectedTeamSize?.variant });
+      console.log(selectedTeamSize?.variant);
+      navigation.navigate("AccountSetupLocation");
     }
-    return;
   };
 
   return (
@@ -86,11 +109,9 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
           <Header>
-            <Text fontVariant="h3">
-              {t("account_setup_business_name_title")}
-            </Text>
+            <Text fontVariant="h3">{t("account_setup_team_title")}</Text>
             <Text fontVariant="bodyMedium">
-              {t("account_setup_business_name_description")}
+              {t("account_setup_team_description")}
             </Text>
           </Header>
           <ScrollView
@@ -105,38 +126,27 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
           >
             <KeyboardAvoidingView contentContainerStyle={{ flexGrow: 1 }}>
               <InputWrapper>
-                <EmailInput
-                  value={businessName}
-                  onChangeText={setBusinessName}
-                  label={t("placeholder_business_name")}
-                  iconLeft="briefcase-variant-outline"
-                  autoCapitalize="sentences"
-                  keyboardType="default"
-                  textContentType="none"
-                  errorMessage={businessNameError}
-                  autoCorrect={false}
-                  required
-                  onSubmitEditing={() => handleSubmit()}
-                  returnKeyType="next"
-                />
-                <PasswordInput
-                  value={webPage}
-                  onChangeText={setWebpage}
-                  label={t("placeholder_homepage")}
-                  iconLeft="web"
-                  keyboardType="default"
-                  textContentType="none"
-                  errorMessage={webPageError}
-                  autoCorrect={true}
-                  required
-                  onSubmitEditing={() => handleSubmit()}
-                  returnKeyType="done"
-                />
+                {teamVariants.map((variant) => {
+                  return (
+                    <RadioButton
+                      key={variant.value}
+                      mode="radio"
+                      value={variant.value.toString()}
+                      label={variant.variant}
+                      status={
+                        checkedValue === variant.value ? "checked" : "unchecked"
+                      }
+                      onPress={() => handleSelection(variant.value)}
+                      disabled={false}
+                      justifyContent="flex-start"
+                    />
+                  );
+                })}
               </InputWrapper>
             </KeyboardAvoidingView>
           </ScrollView>
           <View>
-            <LoginButton
+            <NextButton
               label={t("button_next")}
               mode="contained"
               onPress={handleSubmit}

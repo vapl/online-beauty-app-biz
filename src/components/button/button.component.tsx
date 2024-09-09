@@ -1,22 +1,29 @@
 import React from "react";
 import {
-  StyledButton,
   TextButton,
   OutlinedButton,
   ContainedButton,
+  RadioButtonCustom,
+  StyledButtonProps,
 } from "./button.styles";
+import { Text } from "../text.component";
+import { useTheme } from "styled-components/native";
+import { View } from "react-native";
 
 //////////// Styling start ///////////////
 
 //////////// Styling end ///////////////
 
-interface ButtonProps {
-  mode: "text" | "outlined" | "contained";
-  label: string;
+interface ButtonProps extends StyledButtonProps {
+  mode: "text" | "outlined" | "contained" | "radio" | "check";
+  label?: string;
   icon?: string;
   disabled?: boolean;
   compact?: boolean;
+  value?: string;
+  status?: "checked" | "unchecked";
   onPress: () => void;
+  onValueChange?: (value: string) => void;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -25,10 +32,13 @@ const Button: React.FC<ButtonProps> = ({
   icon,
   disabled = false,
   compact = false,
+  value = "",
+  status = "unchecked",
+  justifyContent = "center",
   onPress,
+  onValueChange,
 }) => {
-  // const theme = useTheme();
-
+  const theme = useTheme();
   if (mode === "text") {
     return (
       <TextButton
@@ -44,8 +54,45 @@ const Button: React.FC<ButtonProps> = ({
 
   if (mode === "outlined") {
     return (
-      <OutlinedButton icon={icon} disabled={disabled} onPress={onPress}>
+      <OutlinedButton
+        icon={icon}
+        disabled={disabled}
+        onPress={onPress}
+        justifyContent={justifyContent}
+      >
         {label}
+      </OutlinedButton>
+    );
+  }
+
+  if (mode === "radio") {
+    return (
+      <OutlinedButton
+        icon={icon}
+        disabled={disabled}
+        onPress={onPress}
+        justifyContent={justifyContent}
+      >
+        <RadioButtonCustom
+          value={value}
+          disabled={disabled}
+          status={status}
+          onPress={() => onValueChange && onValueChange(value)}
+        />
+        <View>
+          <Text
+            style={{
+              color:
+                status === "checked"
+                  ? theme.colors.primary.dark
+                  : theme.colors.grey[60],
+              paddingLeft: theme.space.sm,
+            }}
+            fontVariant="buttonLarge"
+          >
+            {label}
+          </Text>
+        </View>
       </OutlinedButton>
     );
   }
