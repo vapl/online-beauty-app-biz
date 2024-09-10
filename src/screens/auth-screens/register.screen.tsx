@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Input from "../../components/input.component";
 import { parsePhoneNumber } from "libphonenumber-js";
-import { Text } from "../../components/text.component";
+import Text from "../../components/text.component";
 import { useTheme } from "styled-components/native";
 import { registerUser } from "../../services/authService";
 import { SnackbarMessage } from "../../components/snackbar.component";
@@ -322,7 +322,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                       {t("register_terms_start")}{" "}
                       <Text
                         fontVariant="buttonMedium"
-                        color={theme.colors.secondary.dark}
+                        textColor={theme.colors.secondary.dark}
                         onPress={() => {}}
                       >
                         {t("terms_of_use")}{" "}
@@ -330,7 +330,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                       <Text>{t("and")}</Text>{" "}
                       <Text
                         fontVariant="buttonMedium"
-                        color={theme.colors.secondary.dark}
+                        textColor={theme.colors.secondary.dark}
                         onPress={() => {}}
                       >
                         {t("privacy_policy")}
@@ -367,7 +367,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                   navigation.navigate("Login");
                 }}
                 fontVariant="buttonMedium"
-                color={theme.colors.secondary.dark}
+                textColor={theme.colors.secondary.dark}
               >
                 {"  "}
                 {t("login")}

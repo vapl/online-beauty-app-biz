@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, TouchableOpacity } from "react-native";
-import { Text } from "./text.component";
+import Text from "./text.component";
 import styled, { useTheme } from "styled-components/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
@@ -64,11 +64,11 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       {choiceStatus !== "" && (
         <ChoiceLabel>
           {isMainService ? (
-            <Text fontVariant="buttonSmall" color="white">
+            <Text fontVariant="buttonSmall" textColor="white">
               {t("main_status")}
             </Text>
           ) : (
-            <Text fontVariant="buttonSmall" color="white">
+            <Text fontVariant="buttonSmall" textColor="white">
               {choiceStatus}
             </Text>
           )}

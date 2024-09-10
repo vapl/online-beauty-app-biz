@@ -6,7 +6,7 @@ import {
 } from "../types/navigationTypes";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { Text } from "../components/text.component";
+import Text from "../components/text.component";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import AccountSetupBusinessNameScreen from "../screens/account-setup-screens/account-setup-business-name.screen";
 import AccountSetupServicesScreen from "../screens/account-setup-screens/account-setup-services.screen";
@@ -57,6 +57,13 @@ const OnboardingBusinessSetupStack: React.FC = () => {
         },
         headerTintColor: theme.colors.text,
         headerTitleAlign: "center",
+        headerLeftContainerStyle: {
+          paddingLeft: 6,
+          marginLeft: 0,
+        },
+        headerRightContainerStyle: {
+          paddingRight: 16, // to apply padding for the skip button
+        },
       }}
     >
       <Stack.Screen
@@ -67,10 +74,9 @@ const OnboardingBusinessSetupStack: React.FC = () => {
           headerRight: () => (
             <Text
               fontVariant="buttonMedium"
-              color={theme.colors.secondary.dark}
+              textColor={theme.colors.secondary.dark}
               textAlign="right"
               onPress={handleSkipSettings}
-              style={{ marginRight: theme.space.md }}
             >
               {t("skip")}
             </Text>
@@ -85,10 +91,9 @@ const OnboardingBusinessSetupStack: React.FC = () => {
           headerRight: () => (
             <Text
               fontVariant="buttonMedium"
-              color={theme.colors.secondary.dark}
+              textColor={theme.colors.secondary.dark}
               textAlign="right"
               onPress={handleSkipSettings}
-              style={{ marginRight: theme.space.md }}
             >
               {t("skip")}
             </Text>
@@ -103,10 +108,9 @@ const OnboardingBusinessSetupStack: React.FC = () => {
           headerRight: () => (
             <Text
               fontVariant="buttonMedium"
-              color={theme.colors.secondary.dark}
+              textColor={theme.colors.secondary.dark}
               textAlign="right"
               onPress={handleSkipSettings}
-              style={{ marginRight: theme.space.md }}
             >
               {t("skip")}
             </Text>
@@ -121,10 +125,9 @@ const OnboardingBusinessSetupStack: React.FC = () => {
           headerRight: () => (
             <Text
               fontVariant="buttonMedium"
-              color={theme.colors.secondary.dark}
+              textColor={theme.colors.secondary.dark}
               textAlign="right"
               onPress={handleSkipSettings}
-              style={{ marginRight: theme.space.md }}
             >
               {t("skip")}
             </Text>

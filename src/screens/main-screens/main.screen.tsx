@@ -13,7 +13,7 @@ import {
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { Text } from "../../components/text.component";
+import Text from "../../components/text.component";
 import Button from "../../components/button/button.component";
 import { authStateListener, logoutUser } from "../../services/authService";
 import { sendVerificationEmail } from "../../services/authService";

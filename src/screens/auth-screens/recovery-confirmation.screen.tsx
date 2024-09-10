@@ -20,7 +20,7 @@ import { HelperText, TextInput } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 import Space from "../../components/spacer.component";
 import * as Clipboard from "expo-clipboard";
-import { Text } from "../../components/text.component";
+import Text from "../../components/text.component";
 
 //////////// Styling start ///////////////
 
@@ -298,7 +298,7 @@ const RecoveryConfirmationScreen: React.FC<
                   <View>
                     <Text
                       fontVariant="bodyMedium"
-                      color={theme.colors.primary.dark}
+                      textColor={theme.colors.primary.dark}
                     >
                       {t("code_resend_notification")} {formatTime(timeLeft)}
                     </Text>

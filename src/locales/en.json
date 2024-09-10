@@ -30,6 +30,8 @@
   "account_setup_services_description": "Select the main service you offer to your clients and up to 3 related services.",
   "account_setup_team_title": "What is your team's lineup?",
   "account_setup_team_description": "That will help us set up the calendar correctly.",
+  "account_setup_location_title": "Add your location",
+  "account_setup_location_description": "Add your location so your clients can easily find you.",
   "login": "Login",
   "register": "Register",
   "choose_language": "Choose language",
@@ -98,5 +100,7 @@
   "services_solarium": "Solarium",
   "services_other": "Other",
   "team_single": "Just me",
-  "team_employees": "employees"
+  "team_employees": "employees",
+  "address": "Address",
+  "no_location": "I work remotely, I don't have a location"
 }

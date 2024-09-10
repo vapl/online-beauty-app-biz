@@ -15,8 +15,9 @@ import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Input from "../../components/input.component";
-import { Text } from "../../components/text.component";
+import Text from "../../components/text.component";
 import StatusNav from "../../components/status-navbar";
+import { Checkbox } from "react-native-paper";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -46,7 +47,7 @@ const InputWrapper = styled(View)`
   gap: ${(props) => props.theme.space.sm}px;
 `;
 
-const EmailInput = styled(Input)``;
+const LocationInput = styled(Input)``;
 const PasswordInput = styled(Input)``;
 
 const LoginButton = styled(Button)``;
@@ -58,26 +59,15 @@ const AccountSetupLocationScreen: React.FC<
   const { t } = useTranslation();
   const navigation = useNavigation<AccountSetupLocationScreenNavigationProp>();
   const [businessName, setBusinessName] = useState<string>("");
-  const [webPage, setWebpage] = useState<string>("");
-  const [businessNameError, setBusinessNameError] = useState<string>();
-  const [webPageError, setWebPageError] = useState<string>();
+  const [checked, setChecked] = useState<boolean>(false);
   const currentStep = 3;
   const totalSteps = 5;
 
-  const validateWebPageName = (value: string) => {
-    const regex = /^www\.[a-zA-Z0-9_-]+\.[a-zA-Z]{2,3}(\/[a-zA-Z0-9_-]+)*\/?$/;
-    if (value && !regex.test(value)) {
-      return t("invalid_web_page_value");
-    }
+  const handleCheckboxChange = () => {
+    setChecked((prev) => !prev);
   };
 
   const handleSubmit = () => {
-    const webPageValidationError = validateWebPageName(webPage);
-
-    setWebPageError(webPageValidationError);
-    if (!webPageValidationError) {
-      console.log("Form submitted.");
-    }
     return;
   };
 
@@ -87,11 +77,9 @@ const AccountSetupLocationScreen: React.FC<
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
           <Header>
-            <Text fontVariant="h3">
-              {t("account_setup_business_name_title")}
-            </Text>
+            <Text fontVariant="h3">{t("account_setup_location_title")}</Text>
             <Text fontVariant="bodyMedium">
-              {t("account_setup_business_name_description")}
+              {t("account_setup_location_description")}
             </Text>
           </Header>
           <ScrollView
@@ -106,33 +94,31 @@ const AccountSetupLocationScreen: React.FC<
           >
             <KeyboardAvoidingView contentContainerStyle={{ flexGrow: 1 }}>
               <InputWrapper>
-                <EmailInput
+                <LocationInput
                   value={businessName}
                   onChangeText={setBusinessName}
-                  label={t("placeholder_business_name")}
-                  iconLeft="briefcase-variant-outline"
+                  label={t("address")}
+                  iconLeft="map-marker-outline"
                   autoCapitalize="sentences"
                   keyboardType="default"
                   textContentType="none"
-                  errorMessage={businessNameError}
                   autoCorrect={false}
-                  required
+                  disabled={checked}
                   onSubmitEditing={() => handleSubmit()}
                   returnKeyType="next"
                 />
-                <PasswordInput
-                  value={webPage}
-                  onChangeText={setWebpage}
-                  label={t("placeholder_homepage")}
-                  iconLeft="web"
-                  keyboardType="default"
-                  textContentType="none"
-                  errorMessage={webPageError}
-                  autoCorrect={true}
-                  required
-                  onSubmitEditing={() => handleSubmit()}
-                  returnKeyType="done"
-                />
+                <Text
+                  onPress={() => setChecked((prev) => !prev)}
+                  onCheckboxChange={() => setChecked((prev) => !prev)}
+                  fontVariant="bodyMedium"
+                  showCheckbox={true}
+                  checked={checked}
+                  textColor={theme.colors.grey[80]}
+                  checkboxColor={theme.colors.primary.dark}
+                  uncheckedColor={theme.colors.primary.dark}
+                >
+                  {t("no_location")}
+                </Text>
               </InputWrapper>
             </KeyboardAvoidingView>
           </ScrollView>

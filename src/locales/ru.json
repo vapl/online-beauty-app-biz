@@ -30,6 +30,8 @@
   "account_setup_services_description": "Выбери основную услугу, которую ты предлагаешь своим клиентам, и до 3 сопутствующих услуг.",
   "account_setup_team_title": "Каков состав вашей команды?",
   "account_setup_team_description": "Это поможет нам правильно настроить календарь.",
+  "account_setup_location_title": "Добавьте своё местоположение",
+  "account_setup_location_description": "Добавьте своё местоположение, чтобы ваши клиенты могли легко вас найти.",
   "login": "Авторизоваться",
   "register": "Регистрация",
   "choose_language": "Выбор языка",
@@ -98,5 +100,7 @@
   "services_solarium": "Солярий",
   "services_other": "Другое",
   "team_single": "Только я",
-  "team_employees": "работников"
+  "team_employees": "работников",
+  "address": "Адрес",
+  "no_location": "Я работаю удаленно, у меня нет места расположения"
 }

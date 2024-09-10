@@ -14,7 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Button } from "react-native-paper";
 import LanguagePicker from "../../components/language-picker.component";
-import { Text } from "../../components/text.component";
+import Text from "../../components/text.component";
 import { useNavigation } from "@react-navigation/native";
 import {
   OnboardingScreenNavigationProp,
@@ -283,14 +283,14 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = () => {
             <ContentWrapper>
               <Text
                 fontVariant="h3"
-                color={theme.colors.white}
+                textColor={theme.colors.white}
                 textAlign="center"
               >
                 {slides[currentSlide].title}
               </Text>
               <Text
                 fontVariant="bodyLarge"
-                color={theme.colors.white}
+                textColor={theme.colors.white}
                 textAlign="center"
               >
                 {slides[currentSlide].text}
@@ -324,7 +324,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = () => {
           <FooterContainer>
             <Text
               fontVariant="bodyMedium"
-              color={theme.colors.white}
+              textColor={theme.colors.white}
               textAlign="left"
             >
               {t("already_have_account")}

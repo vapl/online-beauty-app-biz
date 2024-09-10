@@ -9,7 +9,7 @@ import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Input from "../../components/input.component";
-import { Text } from "../../components/text.component";
+import Text from "../../components/text.component";
 import { loginUser, useGoogleSignIn } from "../../services/authService";
 import { SnackbarMessage } from "../../components/snackbar.component";
 
@@ -129,7 +129,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
     if (!emailValidationError && !passwordValidationError) {
       try {
         await loginUser(email, password);
-        navigation.navigate("Main");
+        navigation.navigate("AppStack");
       } catch (error: any) {
         console.error("Login failed: ", error.code);
         if (error.code === "auth/invalid-credential") {
@@ -223,7 +223,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
               {t("do_not_have_account")}
               <Text
                 fontVariant="buttonMedium"
-                color={theme.colors.secondary.dark}
+                textColor={theme.colors.secondary.dark}
                 onPress={() => {
                   navigation.navigate("Register");
                 }}

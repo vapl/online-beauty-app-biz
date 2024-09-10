@@ -1,8 +1,19 @@
-import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
+import React from "react";
+import { TouchableOpacity } from "react-native";
+import { Checkbox } from "react-native-paper";
 import styled, { DefaultTheme } from "styled-components/native";
 
 interface TextProps {
   textAlign?: "left" | "center" | "right";
+  onPress?: () => void;
+  showCheckbox?: boolean;
+  checked?: boolean;
+  onCheckboxChange?: (checked: boolean) => void;
+  children?: React.ReactNode;
+  textColor?: string;
+  checkboxColor?: string;
+  uncheckedColor?: string;
+  fontVariant?: keyof typeof variants;
 }
 
 const defaultTextStyle = (theme: DefaultTheme, props: TextProps) => `
@@ -90,7 +101,12 @@ const variants = {
   h6,
 };
 
-export const Text = styled.Text.attrs(() => ({
+const TextContainer = styled(TouchableOpacity)`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const StyledText = styled.Text.attrs(() => ({
   style: { backgroundColor: "transparent" },
 }))<{
   fontVariant?: keyof typeof variants;
@@ -102,3 +118,38 @@ export const Text = styled.Text.attrs(() => ({
     fontVariant && variants[fontVariant] ? variants[fontVariant](theme) : ""}
   ${({ color }) => (color ? `color: ${color};` : "")}
 `;
+
+const Text: React.FC<TextProps> = ({
+  children,
+  onPress,
+  showCheckbox = false,
+  checked = false,
+  onCheckboxChange,
+  textAlign = "left",
+  textColor,
+  checkboxColor,
+  uncheckedColor,
+  fontVariant = "bodyMedium",
+}) => {
+  return (
+    <TextContainer onPress={onPress}>
+      {showCheckbox && (
+        <Checkbox.Android
+          status={checked ? "checked" : "unchecked"}
+          onPress={() => onCheckboxChange && onCheckboxChange(!checked)}
+          uncheckedColor={uncheckedColor}
+          color={checkboxColor}
+        />
+      )}
+      <StyledText
+        fontVariant={fontVariant}
+        color={textColor}
+        textAlign={textAlign}
+      >
+        {children}
+      </StyledText>
+    </TextContainer>
+  );
+};
+
+export default Text;

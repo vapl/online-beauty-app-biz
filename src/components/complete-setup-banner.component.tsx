@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
-import { Text } from "./text.component";
+import Text from "./text.component";
 import styled from "styled-components/native";
 import { UserContext } from "../context/UserProvider";
 

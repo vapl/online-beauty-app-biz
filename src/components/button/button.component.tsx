@@ -6,7 +6,7 @@ import {
   RadioButtonCustom,
   StyledButtonProps,
 } from "./button.styles";
-import { Text } from "../text.component";
+import Text from "../text.component";
 import { useTheme } from "styled-components/native";
 import { View } from "react-native";
 
@@ -77,17 +77,16 @@ const Button: React.FC<ButtonProps> = ({
           value={value}
           disabled={disabled}
           status={status}
-          onPress={() => onValueChange && onValueChange(value)}
+          onPress={onPress}
         />
         <View>
           <Text
-            style={{
-              color:
-                status === "checked"
-                  ? theme.colors.primary.dark
-                  : theme.colors.grey[60],
-              paddingLeft: theme.space.sm,
-            }}
+            textColor={
+              status === "checked"
+                ? theme.colors.primary.dark
+                : theme.colors.grey[60]
+            }
+            onPress={onPress}
             fontVariant="buttonLarge"
           >
             {label}
