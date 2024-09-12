@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import Input from "../../components/input.component";
 import Text from "../../components/text.component";
 import StatusNav from "../../components/status-navbar";
-import { Checkbox } from "react-native-paper";
+import CustomModal from "../../components/modals/custom-modal.component";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -48,9 +48,8 @@ const InputWrapper = styled(View)`
 `;
 
 const LocationInput = styled(Input)``;
-const PasswordInput = styled(Input)``;
 
-const LoginButton = styled(Button)``;
+const NextButton = styled(Button)``;
 
 const AccountSetupLocationScreen: React.FC<
   AccountSetupLocationScreenProps
@@ -60,14 +59,12 @@ const AccountSetupLocationScreen: React.FC<
   const navigation = useNavigation<AccountSetupLocationScreenNavigationProp>();
   const [businessName, setBusinessName] = useState<string>("");
   const [checked, setChecked] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(true);
   const currentStep = 3;
   const totalSteps = 5;
 
-  const handleCheckboxChange = () => {
-    setChecked((prev) => !prev);
-  };
-
   const handleSubmit = () => {
+    setModalVisible(true);
     return;
   };
 
@@ -104,6 +101,7 @@ const AccountSetupLocationScreen: React.FC<
                   textContentType="none"
                   autoCorrect={false}
                   disabled={checked}
+                  onPress={() => setModalVisible(true)}
                   onSubmitEditing={() => handleSubmit()}
                   returnKeyType="next"
                 />
@@ -122,8 +120,30 @@ const AccountSetupLocationScreen: React.FC<
               </InputWrapper>
             </KeyboardAvoidingView>
           </ScrollView>
+          <CustomModal
+            visible={modalVisible}
+            title="Pievieno savu lokāciju"
+            onClose={() => setModalVisible(false)}
+            isStatic={true}
+            initialModalHeight={0.95}
+          >
+            <LocationInput
+              value={businessName}
+              onChangeText={setBusinessName}
+              label={t("address")}
+              iconLeft="map-marker-outline"
+              autoCapitalize="sentences"
+              keyboardType="default"
+              textContentType="none"
+              autoCorrect={false}
+              disabled={checked}
+              onPress={() => setModalVisible(true)}
+              onSubmitEditing={() => handleSubmit()}
+              returnKeyType="next"
+            />
+          </CustomModal>
           <View>
-            <LoginButton
+            <NextButton
               label={t("button_next")}
               mode="contained"
               onPress={handleSubmit}

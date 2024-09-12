@@ -9,6 +9,7 @@ import {
 import Text from "../text.component";
 import { useTheme } from "styled-components/native";
 import { View } from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 //////////// Styling start ///////////////
 
@@ -18,6 +19,8 @@ interface ButtonProps extends StyledButtonProps {
   mode: "text" | "outlined" | "contained" | "radio" | "check";
   label?: string;
   icon?: string;
+  iconSize?: number;
+  iconColor?: string;
   disabled?: boolean;
   compact?: boolean;
   value?: string;
@@ -30,6 +33,8 @@ const Button: React.FC<ButtonProps> = ({
   mode = "contained",
   label,
   icon,
+  iconSize = 24,
+  iconColor,
   disabled = false,
   compact = false,
   value = "",
@@ -39,10 +44,17 @@ const Button: React.FC<ButtonProps> = ({
   onValueChange,
 }) => {
   const theme = useTheme();
+
+  const renderIcon = () => {
+    if (icon) {
+      return <Icon name={icon} size={iconSize} color={iconColor} />;
+    }
+  };
+
   if (mode === "text") {
     return (
       <TextButton
-        icon={icon}
+        icon={renderIcon}
         disabled={disabled}
         compact={compact}
         onPress={onPress}
@@ -55,7 +67,7 @@ const Button: React.FC<ButtonProps> = ({
   if (mode === "outlined") {
     return (
       <OutlinedButton
-        icon={icon}
+        icon={renderIcon}
         disabled={disabled}
         onPress={onPress}
         justifyContent={justifyContent}
@@ -68,7 +80,7 @@ const Button: React.FC<ButtonProps> = ({
   if (mode === "radio") {
     return (
       <OutlinedButton
-        icon={icon}
+        icon={renderIcon}
         disabled={disabled}
         onPress={onPress}
         justifyContent={justifyContent}
@@ -97,7 +109,7 @@ const Button: React.FC<ButtonProps> = ({
   }
 
   return (
-    <ContainedButton icon={icon} disabled={disabled} onPress={onPress}>
+    <ContainedButton icon={renderIcon} disabled={disabled} onPress={onPress}>
       {label}
     </ContainedButton>
   );
