@@ -15,9 +15,26 @@ const ModalGrabber = styled(View)`
   align-self: center;
   background-color: ${(props) => props.theme.colors.grey[60]};
 `;
-const ModalTitle = styled(Text)`
-  position: absolute;
+
+const ModalHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: ${(props) => props.theme.space.md}px;
+  margin-bottom: ${(props) => props.theme.space.md}px;
 `;
+
+const ModalTitleWrapper = styled(View)`
+  width: 70%;
+  align-items: center;
+  justify-items: center;
+`;
+
+const ModalTitle = styled(Text)``;
+
+const ButtonWrapper = styled(View)``;
+const ButtonLeft = styled(Button)``;
+const ButtonRight = styled(Button)``;
 
 const ModalContainer = styled(BlurView)`
   flex: 1;
@@ -39,14 +56,6 @@ const ModalContent = styled(Animated.View)`
   elevation: 10;
 `;
 
-const ModalHeader = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: ${(props) => props.theme.space.md}px;
-  margin-bottom: ${(props) => props.theme.space.md}px;
-`;
-
 const ModalBody = styled.View`
   flex: 1;
 `;
@@ -60,7 +69,9 @@ const ModalFooter = styled.View`
 interface CustomModalProps {
   visible: boolean;
   onClose: () => void;
+  onPress: () => void;
   title?: string;
+  rightButtonLabel?: string;
   children: React.ReactNode;
   showFooter?: boolean;
   footerButtons?: React.ReactNode;
@@ -73,7 +84,9 @@ interface CustomModalProps {
 const CustomModal: React.FC<CustomModalProps> = ({
   visible,
   onClose,
+  onPress,
   title,
+  rightButtonLabel,
   children,
   showFooter = true,
   footerButtons,
@@ -162,16 +175,28 @@ const CustomModal: React.FC<CustomModalProps> = ({
             {title && (
               <ModalHeader>
                 {headerLeftButtonVisible && (
-                  <Button
-                    icon="close"
-                    label=" "
-                    mode={"text"}
-                    onPress={onClose}
-                  />
+                  <ButtonWrapper>
+                    <ButtonLeft
+                      icon="close"
+                      label=" "
+                      mode={"text"}
+                      onPress={onClose}
+                    />
+                  </ButtonWrapper>
                 )}
-                <ModalTitle fontVariant="buttonMedium">{title}</ModalTitle>
+                <ModalTitleWrapper>
+                  <ModalTitle fontVariant="buttonMedium" textAlign="center">
+                    {title}
+                  </ModalTitle>
+                </ModalTitleWrapper>
                 {headerRightButtonVisible && (
-                  <Button label={title} mode={"text"} onPress={() => {}} />
+                  <ButtonWrapper>
+                    <ButtonRight
+                      label={rightButtonLabel}
+                      mode={"text"}
+                      onPress={onPress}
+                    />
+                  </ButtonWrapper>
                 )}
               </ModalHeader>
             )}

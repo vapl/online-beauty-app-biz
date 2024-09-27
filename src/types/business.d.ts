@@ -7,8 +7,10 @@ export interface BusinessInfoProps {
   teamSize?: string;
   employeeIds?: string[];
   location?: {
+    hasLocation?: boolean;
     address?: string;
     city?: string;
+    parish?: string;
     country?: string;
     postalCode?: string;
   };
@@ -52,5 +54,9 @@ export interface BusinessInfoProps {
   receiptSequencing?: {
     ReceiptNoPrefix?: string;
     nextReceiptNumber?: number;
+  };
+  userFeedback?: {
+    question: string;
+    response?: string;
   };
 }

@@ -40,6 +40,8 @@ const Button: React.FC<ButtonProps> = ({
   value = "",
   status = "unchecked",
   justifyContent = "center",
+  labelStyle,
+  labelColor,
   onPress,
   onValueChange,
 }) => {
@@ -58,6 +60,7 @@ const Button: React.FC<ButtonProps> = ({
         disabled={disabled}
         compact={compact}
         onPress={onPress}
+        labelStyle={labelStyle}
       >
         {label}
       </TextButton>
@@ -71,6 +74,8 @@ const Button: React.FC<ButtonProps> = ({
         disabled={disabled}
         onPress={onPress}
         justifyContent={justifyContent}
+        labelStyle={labelStyle}
+        labelColor={labelColor}
       >
         {label}
       </OutlinedButton>

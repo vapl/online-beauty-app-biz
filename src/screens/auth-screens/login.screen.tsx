@@ -8,7 +8,7 @@ import styled, { useTheme } from "styled-components/native";
 import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../../components/input.component";
+import Input from "../../components/inputs/input.component";
 import Text from "../../components/text.component";
 import { loginUser, useGoogleSignIn } from "../../services/authService";
 import { SnackbarMessage } from "../../components/snackbar.component";
@@ -219,19 +219,14 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
             </View>
           </FormWrapper>
           <FooterContainer>
-            <Text fontVariant="bodyMedium">
-              {t("do_not_have_account")}
-              <Text
-                fontVariant="buttonMedium"
-                textColor={theme.colors.secondary.dark}
-                onPress={() => {
-                  navigation.navigate("Register");
-                }}
-              >
-                {"  "}
-                {t("register")}
-              </Text>
-            </Text>
+            <Text fontVariant="bodyMedium">{t("do_not_have_account")}</Text>
+            <Button
+              mode="text"
+              label={t("register")}
+              onPress={() => {
+                navigation.navigate("Register");
+              }}
+            />
           </FooterContainer>
         </ScreenContainer>
       </SafeArea>

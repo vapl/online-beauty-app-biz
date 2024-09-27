@@ -10,4 +10,5 @@ declare module "@env" {
   export const OAUTH_WEB_CLIENT_ID: string;
   export const OUTH_IOS_CLIENT_ID: string;
   export const OUTH_ANDROID_CLIENT_ID: string;
+  export const GOOGLE_PLACES_KEY: string;
 }

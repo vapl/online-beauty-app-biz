@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -88,6 +88,14 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
     },
   ];
 
+  useEffect(() => {
+    teamVariants.map((variant) => {
+      if (businessInfo?.teamSize && businessInfo.teamSize === variant.variant) {
+        setCheckedValue(variant.value);
+      }
+    });
+  }, [businessInfo, teamVariants]);
+
   const handleSelection = (value: number) => {
     setCheckedValue(value);
   };
@@ -98,7 +106,6 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
     );
     if (user) {
       updateBusinessInfo(user.uid, { teamSize: selectedTeamSize?.variant });
-      console.log(selectedTeamSize?.variant);
       navigation.navigate("AccountSetupLocation");
     }
   };

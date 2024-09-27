@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import { parsePhoneNumberFromString as parsePhoneNumber } from "libphonenumber-js";
 import { RecoveryConfirmationScreenNavigationProp } from "../../types/navigationTypes";
 import Button from "../../components/button/button.component";
-import Input from "../../components/input.component";
+import Input from "../../components/inputs/input.component";
 import Space from "../../components/spacer.component";
 import Text from "../../components/text.component";
 import {

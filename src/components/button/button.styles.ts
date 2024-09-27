@@ -1,11 +1,13 @@
 import styled, { useTheme } from "styled-components/native";
 import { Button as PaperButton, RadioButton } from "react-native-paper";
 import { typography } from "../../infrastructure/theme/typography";
-import { ViewStyle } from "react-native";
+import { TextStyle, ViewStyle } from "react-native";
 
 export interface StyledButtonProps {
   justifyContent?: ViewStyle["justifyContent"];
   disabled?: boolean;
+  labelStyle?: TextStyle;
+  labelColor?: string;
 }
 
 export const StyledButton = styled(PaperButton).attrs<StyledButtonProps>(
@@ -16,6 +18,7 @@ export const StyledButton = styled(PaperButton).attrs<StyledButtonProps>(
     },
     labelStyle: {
       ...typography.buttonLarge,
+      ...props.labelStyle,
     },
   })
 )<StyledButtonProps>`
@@ -56,7 +59,7 @@ export const OutlinedButton = styled(StyledButton).attrs<StyledButtonProps>(
     mode: "outlined",
     textColor: props.disabled
       ? props.theme.colors.grey[60]
-      : props.theme.colors.primary.dark,
+      : props.labelColor || props.theme.colors.primary.dark,
     contentStyle: {
       width: undefined,
       height: 52,
@@ -71,6 +74,7 @@ export const OutlinedButton = styled(StyledButton).attrs<StyledButtonProps>(
       : props.theme.colors.primary.dark};
   width: undefined;
   justify-content: center;
+  flex-grow: 1;
 `;
 
 export const RadioButtonCustom = styled(RadioButton.Android).attrs((props) => ({

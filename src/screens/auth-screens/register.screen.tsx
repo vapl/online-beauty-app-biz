@@ -14,7 +14,7 @@ import styled from "styled-components/native";
 import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../../components/input.component";
+import Input from "../../components/inputs/input.component";
 import { parsePhoneNumber } from "libphonenumber-js";
 import Text from "../../components/text.component";
 import { useTheme } from "styled-components/native";
@@ -360,19 +360,14 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
             </ButtonsWrapper>
           </FormWrapper>
           <FooterContainer>
-            <Text fontVariant="bodyMedium">
-              {t("already_have_account")}
-              <Text
-                onPress={() => {
-                  navigation.navigate("Login");
-                }}
-                fontVariant="buttonMedium"
-                textColor={theme.colors.secondary.dark}
-              >
-                {"  "}
-                {t("login")}
-              </Text>
-            </Text>
+            <Text fontVariant="bodyMedium">{t("already_have_account")}</Text>
+            <Button
+              mode="text"
+              label={t("login")}
+              onPress={() => {
+                navigation.navigate("Login");
+              }}
+            />
           </FooterContainer>
         </ScreenContainer>
       </SafeArea>

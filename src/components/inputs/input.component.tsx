@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components/native";
-import { View, Platform } from "react-native";
+import {
+  View,
+  Platform,
+  Pressable,
+  TextInput as RNTextInput,
+} from "react-native";
 import { HelperText, TextInput } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 import CountryPicker, {
   CountryCode,
   DARK_THEME,
 } from "react-native-country-picker-modal";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { darkTheme } from "../infrastructure/theme/theme";
+import { darkTheme } from "../../infrastructure/theme/theme";
+import { MaterialIcons } from "@expo/vector-icons";
 
 interface StyledInputProps {
   hasError?: boolean;
@@ -136,6 +141,7 @@ interface InputProps {
     | "done"
     | "emergency-call";
   disabled?: boolean;
+  editable?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -157,6 +163,7 @@ const Input: React.FC<InputProps> = ({
   countryCodePicker = false,
   setCallingCode,
   disabled = false,
+  editable = false,
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -164,6 +171,18 @@ const Input: React.FC<InputProps> = ({
   const [secureText, setSecureText] = useState<boolean>(secureTextEntry);
   const [countryCode, setCountryCode] = useState<CountryCode>("LV");
   const [pickerVisible, setPickerVisible] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+
+  const inputRef = useRef<RNTextInput>(null);
+
+  const handleEditIconPress = () => {
+    setIsDisabled(false);
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 100);
+  };
 
   const handleEmailInputValue = (text: string) => {
     const filteredText = text.replace(/[^\w@.-]/g, "");
@@ -190,6 +209,16 @@ const Input: React.FC<InputProps> = ({
         <TextInput.Icon
           icon={secureText ? "eye" : "eye-off"}
           onPress={toggleSecureText}
+        />
+      );
+    }
+
+    if (!secureTextEntry && !isFocused && editable) {
+      return (
+        <TextInput.Icon
+          icon={!isFocused && editable ? "pencil" : "close"}
+          onPress={handleEditIconPress}
+          color={theme.colors.primary.dark}
         />
       );
     }
@@ -224,11 +253,11 @@ const Input: React.FC<InputProps> = ({
                 visible={pickerVisible}
                 onClose={() => setPickerVisible(false)}
               />
-              <TouchableOpacity onPress={() => setPickerVisible(true)}>
+              <Pressable onPress={() => setPickerVisible(true)}>
                 <ChevronIconWrapper>
                   <TextInput.Icon icon="chevron-down" />
                 </ChevronIconWrapper>
-              </TouchableOpacity>
+              </Pressable>
             </CountryCodePickerWrapper>
           )}
           <StyledInput
@@ -253,8 +282,14 @@ const Input: React.FC<InputProps> = ({
             }
             autoCapitalize={autoCapitalize}
             textContentType={secureTextEntry ? "password" : textContentType}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onFocus={() => {
+              setIsFocused(true);
+            }}
+            onBlur={() => {
+              setIsDisabled(true);
+              setIsFocused(false);
+            }}
+            render={(props) => <RNTextInput {...props} ref={inputRef} />}
             contextMenuHidden={true}
             error={!!errorMessage}
             onSubmitEditing={onSubmitEditing} // Prop for handling submit on return key
@@ -270,7 +305,7 @@ const Input: React.FC<InputProps> = ({
                 : { paddingLeft: 16 }
             }
             right={getRightIcon()}
-            disabled={disabled}
+            disabled={editable ? isDisabled : disabled}
           />
         </InputWrapper>
         {errorMessage && (

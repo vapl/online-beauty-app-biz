@@ -12,6 +12,7 @@ import AccountSetupBusinessNameScreen from "../screens/account-setup-screens/acc
 import AccountSetupServicesScreen from "../screens/account-setup-screens/account-setup-services.screen";
 import AccountSetupTeamScreen from "../screens/account-setup-screens/account-setup-team.screen";
 import AccountSetupLocationScreen from "../screens/account-setup-screens/account-setup-location.screen";
+import AccountSetupLocationConfirmationScreen from "../screens/account-setup-screens/account-setup-location-confirmation.screen";
 import { UserContext } from "../context/UserProvider";
 import { updateUser } from "../services/userService";
 import AppStack from "./AppStack";
@@ -120,6 +121,23 @@ const OnboardingBusinessSetupStack: React.FC = () => {
       <Stack.Screen
         name="AccountSetupLocation"
         component={AccountSetupLocationScreen}
+        options={{
+          title: t("account_settings"),
+          headerRight: () => (
+            <Text
+              fontVariant="buttonMedium"
+              textColor={theme.colors.secondary.dark}
+              textAlign="right"
+              onPress={handleSkipSettings}
+            >
+              {t("skip")}
+            </Text>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="AccountSetupLocationConfirmation"
+        component={AccountSetupLocationConfirmationScreen}
         options={{
           title: t("account_settings"),
           headerRight: () => (

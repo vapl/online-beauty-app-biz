@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -14,10 +14,13 @@ import styled, { useTheme } from "styled-components/native";
 import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../../components/input.component";
+import { UserContext } from "../../context/UserProvider";
+import { BusinessContext } from "../../context/BusinessProvider";
 import Text from "../../components/text.component";
 import StatusNav from "../../components/status-navbar";
 import CustomModal from "../../components/modals/custom-modal.component";
+import { updateBusinessInfo } from "../../services/businessService";
+import LocationInput from "../../components/inputs/location-input.component";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -47,24 +50,77 @@ const InputWrapper = styled(View)`
   gap: ${(props) => props.theme.space.sm}px;
 `;
 
-const LocationInput = styled(Input)``;
-
 const NextButton = styled(Button)``;
 
 const AccountSetupLocationScreen: React.FC<
   AccountSetupLocationScreenProps
 > = () => {
   const theme = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = i18n.language;
   const navigation = useNavigation<AccountSetupLocationScreenNavigationProp>();
-  const [businessName, setBusinessName] = useState<string>("");
+  const [hasLocation, setHasLocation] = useState<boolean>();
+  const [location, setLocation] = useState({
+    address: "",
+    city: "",
+    parish: "",
+    country: "",
+    postalCode: "",
+  });
   const [checked, setChecked] = useState<boolean>(false);
-  const [modalVisible, setModalVisible] = useState<boolean>(true);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const currentStep = 3;
   const totalSteps = 5;
 
+  const userContext = useContext(UserContext);
+  const businessContext = useContext(BusinessContext);
+  if (!userContext || !businessContext) return;
+  const { user } = userContext;
+  const { businessInfo } = businessContext;
+
+  useEffect(() => {
+    if (user && businessInfo?.location?.address) {
+      setLocation({
+        address: businessInfo?.location?.address || "",
+        city: businessInfo?.location?.city || "",
+        parish: businessInfo?.location?.parish || "",
+        country: businessInfo?.location?.country || "",
+        postalCode: businessInfo?.location?.postalCode || "",
+      });
+    }
+  }, [user, businessInfo?.location]);
+
+  const handleLocationSelect = (selectLocation: {
+    hasLocation: boolean;
+    address: string;
+    city: string;
+    country: string;
+    parish: string;
+    postalCode: string;
+  }) => {
+    setLocation(selectLocation);
+  };
+
   const handleSubmit = () => {
-    setModalVisible(true);
+    if (user) {
+      if (!checked) {
+        setHasLocation(true);
+        navigation.navigate("AccountSetupLocationConfirmation", {
+          ...location,
+          hasLocation: true,
+        });
+      } else {
+        setHasLocation(false),
+          navigation.navigate("AccountSetupLocationConfirmation", {
+            hasLocation: false,
+            address: "",
+            city: "",
+            parish: "",
+            country: "",
+            postalCode: "",
+          });
+      }
+    }
     return;
   };
 
@@ -91,23 +147,25 @@ const AccountSetupLocationScreen: React.FC<
           >
             <KeyboardAvoidingView contentContainerStyle={{ flexGrow: 1 }}>
               <InputWrapper>
-                <LocationInput
-                  value={businessName}
-                  onChangeText={setBusinessName}
-                  label={t("address")}
-                  iconLeft="map-marker-outline"
-                  autoCapitalize="sentences"
-                  keyboardType="default"
-                  textContentType="none"
-                  autoCorrect={false}
-                  disabled={checked}
+                <Button
+                  label={location ? location.address : t("label_address")}
+                  mode="outlined"
+                  justifyContent="flex-start"
+                  icon="map-marker-outline"
+                  iconColor={
+                    location ? theme.colors.primary.dark : theme.colors.grey[80]
+                  }
                   onPress={() => setModalVisible(true)}
-                  onSubmitEditing={() => handleSubmit()}
-                  returnKeyType="next"
+                  labelStyle={theme.typography.bodyLarge}
+                  labelColor={
+                    location
+                      ? theme.colors.primary.dark
+                      : theme.colors.grey[100]
+                  }
+                  disabled={checked}
                 />
                 <Text
                   onPress={() => setChecked((prev) => !prev)}
-                  onCheckboxChange={() => setChecked((prev) => !prev)}
                   fontVariant="bodyMedium"
                   showCheckbox={true}
                   checked={checked}
@@ -122,24 +180,18 @@ const AccountSetupLocationScreen: React.FC<
           </ScrollView>
           <CustomModal
             visible={modalVisible}
-            title="Pievieno savu lokāciju"
+            title={t("title_find_location")}
+            rightButtonLabel={t("label_add")}
             onClose={() => setModalVisible(false)}
+            onPress={() => setModalVisible(false)}
             isStatic={true}
             initialModalHeight={0.95}
           >
             <LocationInput
-              value={businessName}
-              onChangeText={setBusinessName}
-              label={t("address")}
-              iconLeft="map-marker-outline"
-              autoCapitalize="sentences"
-              keyboardType="default"
-              textContentType="none"
-              autoCorrect={false}
-              disabled={checked}
-              onPress={() => setModalVisible(true)}
-              onSubmitEditing={() => handleSubmit()}
-              returnKeyType="next"
+              placeholder={location ? location.address : t("label_address")}
+              onPress={handleLocationSelect}
+              language={language}
+              country="lv"
             />
           </CustomModal>
           <View>

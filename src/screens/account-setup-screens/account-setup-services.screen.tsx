@@ -14,7 +14,7 @@ import styled, { useTheme } from "styled-components/native";
 import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../../components/input.component";
+import Input from "../../components/inputs/input.component";
 import Text from "../../components/text.component";
 import StatusNav from "../../components/status-navbar";
 import ServiceCard from "../../components/service-card.component";
