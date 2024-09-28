@@ -26,7 +26,8 @@ interface ButtonProps extends StyledButtonProps {
   compact?: boolean;
   value?: any;
   status?: "checked" | "unchecked";
-  onPress: () => void;
+  buttonColor?: string;
+  onPress?: () => void;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -42,7 +43,8 @@ const Button: React.FC<ButtonProps> = ({
   justifyContent = "center",
   labelStyle,
   labelColor,
-  onPress,
+  buttonColor,
+  onPress = () => {},
 }) => {
   const theme = useTheme();
 
@@ -113,7 +115,13 @@ const Button: React.FC<ButtonProps> = ({
   }
 
   return (
-    <ContainedButton icon={renderIcon} disabled={disabled} onPress={onPress}>
+    <ContainedButton
+      icon={renderIcon}
+      disabled={disabled}
+      onPress={onPress}
+      buttonColor={buttonColor}
+      labelColor={labelColor}
+    >
       {label}
     </ContainedButton>
   );

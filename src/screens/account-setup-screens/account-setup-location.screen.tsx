@@ -148,19 +148,23 @@ const AccountSetupLocationScreen: React.FC<
             <KeyboardAvoidingView contentContainerStyle={{ flexGrow: 1 }}>
               <InputWrapper>
                 <Button
-                  label={location ? location.address : t("label_address")}
+                  label={
+                    location.address ? location.address : t("label_address")
+                  }
                   mode="outlined"
                   justifyContent="flex-start"
                   icon="map-marker-outline"
                   iconColor={
-                    location ? theme.colors.primary.dark : theme.colors.grey[80]
+                    location.address
+                      ? theme.colors.primary.dark
+                      : theme.colors.grey[60]
                   }
                   onPress={() => setModalVisible(true)}
                   labelStyle={theme.typography.bodyLarge}
                   labelColor={
-                    location
+                    location.address
                       ? theme.colors.primary.dark
-                      : theme.colors.grey[100]
+                      : theme.colors.grey[60]
                   }
                   disabled={checked}
                 />

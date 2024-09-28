@@ -104,7 +104,7 @@
   "services_other": "Другое",
   "team_single": "Только я",
   "team_employees": "работников",
-  "label_address": "Адрес",
+  "label_address": "Выбрать адрес",
   "no_location": "Я работаю удаленно, у меня нет места расположения",
   "label_add": "Добавить",
   "title_find_location": "Искать адрес",
@@ -128,5 +128,8 @@
   "survey_variant_email": "Реклама по электронной почте",
   "survey_variant_magazine": "Реклама в журнале или газете",
   "survey_variant_other": "Другое",
-  "survey_variant_custom_label": "Ваш вариант"
+  "survey_variant_custom_label": "Ваш вариант",
+  "success_modal_title": "Добро пожаловать! Вы готовы начать",
+  "success_modal_description": "Теперь ваш бизнес доступен на платформе Online Beauty. Позвольте клиентам легко записываться на прием, изучать ваши услуги и расширять клиентскую базу с нашей поддержкой.",
+  "button_text_continue": "Продоолжить"
 }

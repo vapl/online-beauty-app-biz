@@ -104,7 +104,7 @@
   "services_other": "Other",
   "team_single": "Just me",
   "team_employees": "employees",
-  "label_address": "Address",
+  "label_address": "Choose your address",
   "no_location": "I work remotely, I don't have a location",
   "label_add": "Add",
   "title_find_location": "Find address",
@@ -128,5 +128,8 @@
   "survey_variant_email": "Email advertisement",
   "survey_variant_magazine": "Magazine or newspaper add",
   "survey_variant_other": "Other",
-  "survey_variant_custom_label": "Your option"
+  "survey_variant_custom_label": "Your option",
+  "success_modal_title": "Welcome! You're Ready to Go",
+  "success_modal_description": "Your business is now available on Online Beauty. Let clients easily book appointments, explore services, and grow your customer base with our platform.",
+  "button_text_continue": "Continue"
 }

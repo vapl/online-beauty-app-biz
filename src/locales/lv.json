@@ -104,7 +104,7 @@
   "services_other": "Cits",
   "team_single": "Tikai es",
   "team_employees": "darbinieki",
-  "label_address": "Adrese",
+  "label_address": "Izvēlēties adresi",
   "no_location": "Es strādāju attālināti, man nav lokācijas vietas",
   "label_add": "Pievienot",
   "title_find_location": "Meklēt adresi",
@@ -128,5 +128,8 @@
   "survey_variant_email": "Reklāma e-pastā",
   "survey_variant_magazine": "Reklāma žurnālā vai avīzē",
   "survey_variant_other": "Cits",
-  "survey_variant_custom_label": "Tavs variants"
+  "survey_variant_custom_label": "Tavs variants",
+  "success_modal_title": "Laipni lūdzam! Jūs esat gatavi sākt",
+  "success_modal_description": "Tagad jūsu bizness ir pieejams platformā Online Beauty. Ļaujiet klientiem ērti rezervēt vizītes, iepazīt pakalpojumus un paplašināt klientu loku ar mūsu palīdzību.",
+  "button_text_continue": "Turpināt"
 }

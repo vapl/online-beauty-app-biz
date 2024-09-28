@@ -22,6 +22,8 @@ import { getBeautyServices } from "../../../data/beautyServices";
 import { UserContext } from "../../context/UserProvider";
 import { updateBusinessInfo } from "../../services/businessService";
 import { BusinessContext } from "../../context/BusinessProvider";
+import LoadingSpinner from "../../components/loading-spinner.component";
+import { handleError } from "../../utils/errorHandler";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -72,6 +74,7 @@ const AccountSetupServicesScreen: React.FC<
   const [showCustomServiceInput, setShowCustomServiceInput] =
     useState<boolean>(false);
   const [isLoadedFromDB, setIsLoadedFromDB] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const services = getBeautyServices(t);
 
   const userContext = useContext(UserContext);
@@ -127,23 +130,31 @@ const AccountSetupServicesScreen: React.FC<
     setShowCustomServiceInput(isCustomSelected);
   };
 
-  const handleSubmit = () => {
-    const selectedServiceLabels = selectedServices.map((serviceKey) => {
-      const service = services.find((s) => s.key === serviceKey);
-      return service ? service.label : "";
-    });
-
-    if (user) {
-      updateBusinessInfo(user.uid, {
-        services: selectedServiceLabels,
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    try {
+      const selectedServiceLabels = selectedServices.map((serviceKey) => {
+        const service = services.find((s) => s.key === serviceKey);
+        return service ? service.label : "";
       });
-      navigation.navigate("AccountSetupTeam");
+
+      if (user) {
+        await updateBusinessInfo(user.uid, {
+          services: selectedServiceLabels,
+        });
+        navigation.navigate("AccountSetupTeam");
+      }
+    } catch (error) {
+      handleError(error, "Failed to update services");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Background>
       <SafeArea>
+        {isLoading && <LoadingSpinner />}
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
           <Header>

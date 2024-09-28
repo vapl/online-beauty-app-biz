@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -13,7 +13,11 @@ import {
 } from "../../types/navigationTypes";
 import styled from "styled-components/native";
 import Button from "../../components/button/button.component";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  CommonActions,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../../context/UserProvider";
 import { BusinessContext } from "../../context/BusinessProvider";
@@ -22,6 +26,9 @@ import StatusNav from "../../components/status-navbar.component";
 import LoadingSpinner from "../../components/loading-spinner.component";
 import Input from "../../components/inputs/input.component";
 import { createSurveyData } from "../../services/surveyServices";
+import SuccessModal from "../../components/modals/success-modal.component";
+import { updateUser } from "../../services/userService";
+import { handleError } from "../../utils/errorHandler";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -76,6 +83,10 @@ const AccountSetupSurveyScreen: React.FC<
   const [checkedValue, setCheckedValue] = useState<number | null>(null);
   const [customVariantInput, setCustomVariantInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [timer, setTimer] = useState<number>(10);
   const currentStep = 4;
   const totalSteps = 5;
 
@@ -113,20 +124,59 @@ const AccountSetupSurveyScreen: React.FC<
     },
   ];
 
-  // useEffect(() => {
-  //   surveyVariants.forEach((variant) => {
-  //     if (
-  //       businessInfo?.userFeedback?.response &&
-  //       businessInfo?.userFeedback?.response === variant.variant
-  //     ) {
-  //       setCheckedValue(variant.value);
-  //     }
-  //   });
-  // }, [businessInfo]);
-
   const handleSelection = (value: number) => {
     setCheckedValue(value);
     if (checkedValue !== 6) setCustomVariantInput("");
+  };
+
+  const handleUserUpdate = async () => {
+    try {
+      if (!user) {
+        throw new Error("User is not authenticated.");
+      }
+      await updateUser(user.uid, { firstLogin: false });
+      userContext.firstLogin = false;
+
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "AppStack" }],
+        })
+      );
+    } catch (error) {
+      handleError(error, "Failed to update user");
+    }
+  };
+
+  const handleSuccess = () => {
+    setTimer(10);
+    setIsSuccess(true);
+
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+    timeoutRef.current = setTimeout(async () => {
+      handleUserUpdate();
+
+      setIsSuccess(false);
+
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }, 10000);
+  };
+
+  const clearCountdown = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    if (timeoutRef.current) {
+      clearInterval(timeoutRef.current);
+    }
   };
 
   const handleSubmit = async () => {
@@ -145,8 +195,10 @@ const AccountSetupSurveyScreen: React.FC<
               ? customVariantInput
               : selectedVariant?.variant,
         };
-
         await createSurveyData(surveyData);
+
+        // Show success modal
+        handleSuccess();
       } else {
         console.error("User ID is missing or user is not authenticated");
       }
@@ -158,70 +210,86 @@ const AccountSetupSurveyScreen: React.FC<
   };
 
   return (
-    <Background>
-      <SafeArea>
-        <ScreenContainer>
-          <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
-          <Header>
-            <Text fontVariant="h3">{t("survey_title")}</Text>
-          </Header>
-          {isLoading && <LoadingSpinner />}
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 0}
-            contentContainerStyle={{ flexGrow: 1 }}
-          >
-            <ScrollView
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{
-                flexGrow: 1,
-                justifyContent: "flex-start",
-              }}
+    <>
+      <Background>
+        <SuccessModal
+          visible={isSuccess}
+          messageTitle={t("success_modal_title")}
+          messageDescription={t("success_modal_description")}
+          buttonLabel={`${t("button_text_continue")} (${timer})`}
+          onClose={() => {
+            handleUserUpdate();
+            clearCountdown();
+            setIsSuccess(false);
+          }}
+        />
+        <SafeArea>
+          <ScreenContainer>
+            <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
+            <Header>
+              <Text fontVariant="h3">{t("survey_title")}</Text>
+            </Header>
+            {isLoading && <LoadingSpinner />}
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 0}
+              contentContainerStyle={{ flexGrow: 1 }}
             >
-              <SurveyWrapper>
-                {surveyVariants.map((variant) => {
-                  return (
-                    <Button
-                      key={variant.value}
-                      label={variant.variant}
-                      mode={"radio"}
-                      disabled={false}
-                      status={
-                        checkedValue === variant.value ? "checked" : "unchecked"
-                      }
-                      onPress={() => handleSelection(variant.value)}
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent: "flex-start",
+                }}
+              >
+                <SurveyWrapper>
+                  {surveyVariants.map((variant) => {
+                    return (
+                      <Button
+                        key={variant.value}
+                        label={variant.variant}
+                        mode={"radio"}
+                        disabled={false}
+                        status={
+                          checkedValue === variant.value
+                            ? "checked"
+                            : "unchecked"
+                        }
+                        onPress={() => handleSelection(variant.value)}
+                      />
+                    );
+                  })}
+                  {checkedValue === 6 && (
+                    <Input
+                      value={customVariantInput}
+                      onChangeText={setCustomVariantInput}
+                      label={t("survey_variant_custom_label")}
+                      iconLeft="pencil"
+                      keyboardType="default"
+                      textContentType="none"
+                      autoCorrect={true}
+                      autoFocus={checkedValue === 6}
+                      required
+                      onSubmitEditing={() => handleSubmit()}
+                      returnKeyType="done"
                     />
-                  );
-                })}
-                {checkedValue === 6 && (
-                  <Input
-                    value={customVariantInput}
-                    onChangeText={setCustomVariantInput}
-                    label={t("survey_variant_custom_label")}
-                    iconLeft="pencil"
-                    keyboardType="default"
-                    textContentType="none"
-                    autoCorrect={true}
-                    autoFocus={checkedValue === 6}
-                    required
-                    onSubmitEditing={() => handleSubmit()}
-                    returnKeyType="done"
-                  />
-                )}
-              </SurveyWrapper>
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </ScreenContainer>
-        <FooterButtonWrapper>
-          <NextButton
-            label={t("button_text_done")}
-            mode="contained"
-            onPress={handleSubmit}
-          />
-        </FooterButtonWrapper>
-      </SafeArea>
-    </Background>
+                  )}
+                </SurveyWrapper>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </ScreenContainer>
+          <FooterButtonWrapper>
+            <NextButton
+              label={t("button_text_done")}
+              mode="contained"
+              onPress={handleSubmit}
+              disabled={!checkedValue}
+            />
+          </FooterButtonWrapper>
+        </SafeArea>
+      </Background>
+    </>
   );
 };
 

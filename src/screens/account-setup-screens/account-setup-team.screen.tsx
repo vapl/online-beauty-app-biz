@@ -19,6 +19,8 @@ import StatusNav from "../../components/status-navbar.component";
 import { UserContext } from "../../context/UserProvider";
 import { BusinessContext } from "../../context/BusinessProvider";
 import { updateBusinessInfo } from "../../services/businessService";
+import { handleError } from "../../utils/errorHandler";
+import LoadingSpinner from "../../components/loading-spinner.component";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -61,6 +63,8 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
   const { t } = useTranslation();
   const navigation = useNavigation<AccountSetupTeamScreenNavigationProp>();
   const [checkedValue, setCheckedValue] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const userContext = useContext(UserContext);
   const businessContext = useContext(BusinessContext);
   if (!userContext || !businessContext) return;
@@ -100,19 +104,29 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
     setCheckedValue(value);
   };
 
-  const handleSubmit = () => {
-    const selectedTeamSize = teamVariants.find(
-      (variant) => variant.value === checkedValue
-    );
-    if (user) {
-      updateBusinessInfo(user.uid, { teamSize: selectedTeamSize?.variant });
-      navigation.navigate("AccountSetupLocation");
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    try {
+      const selectedTeamSize = teamVariants.find(
+        (variant) => variant.value === checkedValue
+      );
+      if (user) {
+        await updateBusinessInfo(user.uid, {
+          teamSize: selectedTeamSize?.variant,
+        });
+        navigation.navigate("AccountSetupLocation");
+      }
+    } catch (error) {
+      handleError(error, "Failed to update team's lineup");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Background>
       <SafeArea>
+        {isLoading && <LoadingSpinner />}
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
           <Header>

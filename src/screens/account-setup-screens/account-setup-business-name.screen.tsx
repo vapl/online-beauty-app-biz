@@ -68,6 +68,7 @@ const AccountSetupBusinessNameScreen: React.FC<
   const [webPage, setWebpage] = useState<string>("");
   const [businessNameError, setBusinessNameError] = useState<string>();
   const [webPageError, setWebPageError] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const currentStep = 0;
   const totalSteps = 5;
 
@@ -77,7 +78,7 @@ const AccountSetupBusinessNameScreen: React.FC<
   const { user } = userContext;
 
   if (!businessContext) return null;
-  const { businessInfo, isLoading, isError } = businessContext;
+  const { businessInfo } = businessContext;
 
   const validateWebPageName = (value: string) => {
     const regex = /^www\.[a-zA-Z0-9_-]+\.[a-zA-Z]{2,3}(\/[a-zA-Z0-9_-]+)*\/?$/;
@@ -94,14 +95,14 @@ const AccountSetupBusinessNameScreen: React.FC<
   }, [businessInfo]);
 
   const handleSubmit = async () => {
-    console.log("start: ", isLoading);
+    setIsLoading(true);
     const webPageValidationError = validateWebPageName(webPage);
     setWebPageError(webPageValidationError);
     if (webPageValidationError) return;
 
     try {
       if (user) {
-        updateBusinessInfo(user.uid, {
+        await updateBusinessInfo(user.uid, {
           businessName: businessName,
           website: webPage,
         });
@@ -112,13 +113,14 @@ const AccountSetupBusinessNameScreen: React.FC<
     } catch (error) {
       handleError(error, "Error updating business information: ");
     } finally {
-      console.log("end: ", isLoading);
+      setIsLoading(false);
     }
   };
 
   return (
     <Background>
       <SafeArea>
+        {isLoading && <LoadingSpinner />}
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
           <Header>
@@ -129,7 +131,6 @@ const AccountSetupBusinessNameScreen: React.FC<
               {t("account_setup_business_name_description")}
             </Text>
           </Header>
-          {isLoading && <LoadingSpinner />}
           <ScrollView
             automaticallyAdjustKeyboardInsets
             keyboardShouldPersistTaps="handled"

@@ -8,6 +8,7 @@ export interface StyledButtonProps {
   disabled?: boolean;
   labelStyle?: TextStyle;
   labelColor?: string;
+  buttonColor?: string;
 }
 
 export const StyledButton = styled(PaperButton).attrs<StyledButtonProps>(
@@ -26,7 +27,7 @@ export const StyledButton = styled(PaperButton).attrs<StyledButtonProps>(
   background-color: ${(props) =>
     props.disabled
       ? props.theme.colors.grey[40]
-      : props.theme.colors.primary.dark};
+      : props.buttonColor || props.theme.colors.primary.dark};
 `;
 
 export const TextButton = styled(PaperButton).attrs((props) => ({
@@ -48,9 +49,12 @@ export const TextButton = styled(PaperButton).attrs((props) => ({
   align-self: flex-end;
 `;
 
-export const ContainedButton = styled(StyledButton).attrs((props) => ({
-  mode: "contained",
-}))`
+export const ContainedButton = styled(StyledButton).attrs<StyledButtonProps>(
+  (props) => ({
+    mode: "contained",
+    textColor: props.labelColor || props.theme.colors.white,
+  })
+)`
   flex-grow: 1;
 `;
 
