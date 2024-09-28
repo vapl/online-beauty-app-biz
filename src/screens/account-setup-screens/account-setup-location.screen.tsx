@@ -21,6 +21,7 @@ import StatusNav from "../../components/status-navbar.component";
 import CustomModal from "../../components/modals/custom-modal.component";
 import { updateBusinessInfo } from "../../services/businessService";
 import LocationInput from "../../components/inputs/location-input.component";
+import LoadingSpinner from "../../components/loading-spinner.component";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -69,6 +70,7 @@ const AccountSetupLocationScreen: React.FC<
   });
   const [checked, setChecked] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const currentStep = 3;
   const totalSteps = 5;
 
@@ -101,32 +103,40 @@ const AccountSetupLocationScreen: React.FC<
     setLocation(selectLocation);
   };
 
-  const handleSubmit = () => {
-    if (user) {
-      if (!checked) {
-        setHasLocation(true);
-        navigation.navigate("AccountSetupLocationConfirmation", {
-          ...location,
-          hasLocation: true,
-        });
-      } else {
-        setHasLocation(false),
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    try {
+      if (user) {
+        if (!checked) {
+          setHasLocation(true);
           navigation.navigate("AccountSetupLocationConfirmation", {
-            hasLocation: false,
-            address: "",
-            city: "",
-            parish: "",
-            country: "",
-            postalCode: "",
+            ...location,
+            hasLocation: true,
           });
+        } else {
+          setHasLocation(false);
+          if (user && user.uid) {
+            const locationData = {
+              hasLocation: hasLocation,
+            };
+            await updateBusinessInfo(user.uid, { location: locationData });
+            navigation.navigate("AccountSetupSurvey");
+          } else {
+            console.error("User ID is missing or user is not authenticated");
+          }
+        }
       }
+    } catch (error) {
+      console.error("Failed to update business info", error);
+    } finally {
+      setIsLoading(false);
     }
-    return;
   };
 
   return (
     <Background>
       <SafeArea>
+        {isLoading && <LoadingSpinner />}
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
           <Header>

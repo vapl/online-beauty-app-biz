@@ -171,6 +171,7 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
               label={t("button_next")}
               mode="contained"
               onPress={handleSubmit}
+              disabled={!checkedValue}
             />
           </View>
         </ScreenContainer>

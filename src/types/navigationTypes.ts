@@ -29,11 +29,11 @@ export type RootStackParamList = {
   AccountSetupLocationConfirmation:
     | {
         hasLocation: boolean;
-        address: string;
-        city: string;
-        country: string;
-        parish: string;
-        postalCode: string;
+        address?: string;
+        city?: string;
+        country?: string;
+        parish?: string;
+        postalCode?: string;
       }
     | undefined;
   AccountSetupSurvey: undefined;
