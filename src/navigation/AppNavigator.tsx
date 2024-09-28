@@ -8,7 +8,7 @@ import styled, { useTheme } from "styled-components/native";
 import * as Linking from "expo-linking";
 import OnboardingBusinessSetupStack from "./OnboardingBusinessSetupStack";
 import { UserContext } from "../context/UserProvider";
-import LoadingSpinner from "../components/loading.spinner";
+import LoadingSpinner from "../components/loading-spinner.component";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;

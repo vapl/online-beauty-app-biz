@@ -119,5 +119,14 @@
   "label_appartment": "Квартира",
   "button_cancel": "Отмена",
   "button_save": "Сохранить",
-  "text_clear": "Очистить"
+  "text_clear": "Очистить",
+  "button_text_done": "Готова",
+  "survey_title": "Как вы узнали об Online Beauty?",
+  "survey_variant_recomendation": "Рекомендация",
+  "survey_variant_search_engine": "Поисковая система (Google, Bing...)",
+  "survey_variant_social": "Социальные сети",
+  "survey_variant_email": "Реклама по электронной почте",
+  "survey_variant_magazine": "Реклама в журнале или газете",
+  "survey_variant_other": "Другое",
+  "survey_variant_custom_label": "Ваш вариант"
 }

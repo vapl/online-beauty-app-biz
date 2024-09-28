@@ -7,7 +7,7 @@ import {
   ScrollView,
   Platform,
 } from "react-native";
-import LoadingSpinner from "../../components/loading.spinner";
+import LoadingSpinner from "../../components/loading-spinner.component";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";

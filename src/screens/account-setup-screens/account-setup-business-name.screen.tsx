@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Input from "../../components/inputs/input.component";
 import Text from "../../components/text.component";
-import StatusNav from "../../components/status-navbar";
+import StatusNav from "../../components/status-navbar.component";
 import { UserContext } from "../../context/UserProvider";
 import { BusinessContext } from "../../context/BusinessProvider";
 import {
@@ -24,6 +24,7 @@ import {
   updateBusinessInfo,
 } from "../../services/businessService";
 import { handleError } from "../../utils/errorHandler";
+import LoadingSpinner from "../../components/loading-spinner.component";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -93,6 +94,7 @@ const AccountSetupBusinessNameScreen: React.FC<
   }, [businessInfo]);
 
   const handleSubmit = async () => {
+    console.log("start: ", isLoading);
     const webPageValidationError = validateWebPageName(webPage);
     setWebPageError(webPageValidationError);
     if (webPageValidationError) return;
@@ -109,9 +111,9 @@ const AccountSetupBusinessNameScreen: React.FC<
       }
     } catch (error) {
       handleError(error, "Error updating business information: ");
+    } finally {
+      console.log("end: ", isLoading);
     }
-
-    return;
   };
 
   return (
@@ -127,6 +129,7 @@ const AccountSetupBusinessNameScreen: React.FC<
               {t("account_setup_business_name_description")}
             </Text>
           </Header>
+          {isLoading && <LoadingSpinner />}
           <ScrollView
             automaticallyAdjustKeyboardInsets
             keyboardShouldPersistTaps="handled"

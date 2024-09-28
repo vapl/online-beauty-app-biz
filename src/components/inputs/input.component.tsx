@@ -142,6 +142,7 @@ interface InputProps {
     | "emergency-call";
   disabled?: boolean;
   editable?: boolean;
+  autoFocus?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -164,6 +165,7 @@ const Input: React.FC<InputProps> = ({
   setCallingCode,
   disabled = false,
   editable = false,
+  autoFocus,
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -289,6 +291,7 @@ const Input: React.FC<InputProps> = ({
               setIsDisabled(true);
               setIsFocused(false);
             }}
+            autoFocus={autoFocus}
             render={(props) => <RNTextInput {...props} ref={inputRef} />}
             contextMenuHidden={true}
             error={!!errorMessage}

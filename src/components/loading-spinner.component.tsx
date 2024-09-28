@@ -2,6 +2,7 @@ import React from "react";
 import { ActivityIndicator } from "react-native-paper";
 import { View } from "react-native";
 import styled from "styled-components/native";
+import { useTheme } from "styled-components/native";
 
 const IndicatorWrapper = styled(View)`
   position: absolute;
@@ -16,9 +17,10 @@ const IndicatorWrapper = styled(View)`
 `;
 
 const LoadingSpinner: React.FC = () => {
+  const theme = useTheme();
   return (
     <IndicatorWrapper>
-      <ActivityIndicator size={"large"} color="black" />
+      <ActivityIndicator size={"large"} color={theme.colors.primary.dark} />
     </IndicatorWrapper>
   );
 };

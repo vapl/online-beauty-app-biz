@@ -5,9 +5,10 @@ import {
   ContainedButton,
   RadioButtonCustom,
   StyledButtonProps,
+  RadioWrapper,
 } from "./button.styles";
 import Text from "../text.component";
-import { useTheme } from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -17,16 +18,15 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 interface ButtonProps extends StyledButtonProps {
   mode: "text" | "outlined" | "contained" | "radio" | "check";
-  label?: string;
+  label: string;
   icon?: string;
   iconSize?: number;
   iconColor?: string;
   disabled?: boolean;
   compact?: boolean;
-  value?: string;
+  value?: any;
   status?: "checked" | "unchecked";
   onPress: () => void;
-  onValueChange?: (value: string) => void;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -43,7 +43,6 @@ const Button: React.FC<ButtonProps> = ({
   labelStyle,
   labelColor,
   onPress,
-  onValueChange,
 }) => {
   const theme = useTheme();
 
@@ -88,15 +87,15 @@ const Button: React.FC<ButtonProps> = ({
         icon={renderIcon}
         disabled={disabled}
         onPress={onPress}
-        justifyContent={justifyContent}
+        justifyContent="flex-start"
       >
-        <RadioButtonCustom
-          value={value}
-          disabled={disabled}
-          status={status}
-          onPress={onPress}
-        />
-        <View>
+        <RadioWrapper>
+          <RadioButtonCustom
+            value={value}
+            disabled={disabled}
+            status={status}
+            onPress={onPress}
+          />
           <Text
             textColor={
               status === "checked"
@@ -108,7 +107,7 @@ const Button: React.FC<ButtonProps> = ({
           >
             {label}
           </Text>
-        </View>
+        </RadioWrapper>
       </OutlinedButton>
     );
   }

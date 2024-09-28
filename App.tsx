@@ -11,11 +11,11 @@ import { AppRegistry, SafeAreaView, Switch, View } from "react-native";
 import { lightTheme, darkTheme } from "./src/infrastructure/theme/theme";
 import changeNavigationBarColor from "react-native-navigation-bar-color";
 import { StatusBar } from "react-native";
-import LoadingSpinner from "./src/components/loading.spinner";
+import LoadingSpinner from "./src/components/loading-spinner.component";
 import { UserProvider } from "./src/context/UserProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppProviders from "./src/context/AppProviders";
-import ErrorBoundary from "./src/components/error-boundary";
+import ErrorBoundary from "./src/components/error-boundary.component";
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -54,13 +54,10 @@ export default function App() {
     changeNavigationBarColor(theme.colors.background, theme === darkTheme);
   }, [isDarkTheme]);
 
-  if (!dataLoaded) {
-    return <LoadingSpinner />; // Return null to render nothing while loading
-  }
-
   return (
     <AppProviders>
       <ThemeProvider theme={theme}>
+        {!dataLoaded && <LoadingSpinner />}
         <I18nextProvider i18n={i18n}>
           <StatusBar
             barStyle={isDarkTheme ? "light-content" : "dark-content"}

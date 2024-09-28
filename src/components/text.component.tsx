@@ -23,7 +23,7 @@ const defaultTextStyle = (theme: DefaultTheme, props: TextProps) => `
   text-align: ${props.textAlign};
   flex-wrap: wrap;
   margin-top: 0px;
-  margin-bottom: 0px;
+  margin-bottom: px;
 `;
 
 const bodyLarge = (theme: DefaultTheme) => `

@@ -36,6 +36,7 @@ export type RootStackParamList = {
         postalCode: string;
       }
     | undefined;
+  AccountSetupSurvey: undefined;
   AccountSetupServices: undefined;
   AccountSetupTeam: undefined;
   VerifyEmail: { url: string };
@@ -84,11 +85,16 @@ export type AccountSetupLocationScreenNavigationProp = StackNavigationProp<
 >;
 export type AccountSetupLocationConfirmationScreenNavigationProp =
   StackNavigationProp<RootStackParamList, "AccountSetupLocationConfirmation">;
+
 export type AccountSetupServicesScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "AccountSetupServices"
 >;
 export type AccountSetupTeamScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "AccountSetupTeam"
+>;
+export type AccountSetupSurveyNavigationProp = StackNavigationProp<
   RootStackParamList,
   "AccountSetupTeam"
 >;
@@ -151,6 +157,11 @@ export type AccountSetupLocationScreenProps = {
 export type AccountSetupLocationConfirmationScreenProps = {
   navigation: AccountSetupLocationConfirmationScreenNavigationProp;
   route: RouteProp<RootStackParamList, "AccountSetupLocationConfirmation">;
+};
+
+export type AccountSetupSurveyScreenProps = {
+  navigation: AccountSetupSurveyNavigationProp;
+  route: RouteProp<RootStackParamList, "AccountSetupSurvey">;
 };
 
 export type AccountSetupServicesScreenProps = {

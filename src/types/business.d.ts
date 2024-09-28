@@ -55,8 +55,4 @@ export interface BusinessInfoProps {
     ReceiptNoPrefix?: string;
     nextReceiptNumber?: number;
   };
-  userFeedback?: {
-    question: string;
-    response?: string;
-  };
 }

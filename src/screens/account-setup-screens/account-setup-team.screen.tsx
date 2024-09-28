@@ -15,7 +15,7 @@ import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Text from "../../components/text.component";
-import StatusNav from "../../components/status-navbar";
+import StatusNav from "../../components/status-navbar.component";
 import { UserContext } from "../../context/UserProvider";
 import { BusinessContext } from "../../context/BusinessProvider";
 import { updateBusinessInfo } from "../../services/businessService";
@@ -89,12 +89,12 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
   ];
 
   useEffect(() => {
-    teamVariants.map((variant) => {
+    teamVariants.forEach((variant) => {
       if (businessInfo?.teamSize && businessInfo.teamSize === variant.variant) {
         setCheckedValue(variant.value);
       }
     });
-  }, [businessInfo, teamVariants]);
+  }, [businessInfo]);
 
   const handleSelection = (value: number) => {
     setCheckedValue(value);
@@ -138,7 +138,7 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
                     <RadioButton
                       key={variant.value}
                       mode="radio"
-                      value={variant.value.toString()}
+                      value={variant.value}
                       label={variant.variant}
                       status={
                         checkedValue === variant.value ? "checked" : "unchecked"

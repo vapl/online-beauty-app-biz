@@ -19,12 +19,12 @@ import { useTranslation } from "react-i18next";
 import { UserContext } from "../../context/UserProvider";
 import { BusinessContext } from "../../context/BusinessProvider";
 import Text from "../../components/text.component";
-import StatusNav from "../../components/status-navbar";
+import StatusNav from "../../components/status-navbar.component";
 import CustomModal from "../../components/modals/custom-modal.component";
 import { updateBusinessInfo } from "../../services/businessService";
 import Input from "../../components/inputs/input.component";
 import MapView from "react-native-maps";
-import LoadingSpinner from "../../components/loading.spinner";
+import LoadingSpinner from "../../components/loading-spinner.component";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -132,13 +132,14 @@ const AccountSetupLocationConfirmationScreen: React.FC<
   });
   const [location, setLocation] = useState<LocationProps>(initialLocation);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const currentStep = 3;
   const totalSteps = 5;
 
   const userContext = useContext(UserContext);
   const businessContext = useContext(BusinessContext);
   if (!userContext || !businessContext) {
-    return <LoadingSpinner />;
+    return;
   }
   const { user } = userContext;
 
@@ -173,8 +174,9 @@ const AccountSetupLocationConfirmationScreen: React.FC<
   }, [location, navigation]);
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
-      if (user) {
+      if (user && user.uid) {
         const locationData = !hasLocation
           ? {
               hasLocation: hasLocation,
@@ -189,9 +191,14 @@ const AccountSetupLocationConfirmationScreen: React.FC<
               ...location,
             };
         await updateBusinessInfo(user.uid, { location: locationData });
+        navigation.navigate("AccountSetupSurvey");
+      } else {
+        console.error("User ID is missing or user is not authenticated");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to update business info", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -208,6 +215,7 @@ const AccountSetupLocationConfirmationScreen: React.FC<
               {t("account_setup_location_confirmation_description")}
             </Text>
           </Header>
+          {isLoading && <LoadingSpinner />}
           <ScrollView
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}

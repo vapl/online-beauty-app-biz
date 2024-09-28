@@ -13,10 +13,9 @@ import AccountSetupServicesScreen from "../screens/account-setup-screens/account
 import AccountSetupTeamScreen from "../screens/account-setup-screens/account-setup-team.screen";
 import AccountSetupLocationScreen from "../screens/account-setup-screens/account-setup-location.screen";
 import AccountSetupLocationConfirmationScreen from "../screens/account-setup-screens/account-setup-location-confirmation.screen";
+import AccountSetupSurveyScreen from "../screens/account-setup-screens/account-setup-survey.screen";
 import { UserContext } from "../context/UserProvider";
 import { updateUser } from "../services/userService";
-import AppStack from "./AppStack";
-import AccountVerificationBanner from "../components/complete-setup-banner.component";
 import AccountSetupStack from "../components/account-setup-stack.component";
 import { handleError } from "../utils/errorHandler";
 
@@ -138,6 +137,23 @@ const OnboardingBusinessSetupStack: React.FC = () => {
       <Stack.Screen
         name="AccountSetupLocationConfirmation"
         component={AccountSetupLocationConfirmationScreen}
+        options={{
+          title: t("account_settings"),
+          headerRight: () => (
+            <Text
+              fontVariant="buttonMedium"
+              textColor={theme.colors.secondary.dark}
+              textAlign="right"
+              onPress={handleSkipSettings}
+            >
+              {t("skip")}
+            </Text>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="AccountSetupSurvey"
+        component={AccountSetupSurveyScreen}
         options={{
           title: t("account_settings"),
           headerRight: () => (

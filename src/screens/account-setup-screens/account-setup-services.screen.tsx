@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Input from "../../components/inputs/input.component";
 import Text from "../../components/text.component";
-import StatusNav from "../../components/status-navbar";
+import StatusNav from "../../components/status-navbar.component";
 import ServiceCard from "../../components/service-card.component";
 import { getBeautyServices } from "../../../data/beautyServices";
 import { UserContext } from "../../context/UserProvider";

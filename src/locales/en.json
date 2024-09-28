@@ -119,5 +119,14 @@
   "label_appartment": "Appartment",
   "button_cancel": "Cancel",
   "button_save": "Save",
-  "text_clear": "Clear"
+  "text_clear": "Clear",
+  "button_text_done": "Done",
+  "survey_title": "How did you find out about Online Beauty?",
+  "survey_variant_recomendation": "Recommendation",
+  "survey_variant_search_engine": "Search engine (e.g., Google, Bing...)",
+  "survey_variant_social": "Social media",
+  "survey_variant_email": "Email advertisement",
+  "survey_variant_magazine": "Magazine or newspaper add",
+  "survey_variant_other": "Other",
+  "survey_variant_custom_label": "Your option"
 }

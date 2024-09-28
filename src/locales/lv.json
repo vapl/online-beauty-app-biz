@@ -119,5 +119,14 @@
   "label_appartment": "Dzīvoklis",
   "button_cancel": "Atcelt",
   "button_save": "Saglabāt",
-  "text_clear": "Notīrīt"
+  "text_clear": "Notīrīt",
+  "button_text_done": "Gatavs",
+  "survey_title": "Kā tu uzzināji par Online Beauty?",
+  "survey_variant_recomendation": "Rekomendācija",
+  "survey_variant_search_engine": "Meklēšanas resurss (Google, Bing...)",
+  "survey_variant_social": "Sociālie tīkli",
+  "survey_variant_email": "Reklāma e-pastā",
+  "survey_variant_magazine": "Reklāma žurnālā vai avīzē",
+  "survey_variant_other": "Cits",
+  "survey_variant_custom_label": "Tavs variants"
 }

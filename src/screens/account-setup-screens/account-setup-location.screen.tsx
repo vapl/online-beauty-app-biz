@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { UserContext } from "../../context/UserProvider";
 import { BusinessContext } from "../../context/BusinessProvider";
 import Text from "../../components/text.component";
-import StatusNav from "../../components/status-navbar";
+import StatusNav from "../../components/status-navbar.component";
 import CustomModal from "../../components/modals/custom-modal.component";
 import { updateBusinessInfo } from "../../services/businessService";
 import LocationInput from "../../components/inputs/location-input.component";
@@ -188,10 +188,11 @@ const AccountSetupLocationScreen: React.FC<
             initialModalHeight={0.95}
           >
             <LocationInput
-              placeholder={location ? location.address : t("label_address")}
+              placeholder={t("label_address")}
               onPress={handleLocationSelect}
               language={language}
               country="lv"
+              autoFocus={modalVisible}
             />
           </CustomModal>
           <View>

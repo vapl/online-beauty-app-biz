@@ -23,6 +23,7 @@ interface LocationInputProps {
   language?: string;
   country?: string;
   onPress?: (data: any, details: any) => void;
+  autoFocus?: boolean;
 }
 
 const LocationInput: React.FC<LocationInputProps> = ({
@@ -30,6 +31,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
   language = "lv",
   country = "lv",
   onPress,
+  autoFocus,
 }) => {
   const theme = useTheme();
   const [isFocused, setIsFocused] = useState<boolean>(false);
@@ -87,6 +89,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
         mode: "outlined",
         onFocus: () => setIsFocused(true),
         onBlur: () => setIsFocused(false),
+        autoFocus: autoFocus,
         left: isFocused ? undefined : (
           <TextInput.Icon icon={"map-search-outline"} />
         ),

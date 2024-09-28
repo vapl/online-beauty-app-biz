@@ -1,7 +1,7 @@
 import styled, { useTheme } from "styled-components/native";
 import { Button as PaperButton, RadioButton } from "react-native-paper";
 import { typography } from "../../infrastructure/theme/typography";
-import { TextStyle, ViewStyle } from "react-native";
+import { TextStyle, View, ViewStyle } from "react-native";
 
 export interface StyledButtonProps {
   justifyContent?: ViewStyle["justifyContent"];
@@ -61,9 +61,10 @@ export const OutlinedButton = styled(StyledButton).attrs<StyledButtonProps>(
       ? props.theme.colors.grey[60]
       : props.labelColor || props.theme.colors.primary.dark,
     contentStyle: {
-      width: undefined,
+      // width: undefined,
       height: 52,
       justifyContent: props.justifyContent,
+      paddingLeft: 0,
     },
   })
 )<StyledButtonProps>`
@@ -72,7 +73,7 @@ export const OutlinedButton = styled(StyledButton).attrs<StyledButtonProps>(
     props.disabled
       ? props.theme.colors.grey[60]
       : props.theme.colors.primary.dark};
-  width: undefined;
+  /* width: undefined; */
   justify-content: center;
   flex-grow: 1;
 `;
@@ -83,3 +84,11 @@ export const RadioButtonCustom = styled(RadioButton.Android).attrs((props) => ({
     : props.theme.colors.primary.dark,
   uncheckedColor: props.theme.colors.grey[60],
 }))``;
+
+export const RadioWrapper = styled(View)`
+  flex-direction: row;
+  align-items: center;
+  padding-top: 4px;
+  margin-left: -8px;
+  gap: ${(props) => props.theme.space.sm}px;
+`;
