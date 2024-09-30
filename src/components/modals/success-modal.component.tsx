@@ -40,7 +40,7 @@ interface successModalProps {
 const SuccessModal: React.FC<successModalProps> = ({
   visible,
   onClose,
-  icon = "check-circle-outline",
+  icon = "checkbox-marked-circle-outline",
   messageTitle,
   messageDescription,
   buttonLabel = "Continue",

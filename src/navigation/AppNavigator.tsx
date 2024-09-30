@@ -38,16 +38,14 @@ const AppNavigator: React.FC = () => {
     <NavigationContainer linking={linking}>
       {isAuthenticated ? (
         <>
-          <SafeArea>
-            {firstLogin ? (
-              <OnboardingBusinessSetupStack />
-            ) : (
-              <>
-                {!isEmailVerified && <AccountVerificationBanner />}
-                <AppStack />
-              </>
-            )}
-          </SafeArea>
+          {firstLogin ? (
+            <OnboardingBusinessSetupStack />
+          ) : (
+            <>
+              {/* {!isEmailVerified && <AccountVerificationBanner />} */}
+              <AppStack />
+            </>
+          )}
         </>
       ) : (
         <AuthStack />

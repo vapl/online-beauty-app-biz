@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import {
   AppStackNavigationProp,
-  MainScreenProps,
+  // MainScreenProps,
 } from "../../types/navigationTypes";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -17,13 +17,21 @@ import Text from "../../components/text.component";
 import Button from "../../components/button/button.component";
 import { authStateListener, logoutUser } from "../../services/authService";
 import { sendVerificationEmail } from "../../services/authService";
-import { User } from "firebase/auth";
 import { getUserData } from "../../services/userService";
-import { firestore } from "../../api/firebaseConfig";
-import { doc, updateDoc } from "firebase/firestore";
 import { UserContext } from "../../context/UserProvider";
 import { SnackbarMessage } from "../../components/snackbar.component";
 import { handleError } from "../../utils/errorHandler";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+
+// types/navigationTypes.ts
+
+export type TabParamList = {
+  Main: undefined; // 'Main' ekrānam nav papildus parametru
+  Profile: undefined; // 'Profile' arī nav parametru
+};
+
+// Tiek definēts MainScreen props tips, izmantojot BottomTabScreenProps
+type MainScreenProps = BottomTabScreenProps<TabParamList, "Main">;
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;

@@ -63,18 +63,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  // useEffect(() => {
-  //   if (user && !isEmailVerified) {
-  //     const intervalId = setInterval(async () => {
-  //       await user.reload();
-  //       if (user.emailVerified && !isEmailVerified) {
-  //         setIfEmailVerified(true);
-  //       }
-  //     }, 10000);
-  //     return () => clearInterval(intervalId);
-  //   }
-  // }, [user, isEmailVerified]);
-
   return (
     <UserContext.Provider
       value={{ user, firstLogin, isAuthenticated, isLoading, isEmailVerified }}

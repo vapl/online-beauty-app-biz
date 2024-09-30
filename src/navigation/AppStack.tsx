@@ -1,14 +1,13 @@
-import React, { useContext } from "react";
+import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AppStackParamList } from "../types/navigationTypes";
-import MainScreen from "../screens/main-screens/main.screen";
 import { useTheme } from "styled-components/native";
-import { useTranslation } from "react-i18next";
+import DrawerNavigator from "./drawer-navigator/DrawerNavigator";
+
 const Stack = createStackNavigator<AppStackParamList>();
 
 const AppStack: React.FC = () => {
   const theme = useTheme();
-  const { t } = useTranslation();
 
   return (
     <Stack.Navigator
@@ -19,13 +18,14 @@ const AppStack: React.FC = () => {
         },
         headerTintColor: theme.colors.text,
         headerTitleAlign: "center",
+        headerShown: false,
       }}
     >
       <Stack.Screen
         name="Main"
-        component={MainScreen}
+        component={DrawerNavigator}
         options={{
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

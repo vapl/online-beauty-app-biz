@@ -2,14 +2,31 @@
 
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
 // Define AppStackParamList for nested navigation
 export type AppStackParamList = {
   Main: undefined;
 };
 
-export type AuthStackParamList = {
-  Login: undefined;
+// Drawer navigation parameter list
+export type DrawerParamList = {
+  BusinessProfile: undefined;
+  UserProfile: undefined;
+  Services: undefined;
+  Marketing: undefined;
+  OnlineRezervations: undefined;
+  Team: undefined;
+  Statistics: undefined;
+  PaymentsAndBilling: undefined;
+  Support: undefined;
+};
+
+export type TabParamList = {
+  Appointments: undefined;
+  Clients: undefined;
+  Checkout: undefined;
 };
 
 // Definējiet Stack parametru sarakstu
@@ -103,6 +120,55 @@ export type VerifyEmailScreenNavigationProp = StackNavigationProp<
   "VerifyEmail"
 >;
 
+// Drawer navigation props
+export type BusinessProfileNavigationProp = DrawerNavigationProp<
+  DrawerParamList,
+  "BusinessProfile"
+>;
+export type UserProfileNavigationProp = DrawerNavigationProp<
+  DrawerParamList,
+  "UserProfile"
+>;
+export type ServicesNavigationProp = DrawerNavigationProp<
+  DrawerParamList,
+  "Services"
+>;
+export type MarketingNavigationProp = DrawerNavigationProp<
+  DrawerParamList,
+  "Marketing"
+>;
+export type OnlineRezervationsNavigationProp = DrawerNavigationProp<
+  DrawerParamList,
+  "OnlineRezervations"
+>;
+export type TeamNavigationProp = DrawerNavigationProp<DrawerParamList, "Team">;
+export type StatisticsNavigationProp = DrawerNavigationProp<
+  DrawerParamList,
+  "Statistics"
+>;
+export type PaymentsAndBillingNavigationProp = DrawerNavigationProp<
+  DrawerParamList,
+  "PaymentsAndBilling"
+>;
+export type SupportNavigationProp = DrawerNavigationProp<
+  DrawerParamList,
+  "Support"
+>;
+
+// Tab navigation props
+export type AppointmentsNavigationProp = BottomTabNavigationProp<
+  TabParamList,
+  "Appointments"
+>;
+export type ClientsNavigationProp = DrawerNavigationProp<
+  TabParamList,
+  "Clients"
+>;
+export type CheckoutNavigationProp = DrawerNavigationProp<
+  TabParamList,
+  "Checkout"
+>;
+
 // Ekrāna props tips katram ekrānam
 export type AppStackScreenProps = {
   navigation: AppStackNavigationProp;
@@ -177,4 +243,56 @@ export type AccountSetupTeamScreenProps = {
 export type VerifyEmailScreenProps = {
   navigation: VerifyEmailScreenNavigationProp;
   route: RouteProp<RootStackParamList, "VerifyEmail">;
+};
+
+// Drawer screen props
+export type BusinessProfileScreenProps = {
+  navigation: BusinessProfileNavigationProp;
+  route: RouteProp<DrawerParamList, "BusinessProfile">;
+};
+export type UserProfileScreenProps = {
+  navigation: UserProfileNavigationProp;
+  route: RouteProp<DrawerParamList, "UserProfile">;
+};
+export type ServicesScreenProps = {
+  navigation: ServicesNavigationProp;
+  route: RouteProp<DrawerParamList, "Services">;
+};
+export type MarketingScreenProps = {
+  navigation: MarketingNavigationProp;
+  route: RouteProp<DrawerParamList, "Marketing">;
+};
+export type OnlineRezervationsScreenProps = {
+  navigation: OnlineRezervationsNavigationProp;
+  route: RouteProp<DrawerParamList, "OnlineRezervations">;
+};
+export type TeamScreenProps = {
+  navigation: TeamNavigationProp;
+  route: RouteProp<DrawerParamList, "Team">;
+};
+export type StatisticsScreenProps = {
+  navigation: StatisticsNavigationProp;
+  route: RouteProp<DrawerParamList, "Statistics">;
+};
+export type PaymentsAndBillingScreenProps = {
+  navigation: PaymentsAndBillingNavigationProp;
+  route: RouteProp<DrawerParamList, "PaymentsAndBilling">;
+};
+export type SupportScreenProps = {
+  navigation: SupportNavigationProp;
+  route: RouteProp<DrawerParamList, "Support">;
+};
+
+// Tab screen props
+export type AppointmentsScreenProps = {
+  navigation: AppointmentsNavigationProp;
+  route: RouteProp<TabParamList, "Appointments">;
+};
+export type ClientsScreenProps = {
+  navigation: ClientsNavigationProp;
+  route: RouteProp<TabParamList, "Clients">;
+};
+export type CheckoutScreenProps = {
+  navigation: CheckoutNavigationProp;
+  route: RouteProp<TabParamList, "Checkout">;
 };
