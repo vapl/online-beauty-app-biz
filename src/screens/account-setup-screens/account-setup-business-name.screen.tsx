@@ -78,7 +78,7 @@ const AccountSetupBusinessNameScreen: React.FC<
   const { user } = userContext;
 
   if (!businessContext) return null;
-  const { businessInfo } = businessContext;
+  const { businessData } = businessContext;
 
   const validateWebPageName = (value: string) => {
     const regex = /^www\.[a-zA-Z0-9_-]+\.[a-zA-Z]{2,3}(\/[a-zA-Z0-9_-]+)*\/?$/;
@@ -88,11 +88,11 @@ const AccountSetupBusinessNameScreen: React.FC<
   };
 
   useEffect(() => {
-    if (businessInfo) {
-      setBusinessName(businessInfo.businessName || "");
-      setWebpage(businessInfo.website || "");
+    if (businessData) {
+      setBusinessName(businessData.businessName || "");
+      setWebpage(businessData.website || "");
     }
-  }, [businessInfo]);
+  }, [businessData]);
 
   const handleSubmit = async () => {
     setIsLoading(true);

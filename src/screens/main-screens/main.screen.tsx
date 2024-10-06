@@ -6,10 +6,8 @@ import {
   ScrollView,
   RefreshControl,
 } from "react-native";
-import {
-  AppStackNavigationProp,
-  // MainScreenProps,
-} from "../../types/navigationTypes";
+import // MainScreenProps,
+"../../types/navigationTypes";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -68,7 +66,7 @@ const MainScreen: React.FC<MainScreenProps> = () => {
   const { t, i18n } = useTranslation();
   const language = i18n.language;
   const theme = useTheme();
-  const navigation = useNavigation<AppStackNavigationProp>();
+  const navigation = useNavigation();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [snackBarMessage, setSnackBarMessage] = useState<string>("");

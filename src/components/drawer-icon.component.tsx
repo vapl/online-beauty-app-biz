@@ -38,14 +38,14 @@ const CustomDrawerIcon: React.FC<CustomDrawerIconProps> = ({
   const [businessFirstChar, SetBusinessFirstChar] = useState<string>("");
   if (!userContext || !businessContext) return;
   const { user } = userContext;
-  const { businessInfo } = businessContext;
+  const { businessData } = businessContext;
 
   useEffect(() => {
-    if (businessInfo?.businessName) {
-      const businessName = businessInfo?.businessName;
+    if (businessData?.businessName) {
+      const businessName = businessData?.businessName;
       SetBusinessFirstChar(businessName?.charAt(0));
     }
-  }, [businessInfo?.businessName, drawerStatus]);
+  }, [businessData?.businessName, drawerStatus]);
 
   // Animated value
   const animatedStyle = useAnimatedStyle(() => {
@@ -77,14 +77,14 @@ const CustomDrawerIcon: React.FC<CustomDrawerIconProps> = ({
           />
         ) : drawerStatus === "closed" ? (
           <TouchableOpacity onPress={onPress}>
-            {businessInfo?.businessLogo ? (
+            {businessData?.businessLogo ? (
               <Image
                 style={{
                   width: size,
                   height: size,
                   borderRadius: size / 2,
                 }}
-                source={{ uri: businessInfo.businessLogo }}
+                source={{ uri: businessData.businessLogo }}
               />
             ) : (
               <View

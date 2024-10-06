@@ -82,15 +82,15 @@ const AccountSetupServicesScreen: React.FC<
   if (!userContext) return;
   if (!businessContext) return;
   const { user } = userContext;
-  const { businessInfo } = businessContext;
+  const { businessData } = businessContext;
   const currentStep = 1;
   const totalSteps = 5;
 
   useEffect(() => {
-    if (!businessInfo?.services || !services || isLoadedFromDB) return;
+    if (!businessData?.services || !services || isLoadedFromDB) return;
 
     // Izveido masīvu ar indeksiem, kas atbilst pakalpojumu atslēgām
-    const savedServices: number[] = businessInfo.services
+    const savedServices: number[] = businessData.services
       .map((service) => {
         const foundService = services.find((s) => s.label === service);
         return foundService ? foundService.key : -1; // Atgriež `key` vai -1, ja pakalpojums nav atrasts
@@ -100,7 +100,7 @@ const AccountSetupServicesScreen: React.FC<
     // Iestata izvēlētos pakalpojumus tikai pirmo reizi
     setSelectedServices(savedServices);
     setIsLoadedFromDB(true); // Iestatām, ka pakalpojumi ir ielādēti
-  }, [businessInfo, services, isLoadedFromDB]);
+  }, [businessData, services, isLoadedFromDB]);
 
   const getChoiceStatus = (serviceKey: number) => {
     const index = selectedServices.indexOf(serviceKey);

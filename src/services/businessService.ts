@@ -1,12 +1,18 @@
 import { firestore } from "../api/firebaseConfig";
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
 import { BusinessInfoProps } from "../types/business";
 import { handleError } from "../utils/errorHandler";
 
 // Update business information
 export const updateBusinessInfo = async (
   userId: string,
-  businessInfo: BusinessInfoProps
+  businessData: BusinessInfoProps
 ) => {
   try {
     const userDocRef = doc(firestore, "users", userId);
@@ -16,7 +22,7 @@ export const updateBusinessInfo = async (
 
     if (businessId) {
       const businessDocRef = doc(firestore, "businessInformation", businessId);
-      await setDoc(businessDocRef, businessInfo, { merge: true });
+      await setDoc(businessDocRef, businessData, { merge: true });
       console.log("Business information updated successfully!");
     } else {
       businessId = doc(collection(firestore, "businessInformation")).id;
@@ -25,7 +31,7 @@ export const updateBusinessInfo = async (
         "businessInformation",
         businessId
       );
-      await setDoc(newBusinessDocRef, { ...businessInfo, ownerId: userId });
+      await setDoc(newBusinessDocRef, { ...businessData, ownerId: userId });
 
       await setDoc(
         userDocRef,
@@ -67,6 +73,38 @@ export const getBusinessInfo = async (
     return null;
   } catch (error) {
     handleError(error, "Error fetching business information");
+    return null;
+  }
+};
+
+export const getBusinessInfoRealtime = (
+  userId: string,
+  callback: (data: BusinessInfoProps | null) => void
+): (() => void) | null => {
+  try {
+    const userDocRef = doc(firestore, "users", userId);
+
+    return onSnapshot(userDocRef, (userDoc) => {
+      const businessId = userDoc.exists() ? userDoc.data()?.businessId : null;
+      if (businessId) {
+        const businessDataDocRef = doc(
+          firestore,
+          "businessInformation",
+          businessId
+        );
+
+        // Klausīties uz biznesa datu izmaiņām
+        return onSnapshot(businessDataDocRef, (businessInfoDoc) => {
+          if (businessInfoDoc.exists()) {
+            callback(businessInfoDoc.data() as BusinessInfoProps);
+          } else {
+            callback(null);
+          }
+        });
+      }
+    });
+  } catch (error) {
+    handleError(error, "Error fetching business information in realtime");
     return null;
   }
 };

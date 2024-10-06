@@ -6,9 +6,10 @@ import { I18nextProvider } from "react-i18next";
 import * as SplashScreen from "expo-splash-screen";
 import AppNavigator from "./src/navigation/AppNavigator";
 import i18n from "./src/i18n";
-import styled, { ThemeProvider } from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
+import { ThemeProvider } from "./src/context/useThemeContext";
+import { useThemeContext } from "./src/context/useThemeContext";
 import { AppRegistry, SafeAreaView, Switch, View } from "react-native";
-import { lightTheme, darkTheme } from "./src/infrastructure/theme/theme";
 import changeNavigationBarColor from "react-native-navigation-bar-color";
 import { StatusBar } from "react-native";
 import LoadingSpinner from "./src/components/loading-spinner.component";
@@ -30,10 +31,8 @@ const fetchFonts = async () => {
 
 export default function App() {
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState<boolean>(false);
   const queryClient = new QueryClient();
-
-  const theme = isDarkTheme ? darkTheme : lightTheme;
+  const { isDarkTheme } = useThemeContext();
 
   useEffect(() => {
     async function loadResourcesAndDataAsync() {
@@ -51,26 +50,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    changeNavigationBarColor(theme.colors.background, theme === darkTheme);
+    changeNavigationBarColor(isDarkTheme ? "black" : "white", isDarkTheme);
   }, [isDarkTheme]);
 
   return (
     <AppProviders>
-      <ThemeProvider theme={theme}>
+      <StatusBar />
+      <ThemeProvider>
         {!dataLoaded && <LoadingSpinner />}
         <I18nextProvider i18n={i18n}>
-          <StatusBar
-            barStyle={isDarkTheme ? "light-content" : "dark-content"}
-            backgroundColor={theme.colors.background}
-          />
           <ErrorBoundary>
             <AppNavigator />
           </ErrorBoundary>
-          {/* <Switch
-          value={isDarkTheme}
-          onValueChange={() => setIsDarkTheme((prev) => !prev)}
-          style={{ position: "absolute", top: 40, right: 20 }}
-        /> */}
         </I18nextProvider>
       </ThemeProvider>
     </AppProviders>

@@ -78,19 +78,19 @@ const AccountSetupLocationScreen: React.FC<
   const businessContext = useContext(BusinessContext);
   if (!userContext || !businessContext) return;
   const { user } = userContext;
-  const { businessInfo } = businessContext;
+  const { businessData } = businessContext;
 
   useEffect(() => {
-    if (user && businessInfo?.location?.address) {
+    if (user && businessData?.location?.address) {
       setLocation({
-        address: businessInfo?.location?.address || "",
-        city: businessInfo?.location?.city || "",
-        parish: businessInfo?.location?.parish || "",
-        country: businessInfo?.location?.country || "",
-        postalCode: businessInfo?.location?.postalCode || "",
+        address: businessData?.location?.address || "",
+        city: businessData?.location?.city || "",
+        parish: businessData?.location?.parish || "",
+        country: businessData?.location?.country || "",
+        postalCode: businessData?.location?.postalCode || "",
       });
     }
-  }, [user, businessInfo?.location]);
+  }, [user, businessData?.location]);
 
   const handleLocationSelect = (selectLocation: {
     hasLocation: boolean;

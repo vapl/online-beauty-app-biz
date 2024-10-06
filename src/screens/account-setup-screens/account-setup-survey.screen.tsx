@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import {
   AccountSetupSurveyScreenProps,
-  AccountSetupSurveyNavigationProp,
+  HomeTabsNavigationProp,
 } from "../../types/navigationTypes";
 import styled from "styled-components/native";
 import Button from "../../components/button/button.component";
@@ -79,7 +79,7 @@ const AccountSetupSurveyScreen: React.FC<
   AccountSetupSurveyScreenProps
 > = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation<AccountSetupSurveyNavigationProp>();
+  const navigation = useNavigation<HomeTabsNavigationProp>();
   const [checkedValue, setCheckedValue] = useState<number | null>(null);
   const [customVariantInput, setCustomVariantInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -136,13 +136,6 @@ const AccountSetupSurveyScreen: React.FC<
       }
       await updateUser(user.uid, { firstLogin: false });
       userContext.firstLogin = false;
-
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "AppStack" }],
-        })
-      );
     } catch (error) {
       handleError(error, "Failed to update user");
     }
@@ -181,6 +174,7 @@ const AccountSetupSurveyScreen: React.FC<
 
   const handleSubmit = async () => {
     setIsLoading(true);
+    let hasError = false;
     try {
       const selectedVariant = surveyVariants.find(
         (variant) => variant.value === checkedValue
@@ -196,16 +190,16 @@ const AccountSetupSurveyScreen: React.FC<
               : selectedVariant?.variant,
         };
         await createSurveyData(surveyData);
-
-        // Show success modal
-        handleSuccess();
       } else {
         console.error("User ID is missing or user is not authenticated");
+        hasError = true;
       }
     } catch (error) {
       console.error("Faild to update survey", error);
+      hasError = true;
     } finally {
       setIsLoading(false);
+      handleSuccess();
     }
   };
 

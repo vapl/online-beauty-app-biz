@@ -12,6 +12,8 @@ export type AppStackParamList = {
 
 // Drawer navigation parameter list
 export type DrawerParamList = {
+  HomeTabs: undefined;
+  Settings: undefined;
   BusinessProfile: undefined;
   UserProfile: undefined;
   Services: undefined;
@@ -31,7 +33,6 @@ export type TabParamList = {
 
 // Definējiet Stack parametru sarakstu
 export type RootStackParamList = {
-  AppStack: undefined;
   AuthStack: undefined;
   OnboardingBusinessSetupStack: undefined;
 
@@ -60,10 +61,6 @@ export type RootStackParamList = {
 };
 
 // Navigācijas props tips katram ekrānam
-export type AppStackNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "AppStack"
->;
 export type OnboardingScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Onboarding"
@@ -125,6 +122,10 @@ export type BusinessProfileNavigationProp = DrawerNavigationProp<
   DrawerParamList,
   "BusinessProfile"
 >;
+export type HomeTabsNavigationProp = DrawerNavigationProp<
+  DrawerParamList,
+  "HomeTabs"
+>;
 export type UserProfileNavigationProp = DrawerNavigationProp<
   DrawerParamList,
   "UserProfile"
@@ -170,9 +171,10 @@ export type CheckoutNavigationProp = DrawerNavigationProp<
 >;
 
 // Ekrāna props tips katram ekrānam
-export type AppStackScreenProps = {
-  navigation: AppStackNavigationProp;
-  route: RouteProp<RootStackParamList, "AppStack">;
+
+export type HomeTabsScreenProps = {
+  navigation: HomeTabsNavigationProp;
+  route: RouteProp<DrawerParamList, "HomeTabs">;
 };
 
 export type OnboardingScreenProps = {

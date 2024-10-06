@@ -131,5 +131,6 @@
   "survey_variant_custom_label": "Your option",
   "success_modal_title": "Welcome! You're Ready to Go",
   "success_modal_description": "Your business is now available on Online Beauty. Let clients easily book appointments, explore services, and grow your customer base with our platform.",
-  "button_text_continue": "Continue"
+  "button_text_continue": "Continue",
+  "button_logout_text": "Logout"
 }

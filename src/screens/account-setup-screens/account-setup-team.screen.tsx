@@ -69,7 +69,7 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
   const businessContext = useContext(BusinessContext);
   if (!userContext || !businessContext) return;
   const { user } = userContext;
-  const { businessInfo } = businessContext;
+  const { businessData } = businessContext;
   const currentStep = 2;
   const totalSteps = 5;
 
@@ -94,11 +94,11 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
 
   useEffect(() => {
     teamVariants.forEach((variant) => {
-      if (businessInfo?.teamSize && businessInfo.teamSize === variant.variant) {
+      if (businessData?.teamSize && businessData.teamSize === variant.variant) {
         setCheckedValue(variant.value);
       }
     });
-  }, [businessInfo]);
+  }, [businessData]);
 
   const handleSelection = (value: number) => {
     setCheckedValue(value);

@@ -7,10 +7,11 @@ import { handleError } from "../utils/errorHandler";
 
 interface UserContextProps {
   user: User | null;
-  firstLogin: boolean | null;
+  firstLogin: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
   isEmailVerified: boolean;
+  setFirstLogin: (value: boolean) => void;
 }
 
 export const UserContext = createContext<UserContextProps | undefined>(
@@ -23,7 +24,7 @@ interface UserProviderProps {
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [firstLogin, setFirstLogin] = useState<boolean | null>(null);
+  const [firstLogin, setFirstLogin] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isEmailVerified, setIfEmailVerified] = useState<boolean>(false);
@@ -55,7 +56,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       } else {
         setIsAuthenticated(false);
         setUser(null);
-        setFirstLogin(null);
         setIfEmailVerified(false);
       }
       setIsLoading(false);
@@ -65,7 +65,14 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, firstLogin, isAuthenticated, isLoading, isEmailVerified }}
+      value={{
+        user,
+        firstLogin,
+        isAuthenticated,
+        isLoading,
+        isEmailVerified,
+        setFirstLogin,
+      }}
     >
       {children}
     </UserContext.Provider>

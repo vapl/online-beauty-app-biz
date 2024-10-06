@@ -2,6 +2,7 @@ import { auth, firestore } from "../api/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { User } from "firebase/auth";
 import { handleError } from "../utils/errorHandler";
+import { createContext } from "react";
 
 interface UserData {
   firstLogin?: boolean;
@@ -9,6 +10,7 @@ interface UserData {
   surname?: string;
   email?: string;
   phone?: string;
+  userLogo?: string;
   verified?: boolean;
 }
 

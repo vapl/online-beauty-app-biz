@@ -3,25 +3,34 @@ import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import AppStack from "./AppStack";
 import AuthStack from "./AuthStack";
 import AccountVerificationBanner from "../components/complete-setup-banner.component";
-import { SafeAreaView } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import * as Linking from "expo-linking";
 import OnboardingBusinessSetupStack from "./OnboardingBusinessSetupStack";
 import { UserContext } from "../context/UserProvider";
 import LoadingSpinner from "../components/loading-spinner.component";
+import DrawerNavigator from "./drawer-navigator/DrawerNavigator";
+import { getUserData } from "../services/userService";
+import Text from "../components/text.component";
 
-const SafeArea = styled(SafeAreaView)`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.background};
-`;
+interface UserData {
+  firstLogin?: boolean;
+  name?: string;
+  surname?: string;
+  email?: string;
+  phone?: string;
+  userLogo?: string;
+  verified?: boolean;
+}
 
 const AppNavigator: React.FC = () => {
   const theme = useTheme();
   const userContext = useContext(UserContext);
 
   if (!userContext) return null;
-  const { firstLogin, isAuthenticated, isLoading, isEmailVerified, user } =
+  const { isAuthenticated, isLoading, isEmailVerified, firstLogin, user } =
     userContext;
+  // const [userData, setUserData] = useState<UserData | null>(null);
+
   if (isLoading) return <LoadingSpinner />;
 
   const linking = {
@@ -38,14 +47,7 @@ const AppNavigator: React.FC = () => {
     <NavigationContainer linking={linking}>
       {isAuthenticated ? (
         <>
-          {firstLogin ? (
-            <OnboardingBusinessSetupStack />
-          ) : (
-            <>
-              {/* {!isEmailVerified && <AccountVerificationBanner />} */}
-              <AppStack />
-            </>
-          )}
+          {firstLogin ? <OnboardingBusinessSetupStack /> : <DrawerNavigator />}
         </>
       ) : (
         <AuthStack />

@@ -1,13 +1,9 @@
 import React, { useContext, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import {
-  AppStackNavigationProp,
-  RootStackParamList,
-} from "../types/navigationTypes";
+import { RootStackParamList } from "../types/navigationTypes";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import Text from "../components/text.component";
-import { CommonActions, useNavigation } from "@react-navigation/native";
 import AccountSetupBusinessNameScreen from "../screens/account-setup-screens/account-setup-business-name.screen";
 import AccountSetupServicesScreen from "../screens/account-setup-screens/account-setup-services.screen";
 import AccountSetupTeamScreen from "../screens/account-setup-screens/account-setup-team.screen";
@@ -16,7 +12,6 @@ import AccountSetupLocationConfirmationScreen from "../screens/account-setup-scr
 import AccountSetupSurveyScreen from "../screens/account-setup-screens/account-setup-survey.screen";
 import { UserContext } from "../context/UserProvider";
 import { updateUser } from "../services/userService";
-import AccountSetupStack from "../components/account-setup-stack.component";
 import { handleError } from "../utils/errorHandler";
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -25,7 +20,6 @@ const OnboardingBusinessSetupStack: React.FC = () => {
   const userContext = useContext(UserContext);
   const theme = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation<AppStackNavigationProp>();
 
   if (!userContext) return;
   const { user } = userContext;
@@ -34,17 +28,10 @@ const OnboardingBusinessSetupStack: React.FC = () => {
     if (!user) return;
 
     try {
+      userContext.setFirstLogin(false);
       await updateUser(user.uid, { firstLogin: false });
-      userContext.firstLogin = false;
-
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "AppStack" }],
-        })
-      );
     } catch (error) {
-      handleError(error, "Ffetching user data:");
+      handleError(error, "Fetching user data:");
     }
   };
 
@@ -62,7 +49,7 @@ const OnboardingBusinessSetupStack: React.FC = () => {
           marginLeft: 0,
         },
         headerRightContainerStyle: {
-          paddingRight: 16, // to apply padding for the skip button
+          paddingRight: theme.space.md,
         },
       }}
     >
@@ -167,11 +154,6 @@ const OnboardingBusinessSetupStack: React.FC = () => {
             </Text>
           ),
         }}
-      />
-      <Stack.Screen
-        name="AppStack"
-        component={AccountSetupStack}
-        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

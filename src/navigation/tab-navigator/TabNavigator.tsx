@@ -9,31 +9,35 @@ import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { useDrawerStatus } from "@react-navigation/drawer";
 import CustomDrawerIcon from "../../components/drawer-icon.component";
 import { Image } from "react-native";
+import { useTheme } from "styled-components/native";
+import Ionicons from "@expo/vector-icons/FontAwesome";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const TabNavigator: React.FC = () => {
   const navigation = useNavigation();
+  const theme = useTheme();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName;
+          let iconName: keyof typeof Ionicons.glyphMap = "home";
           switch (route.name) {
-            case "Appointments":
-              iconName = "calendar-month";
-              break;
             case "Clients":
-              iconName = "account-group";
+              iconName = "group";
+              break;
+            case "Appointments":
+              iconName = "calendar";
               break;
             case "Checkout":
-              iconName = "credit-card-outline";
+              iconName = "credit-card";
               break;
             default:
               iconName = "circle";
           }
-          return <Icon source={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
+        tabBarActiveTintColor: theme.colors.primary.dark,
         headerLeft: () => (
           <CustomDrawerIcon
             type="image"
@@ -42,14 +46,18 @@ const TabNavigator: React.FC = () => {
           />
         ),
         headerStyle: {
-          backgroundColor: "transparent",
+          backgroundColor: theme.colors.background,
           elevation: 0,
           shadowOpacity: 0,
         },
+        tabBarStyle: {
+          backgroundColor: theme.colors.background,
+          borderTopColor: theme.colors.grey[40],
+        },
       })}
     >
-      <Tab.Screen name="Appointments" component={AppointmentsScreen} />
       <Tab.Screen name="Clients" component={ClientsScreen} />
+      <Tab.Screen name="Appointments" component={AppointmentsScreen} />
       <Tab.Screen name="Checkout" component={CheckoutScreen} />
     </Tab.Navigator>
   );

@@ -131,5 +131,6 @@
   "survey_variant_custom_label": "Ваш вариант",
   "success_modal_title": "Добро пожаловать! Вы готовы начать",
   "success_modal_description": "Теперь ваш бизнес доступен на платформе Online Beauty. Позвольте клиентам легко записываться на прием, изучать ваши услуги и расширять клиентскую базу с нашей поддержкой.",
-  "button_text_continue": "Продоолжить"
+  "button_text_continue": "Продоолжить",
+  "button_logout_text": "Выйти"
 }
