@@ -132,5 +132,19 @@
   "success_modal_title": "Laipni lūdzam! Jūs esat gatavi sākt",
   "success_modal_description": "Tagad jūsu bizness ir pieejams platformā Online Beauty. Ļaujiet klientiem ērti rezervēt vizītes, iepazīt pakalpojumus un paplašināt klientu loku ar mūsu palīdzību.",
   "button_text_continue": "Turpināt",
-  "button_logout_text": "Iziet"
+  "button_logout_text": "Iziet",
+  "drawer_item_title_home": "Sākums",
+  "drawer_item_title_services": "Pakalpojumi",
+  "drawer_item_title_marketing": "Mārketings",
+  "drawer_item_title_online_rezervations": "Tiešsaistes rezervācijas",
+  "drawer_item_title_team": "Komanda",
+  "drawer_item_title_statistics": "Statistika",
+  "drawer_item_title_payment_billing": "Maksājumi un rēķini",
+  "drawer_item_title_support": "Atbalsts",
+  "business_profile_business_info_title": "Uzņēmuma dati",
+  "business_profile_business_info_subtitle": "Juridiskā informācija un uzņēmuma iestatījumi",
+  "business_profile_business_locations_title": "Lokācijas",
+  "business_profile_business_locations_subtitle": "Salonu adreses, darba laiki un cita informācija",
+  "business_profile_status": "Profila status",
+  "business_profile_status_finished": "ir pabeigts"
 }

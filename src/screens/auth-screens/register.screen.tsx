@@ -319,22 +319,22 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                   />
                   <RegulationsWrapper>
                     <Text fontVariant="bodyMedium">
-                      {t("register_terms_start")}{" "}
-                      <Text
-                        fontVariant="buttonMedium"
-                        textColor={theme.colors.secondary.dark}
-                        onPress={() => {}}
-                      >
-                        {t("terms_of_use")}{" "}
-                      </Text>
-                      <Text>{t("and")}</Text>{" "}
-                      <Text
-                        fontVariant="buttonMedium"
-                        textColor={theme.colors.secondary.dark}
-                        onPress={() => {}}
-                      >
-                        {t("privacy_policy")}
-                      </Text>
+                      {t("register_terms_start")}
+                    </Text>
+                    <Text
+                      fontVariant="buttonMedium"
+                      textColor={theme.colors.secondary.dark}
+                      onPress={() => {}}
+                    >
+                      {` ${t("terms_of_use")} `}
+                    </Text>
+                    <Text>{t("and")}</Text>
+                    <Text
+                      fontVariant="buttonMedium"
+                      textColor={theme.colors.secondary.dark}
+                      onPress={() => {}}
+                    >
+                      {` ${t("privacy_policy")} `}
                     </Text>
                   </RegulationsWrapper>
                 </InputWrapper>

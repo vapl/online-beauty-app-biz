@@ -9,16 +9,17 @@ import {
 } from "./button.styles";
 import Text from "../text.component";
 import styled, { useTheme } from "styled-components/native";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 //////////// Styling start ///////////////
 
 //////////// Styling end ///////////////
 
 interface ButtonProps extends StyledButtonProps {
-  mode: "text" | "outlined" | "contained" | "radio" | "check";
-  label: string;
+  mode: "text" | "outlined" | "contained" | "radio" | "check" | "icon";
+  label?: string;
   icon?: string;
   iconSize?: number;
   iconColor?: string;
@@ -28,6 +29,7 @@ interface ButtonProps extends StyledButtonProps {
   status?: "checked" | "unchecked";
   buttonColor?: string;
   onPress?: () => void;
+  iconName?: keyof typeof Ionicons.glyphMap;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -44,6 +46,7 @@ const Button: React.FC<ButtonProps> = ({
   labelStyle,
   labelColor,
   buttonColor,
+  iconName = "home",
   onPress = () => {},
 }) => {
   const theme = useTheme();
@@ -111,6 +114,14 @@ const Button: React.FC<ButtonProps> = ({
           </Text>
         </RadioWrapper>
       </OutlinedButton>
+    );
+  }
+
+  if (mode === "icon") {
+    return (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.2}>
+        <Ionicons name={iconName} size={iconSize} color={iconColor} />
+      </TouchableOpacity>
     );
   }
 

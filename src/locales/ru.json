@@ -132,5 +132,19 @@
   "success_modal_title": "Добро пожаловать! Вы готовы начать",
   "success_modal_description": "Теперь ваш бизнес доступен на платформе Online Beauty. Позвольте клиентам легко записываться на прием, изучать ваши услуги и расширять клиентскую базу с нашей поддержкой.",
   "button_text_continue": "Продоолжить",
-  "button_logout_text": "Выйти"
+  "button_logout_text": "Выйти",
+  "drawer_item_title_home": "Главная",
+  "drawer_item_title_services": "Услуги",
+  "drawer_item_title_marketing": "Маркетинг",
+  "drawer_item_title_online_rezervations": "Онлайн бронирование",
+  "drawer_item_title_team": "Команда",
+  "drawer_item_title_statistics": "Статистика",
+  "drawer_item_title_payment_billing": "Оплата и выставление счетов",
+  "drawer_item_title_support": "Поддержка",
+  "business_profile_business_info_title": "Данные компании",
+  "business_profile_business_info_subtitle": "Юридическая информация и настройки компании",
+  "business_profile_business_locations_title": "Локации",
+  "business_profile_business_locations_subtitle": "Адреса салонов, рабочее время и другая информация",
+  "business_profile_status": "Статус профиля",
+  "business_profile_status_finished": "закончено"
 }

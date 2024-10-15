@@ -1,7 +1,9 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable, TouchableOpacity } from "react-native";
 import { Checkbox } from "react-native-paper";
 import styled, { DefaultTheme } from "styled-components/native";
+import { BackgroundColor } from "./background-color.component";
+import { opacity } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 
 interface TextProps {
   textAlign?: "left" | "center" | "right";
@@ -14,6 +16,7 @@ interface TextProps {
   checkboxColor?: string;
   uncheckedColor?: string;
   fontVariant?: keyof typeof variants;
+  pressable?: boolean;
 }
 
 const defaultTextStyle = (theme: DefaultTheme, props: TextProps) => `
@@ -101,7 +104,7 @@ const variants = {
   h6,
 };
 
-const TextContainer = styled(TouchableOpacity)`
+const PressableTextContainer = styled(Pressable)`
   flex-direction: row;
   align-items: center;
 `;
@@ -130,9 +133,14 @@ const Text: React.FC<TextProps> = ({
   checkboxColor,
   uncheckedColor,
   fontVariant = "bodyMedium",
+  pressable = false,
 }) => {
   return (
-    <TextContainer onPress={onPress}>
+    <PressableTextContainer
+      onPress={onPress}
+      style={({ pressed }) => [{ opacity: pressed ? 0.2 : 1 }]}
+      disabled={!pressable}
+    >
       {showCheckbox && (
         <Checkbox.Android
           status={checked ? "checked" : "unchecked"}
@@ -148,7 +156,7 @@ const Text: React.FC<TextProps> = ({
       >
         {children}
       </StyledText>
-    </TextContainer>
+    </PressableTextContainer>
   );
 };
 

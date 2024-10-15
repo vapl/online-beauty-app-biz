@@ -132,5 +132,19 @@
   "success_modal_title": "Welcome! You're Ready to Go",
   "success_modal_description": "Your business is now available on Online Beauty. Let clients easily book appointments, explore services, and grow your customer base with our platform.",
   "button_text_continue": "Continue",
-  "button_logout_text": "Logout"
+  "button_logout_text": "Logout",
+  "drawer_item_title_home": "Home",
+  "drawer_item_title_services": "Services",
+  "drawer_item_title_marketing": "Marketing",
+  "drawer_item_title_online_rezervations": "Online rezervations",
+  "drawer_item_title_team": "Team",
+  "drawer_item_title_statistics": "Statistics",
+  "drawer_item_title_payment_billing": "Payment and billing",
+  "drawer_item_title_support": "Support",
+  "business_profile_business_info_title": "Business Information",
+  "business_profile_business_info_subtitle": "Legal information and business settings",
+  "business_profile_business_locations_title": "Locations",
+  "business_profile_business_locations_subtitle": "Salon addresses, working hours, and other information",
+  "business_profile_status": "Profile status",
+  "business_profile_status_finished": "is completed"
 }

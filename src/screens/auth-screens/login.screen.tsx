@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, StatusBar, View } from "react-native";
 import {
   LoginScreenProps,
+  BusinessProfileMainNavigationProp,
   LoginScreenNavigationProp,
 } from "../../types/navigationTypes";
 import styled, { useTheme } from "styled-components/native";
@@ -86,7 +87,7 @@ const FooterContainer = styled.View`
 const LoginScreen: React.FC<LoginScreenProps> = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const loginNavigation = useNavigation<LoginScreenNavigationProp>();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
@@ -129,7 +130,6 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
     if (!emailValidationError && !passwordValidationError) {
       try {
         await loginUser(email, password);
-        navigation.navigate("AppStack");
       } catch (error: any) {
         console.error("Login failed: ", error.code);
         if (error.code === "auth/invalid-credential") {
@@ -195,7 +195,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
                 <PassRecoverButton
                   label={t("password_recovery_button")}
                   mode="text"
-                  onPress={() => navigation.navigate("PassRecovery")}
+                  onPress={() => loginNavigation.navigate("PassRecovery")}
                 />
               </InputWrapper>
             </BodyWrapper>
@@ -224,7 +224,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
               mode="text"
               label={t("register")}
               onPress={() => {
-                navigation.navigate("Register");
+                loginNavigation.navigate("Register");
               }}
             />
           </FooterContainer>

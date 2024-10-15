@@ -12,9 +12,12 @@ export type AppStackParamList = {
 
 // Drawer navigation parameter list
 export type DrawerParamList = {
+  BusinessProfileStack: undefined;
+
+  Main: undefined;
   HomeTabs: undefined;
   Settings: undefined;
-  BusinessProfile: undefined;
+  // BusinessProfile: undefined;
   UserProfile: undefined;
   Services: undefined;
   Marketing: undefined;
@@ -31,7 +34,7 @@ export type TabParamList = {
   Checkout: undefined;
 };
 
-// Definējiet Stack parametru sarakstu
+// Definējam Stack parametru sarakstu
 export type RootStackParamList = {
   AuthStack: undefined;
   OnboardingBusinessSetupStack: undefined;
@@ -58,6 +61,19 @@ export type RootStackParamList = {
   AccountSetupServices: undefined;
   AccountSetupTeam: undefined;
   VerifyEmail: { url: string };
+};
+
+// Business profile param list
+export type BusinessProfileParamList = {
+  BusinessProfileMain: undefined;
+  BusinessInfo: undefined;
+  BusinessLocations: undefined;
+  EditBusinessLocation: undefined;
+  BusinessPortfolio: undefined;
+  AddNewLocationName: undefined;
+  AddNewLocationServices: undefined;
+  AddNewLocationAddress: undefined;
+  AddNewLocationOpeningHours: undefined;
 };
 
 // Navigācijas props tips katram ekrānam
@@ -110,7 +126,7 @@ export type AccountSetupTeamScreenNavigationProp = StackNavigationProp<
 >;
 export type AccountSetupSurveyNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "AccountSetupTeam"
+  "AccountSetupSurvey"
 >;
 export type VerifyEmailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -118,9 +134,9 @@ export type VerifyEmailScreenNavigationProp = StackNavigationProp<
 >;
 
 // Drawer navigation props
-export type BusinessProfileNavigationProp = DrawerNavigationProp<
+export type BusinessProfileStackNavigationProp = DrawerNavigationProp<
   DrawerParamList,
-  "BusinessProfile"
+  "BusinessProfileStack"
 >;
 export type HomeTabsNavigationProp = DrawerNavigationProp<
   DrawerParamList,
@@ -168,6 +184,45 @@ export type ClientsNavigationProp = DrawerNavigationProp<
 export type CheckoutNavigationProp = DrawerNavigationProp<
   TabParamList,
   "Checkout"
+>;
+
+// Business profile stack props
+
+export type BusinessProfileMainNavigationProp = StackNavigationProp<
+  BusinessProfileParamList,
+  "BusinessProfileMain"
+>;
+export type EditBusinessDataNavigationProp = StackNavigationProp<
+  BusinessProfileParamList,
+  "BusinessInfo"
+>;
+export type BusinessLocationsNavigationProp = StackNavigationProp<
+  BusinessProfileParamList,
+  "BusinessLocations"
+>;
+export type EditBusinessLocationNavigationProp = StackNavigationProp<
+  BusinessProfileParamList,
+  "EditBusinessLocation"
+>;
+export type BusinessPortfolioNavigationProp = StackNavigationProp<
+  BusinessProfileParamList,
+  "BusinessPortfolio"
+>;
+export type AddNewLocationNameNavigationProp = StackNavigationProp<
+  BusinessProfileParamList,
+  "AddNewLocationName"
+>;
+export type AddNewLocationServicesNavigationProp = StackNavigationProp<
+  BusinessProfileParamList,
+  "AddNewLocationServices"
+>;
+export type AddNewLocationAddressNavigationProp = StackNavigationProp<
+  BusinessProfileParamList,
+  "AddNewLocationAddress"
+>;
+export type AddNewLocationOpeningHoursNavigationProp = StackNavigationProp<
+  BusinessProfileParamList,
+  "AddNewLocationOpeningHours"
 >;
 
 // Ekrāna props tips katram ekrānam
@@ -248,9 +303,9 @@ export type VerifyEmailScreenProps = {
 };
 
 // Drawer screen props
-export type BusinessProfileScreenProps = {
-  navigation: BusinessProfileNavigationProp;
-  route: RouteProp<DrawerParamList, "BusinessProfile">;
+export type BusinessProfileStackScreenProps = {
+  navigation: BusinessProfileStackNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "BusinessProfileMain">;
 };
 export type UserProfileScreenProps = {
   navigation: UserProfileNavigationProp;
@@ -297,4 +352,42 @@ export type ClientsScreenProps = {
 export type CheckoutScreenProps = {
   navigation: CheckoutNavigationProp;
   route: RouteProp<TabParamList, "Checkout">;
+};
+
+// Business profile screen props
+export type BusinessProfileMainScreenProps = {
+  navigation: BusinessProfileMainNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "BusinessProfileMain">;
+};
+export type EditBusinessDataScreenProps = {
+  navigation: EditBusinessDataNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "BusinessInfo">;
+};
+export type BusinessLocationsScreenProps = {
+  navigation: BusinessLocationsNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "BusinessLocations">;
+};
+export type EditBusinessLocationScreenProps = {
+  navigation: EditBusinessLocationNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "EditBusinessLocation">;
+};
+export type BusinessPortfolioScreenProps = {
+  navigation: BusinessPortfolioNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "BusinessPortfolio">;
+};
+export type AddNewLocationNameScreenProps = {
+  navigation: AddNewLocationNameNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "AddNewLocationName">;
+};
+export type AddNewLocationServicesScreenProps = {
+  navigation: AddNewLocationServicesNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "AddNewLocationServices">;
+};
+export type AddNewLocationAddressScreenProps = {
+  navigation: AddNewLocationAddressNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "AddNewLocationAddress">;
+};
+export type AddNewLocationOpeningHoursScreenProps = {
+  navigation: AddNewLocationOpeningHoursNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "AddNewLocationOpeningHours">;
 };

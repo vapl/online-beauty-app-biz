@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
+import { getStorage } from "firebase/storage";
 import {
   FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN,
@@ -30,5 +31,6 @@ const auth = initializeAuth(app, {
 });
 const firestore = getFirestore(app);
 const functions = getFunctions(app);
+const storage = getStorage(app);
 
-export { app, auth, firestore, functions };
+export { app, auth, firestore, functions, storage };

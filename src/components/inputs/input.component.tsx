@@ -13,7 +13,6 @@ import CountryPicker, {
   DARK_THEME,
 } from "react-native-country-picker-modal";
 import { darkTheme } from "../../infrastructure/theme/theme";
-import { MaterialIcons } from "@expo/vector-icons";
 
 interface StyledInputProps {
   hasError?: boolean;

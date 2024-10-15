@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, Image } from "react-native";
+import { View, SafeAreaView, Image } from "react-native";
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -16,6 +16,9 @@ import { logoutUser } from "../services/authService";
 import { BusinessContext } from "../context/BusinessProvider";
 import { getUserData } from "../services/userService";
 import { Icon } from "react-native-paper";
+import LanguagePicker from "./language-picker.component";
+import { useNavigation } from "@react-navigation/native";
+import { BusinessProfileStackNavigationProp } from "../types/navigationTypes";
 
 const SafeView = styled(SafeAreaView)`
   flex: 1;
@@ -50,6 +53,8 @@ interface UserData {
 const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const businessNavigation =
+    useNavigation<BusinessProfileStackNavigationProp>();
   const { isDarkTheme, toggleTheme } = useThemeContext();
   const [userData, setUserData] = useState<UserData | null>(null);
   const userContext = useContext(UserContext);
@@ -78,12 +83,17 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
           topLine={false}
           iconLeft={
             businessData?.businessLogo ? (
-              <Image source={{ uri: businessData?.businessLogo }} />
+              <Image
+                source={{ uri: businessData?.businessLogo }}
+                style={{ height: 48, width: 48, borderRadius: 24 }}
+              />
             ) : (
               <Icon source="star" size={24} color="" />
             )
           }
+          onPress={() => businessNavigation.navigate("BusinessProfileStack")}
         />
+        <LanguagePicker color={theme.colors.text} />
         <DrawerContentScrollView {...props}>
           <DrawerItemList {...props} />
         </DrawerContentScrollView>
@@ -96,9 +106,8 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
             onPress={logoutUser}
           />
           <Button
-            mode="text"
-            label=""
-            icon={`${isDarkTheme ? "weather-sunny" : "weather-night"}`}
+            mode="icon"
+            iconName={`${isDarkTheme ? "sunny-outline" : "moon-outline"}`}
             iconColor={theme.colors.secondary.dark}
             onPress={toggleTheme}
           />
