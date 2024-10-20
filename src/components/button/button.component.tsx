@@ -1,10 +1,12 @@
 import React from "react";
 import {
+  // StyledIcon,
   TextButton,
   OutlinedButton,
   ContainedButton,
   RadioButtonCustom,
   StyledButtonProps,
+  TextButtonProps,
   RadioWrapper,
 } from "./button.styles";
 import Text from "../text.component";
@@ -17,7 +19,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 //////////// Styling end ///////////////
 
-interface ButtonProps extends StyledButtonProps {
+interface ButtonProps extends StyledButtonProps, TextButtonProps {
   mode: "text" | "outlined" | "contained" | "radio" | "check" | "icon";
   label?: string;
   icon?: string;
@@ -30,6 +32,9 @@ interface ButtonProps extends StyledButtonProps {
   buttonColor?: string;
   onPress?: () => void;
   iconName?: keyof typeof Ionicons.glyphMap;
+  iconPosition?: "left" | "right";
+  buttonSize?: "lg" | "sm";
+  buttonPosition?: "left" | "center" | "right";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -47,13 +52,37 @@ const Button: React.FC<ButtonProps> = ({
   labelColor,
   buttonColor,
   iconName = "home",
+  iconPosition = "left",
+  buttonSize = "lg",
+  buttonPosition = "left",
   onPress = () => {},
 }) => {
   const theme = useTheme();
 
+  const handleIconColor = () => {
+    if (disabled) {
+      return theme.colors.grey[60];
+    } else {
+      if (mode === "outlined") {
+        return iconColor || theme.colors.primary.dark;
+      }
+      if (mode === "text") {
+        return iconColor || theme.colors.secondary.dark;
+      }
+      return iconColor || theme.colors.white;
+    }
+  };
+
   const renderIcon = () => {
     if (icon) {
-      return <Icon name={icon} size={iconSize} color={iconColor} />;
+      return (
+        <Icon
+          disabled={disabled}
+          name={icon}
+          size={iconSize}
+          color={handleIconColor()}
+        />
+      );
     }
   };
 
@@ -65,6 +94,9 @@ const Button: React.FC<ButtonProps> = ({
         compact={compact}
         onPress={onPress}
         labelStyle={labelStyle}
+        labelColor={labelColor}
+        iconPosition={iconPosition}
+        buttonPosition={buttonPosition}
       >
         {label}
       </TextButton>
@@ -80,6 +112,8 @@ const Button: React.FC<ButtonProps> = ({
         justifyContent={justifyContent}
         labelStyle={labelStyle}
         labelColor={labelColor}
+        buttonSize={buttonSize}
+        iconColor={iconColor}
       >
         {label}
       </OutlinedButton>
@@ -132,6 +166,7 @@ const Button: React.FC<ButtonProps> = ({
       onPress={onPress}
       buttonColor={buttonColor}
       labelColor={labelColor}
+      buttonSize={buttonSize}
     >
       {label}
     </ContainedButton>

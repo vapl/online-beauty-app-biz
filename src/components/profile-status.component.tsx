@@ -4,13 +4,14 @@ import Text from "./text.component";
 import styled, { useTheme } from "styled-components/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTranslation } from "react-i18next";
+import { useThemeContext } from "../context/useThemeContext";
 
 // start -> styles
-const Container = styled(View)`
+const Container = styled(View)<{ isDarkTheme: boolean }>`
   width: 100%;
   background-color: ${(props) => props.theme.colors.background};
   border-radius: 8px;
-  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0.5px 2px ${(props) => props.theme.colors.grey[40]};
   padding: 8px;
   margin-bottom: 16px;
   gap: 8px;
@@ -55,6 +56,7 @@ const ProfileStatusComponent: React.FC<ProfileStatusProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const { isDarkTheme } = useThemeContext();
   const renderCompletedColor = (index: number) => {
     if (completed >= index + 1) {
       return theme.colors.secondary.dark;
@@ -64,7 +66,10 @@ const ProfileStatusComponent: React.FC<ProfileStatusProps> = ({
   };
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.5}>
-      <Container style={{ display: completed === quantity ? "none" : "flex" }}>
+      <Container
+        isDarkTheme={isDarkTheme}
+        style={{ display: completed === quantity ? "none" : "flex" }}
+      >
         <Header>
           <Text fontVariant="bodySmall" pressable={false}>
             {t("business_profile_status")}

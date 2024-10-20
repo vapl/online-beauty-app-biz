@@ -146,5 +146,14 @@
   "business_profile_business_locations_title": "Locations",
   "business_profile_business_locations_subtitle": "Salon addresses, working hours, and other information",
   "business_profile_status": "Profile status",
-  "business_profile_status_finished": "is completed"
+  "business_profile_status_finished": "is completed",
+  "portfolio_title": "Portfolio",
+  "text_button_more": "More",
+  "button_add_from_phone": "Add from gallery",
+  "button_add_from_instagram": "Add from Instagram",
+  "title_last_reviews": "Latest reviews",
+  "external_links": "External links",
+  "edit_cover_image": "Edit cover image",
+  "edit_avatar_image": "Edit business logo",
+  "delete": "Delete"
 }

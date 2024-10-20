@@ -1,7 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Animated, Dimensions, View } from "react-native";
+import React, { ReactElement, useEffect, useState } from "react";
+import {
+  Modal,
+  Animated,
+  Dimensions,
+  View,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { BlurView } from "expo-blur";
 import Button from "../button/button.component";
 import Text from "../text.component";
@@ -25,7 +32,9 @@ const ModalHeader = styled.View`
 `;
 
 const ModalTitleWrapper = styled(View)`
-  width: 70%;
+  position: absolute;
+  left: 10%;
+  width: 80%;
   align-items: center;
   justify-items: center;
 `;
@@ -79,6 +88,7 @@ interface CustomModalProps {
   initialModalHeight?: number;
   headerLeftButtonVisible?: boolean;
   headerRightButtonVisible?: boolean;
+  bodyStyle?: StyleProp<ViewStyle>;
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
@@ -94,7 +104,9 @@ const CustomModal: React.FC<CustomModalProps> = ({
   initialModalHeight = 0.95,
   headerLeftButtonVisible = true,
   headerRightButtonVisible = true,
+  bodyStyle,
 }) => {
+  const theme = useTheme();
   const [modalHeight] = useState(
     new Animated.Value(initialModalHeight * screenHeight)
   ); // Initial height
@@ -181,6 +193,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
                       label=" "
                       mode={"text"}
                       onPress={onClose}
+                      iconColor={theme.colors.text}
                     />
                   </ButtonWrapper>
                 )}
@@ -200,7 +213,9 @@ const CustomModal: React.FC<CustomModalProps> = ({
                 )}
               </ModalHeader>
             )}
-            <ModalBody>{children}</ModalBody>
+            <ModalBody style={bodyStyle}>
+              <View>{children}</View>
+            </ModalBody>
             {showFooter && <ModalFooter>{footerButtons}</ModalFooter>}
           </ModalContent>
         </ModalContainer>

@@ -10,7 +10,6 @@ import {
   DrawerParamList,
   HomeTabsNavigationProp,
 } from "../../types/navigationTypes";
-import AppStack from "../AppStack";
 import { useNavigation } from "@react-navigation/native";
 import ServicesScreen from "../../screens/drawer-screens/services.screen";
 import MarketingScreen from "../../screens/drawer-screens/marketing.screen";

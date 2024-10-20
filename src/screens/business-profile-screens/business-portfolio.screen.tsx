@@ -3,11 +3,11 @@ import { View, Text, StyleSheet } from "react-native";
 import { ServicesScreenProps } from "../../types/navigationTypes";
 import { BackgroundColor } from "../../components/background-color.component";
 
-const BusinessLocationsScreen: React.FC = () => {
+const BusinessPortfolioScreen: React.FC = () => {
   return (
     <BackgroundColor>
       <View style={styles.container}>
-        <Text style={styles.text}>Business Locations</Text>
+        <Text style={styles.text}>Business Portfolio</Text>
       </View>
     </BackgroundColor>
   );
@@ -24,4 +24,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BusinessLocationsScreen;
+export default BusinessPortfolioScreen;

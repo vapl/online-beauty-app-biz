@@ -77,14 +77,14 @@ const CustomDrawerIcon: React.FC<CustomDrawerIconProps> = ({
           />
         ) : drawerStatus === "closed" ? (
           <TouchableOpacity onPress={onPress}>
-            {businessData?.businessLogo ? (
+            {businessData?.images?.businessLogo ? (
               <Image
                 style={{
                   width: size,
                   height: size,
                   borderRadius: size / 2,
                 }}
-                source={{ uri: businessData.businessLogo }}
+                source={{ uri: businessData.images?.businessLogo }}
               />
             ) : (
               <View

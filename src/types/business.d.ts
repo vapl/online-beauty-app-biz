@@ -1,15 +1,20 @@
 export interface BusinessInfoProps {
   businessId?: string;
   businessName?: string;
-  website?: string;
   businessTypes?: string[];
   services?: string[];
-  businessLogo?: string;
   teamSize?: string;
   employeeIds?: string[];
+  images?: {
+    businessLogo?: string;
+    coverImage?: string;
+    portfolioImages?: string[];
+  };
+  raiting?: number;
   location?: {
     hasLocation?: boolean;
     address?: string;
+    apartment?: string;
     city?: string;
     parish?: string;
     country?: string;
@@ -28,7 +33,7 @@ export interface BusinessInfoProps {
       start?: string;
       end?: string;
     };
-    thirstday?: {
+    thursday?: {
       start?: string;
       end?: string;
     };
@@ -36,7 +41,7 @@ export interface BusinessInfoProps {
       start?: string;
       end?: string;
     };
-    saturtday?: {
+    saturday?: {
       start?: string;
       end?: string;
     };
@@ -55,5 +60,12 @@ export interface BusinessInfoProps {
   receiptSequencing?: {
     ReceiptNoPrefix?: string;
     nextReceiptNumber?: number;
+  };
+  socialLinks?: {
+    website?: string;
+    facebook?: string;
+    instagram?: string;
+    X?: string;
+    linkedin?: string;
   };
 }

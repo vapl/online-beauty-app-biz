@@ -17,6 +17,9 @@ import { UserProvider } from "./src/context/UserProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppProviders from "./src/context/AppProviders";
 import ErrorBoundary from "./src/components/error-boundary.component";
+import { enableScreens } from "react-native-screens";
+
+enableScreens();
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();

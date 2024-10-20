@@ -82,9 +82,9 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
           botLine={true}
           topLine={false}
           iconLeft={
-            businessData?.businessLogo ? (
+            businessData?.images?.businessLogo ? (
               <Image
-                source={{ uri: businessData?.businessLogo }}
+                source={{ uri: businessData?.images.businessLogo }}
                 style={{ height: 48, width: 48, borderRadius: 24 }}
               />
             ) : (

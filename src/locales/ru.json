@@ -146,5 +146,14 @@
   "business_profile_business_locations_title": "Локации",
   "business_profile_business_locations_subtitle": "Адреса салонов, рабочее время и другая информация",
   "business_profile_status": "Статус профиля",
-  "business_profile_status_finished": "закончено"
+  "business_profile_status_finished": "закончено",
+  "portfolio_title": "Портфолио",
+  "text_button_more": "Больше",
+  "button_add_from_phone": "Добавить из галереи",
+  "button_add_from_instagram": "Добавить из Instagram",
+  "title_last_reviews": "Последние отзывы",
+  "external_links": "Внешние ссылки",
+  "edit_cover_image": "Редактировать обложку",
+  "edit_avatar_image": "Редактировать лого бизнеса",
+  "delete": "Удалить"
 }

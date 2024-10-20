@@ -146,5 +146,14 @@
   "business_profile_business_locations_title": "Lokācijas",
   "business_profile_business_locations_subtitle": "Salonu adreses, darba laiki un cita informācija",
   "business_profile_status": "Profila status",
-  "business_profile_status_finished": "ir pabeigts"
+  "business_profile_status_finished": "ir pabeigts",
+  "portfolio_title": "Portfolio",
+  "text_button_more": "Vairāk",
+  "button_add_from_phone": "Pievienot no galerijas",
+  "button_add_from_instagram": "Pievienot no Instagram",
+  "title_last_reviews": "Pēdējās atsauksmes",
+  "external_links": "Ārējās saites",
+  "edit_cover_image": "Rediģēt galveno attēlu",
+  "edit_avatar_image": "Rediģēt uzņēmuma logo",
+  "delete": "Dzēst"
 }
