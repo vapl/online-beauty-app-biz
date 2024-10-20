@@ -155,5 +155,18 @@
   "external_links": "External links",
   "edit_cover_image": "Edit cover image",
   "edit_avatar_image": "Edit business logo",
-  "delete": "Delete"
+  "delete": "Delete",
+  "profile_status_title": "Profile status",
+  "profile_status_description": "Follow the tasks you need to complete to make your profile look complete and finalized.",
+  "completed_tasks": "{{completed}} of {{total}} completed",
+  "company_info_title": "Company Info",
+  "company_info_description": "Fill out all the required information about your company",
+  "profile_images_title": "Profile images",
+  "profile_images_description": "Add your company logo and profile cover image",
+  "locations_title": "Locations",
+  "locations_description": "Add your salon or business location",
+  "opening_hours_title": "Opening hours",
+  "opening_hours_description": "Add your business working hours",
+  "social_links_title": "Social links",
+  "social_links_description": "Add your website or social links"
 }

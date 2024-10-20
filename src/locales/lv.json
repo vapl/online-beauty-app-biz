@@ -145,7 +145,7 @@
   "business_profile_business_info_subtitle": "Juridiskā informācija un uzņēmuma iestatījumi",
   "business_profile_business_locations_title": "Lokācijas",
   "business_profile_business_locations_subtitle": "Salonu adreses, darba laiki un cita informācija",
-  "business_profile_status": "Profila status",
+  "business_profile_status": "Profila statuss",
   "business_profile_status_finished": "ir pabeigts",
   "portfolio_title": "Portfolio",
   "text_button_more": "Vairāk",
@@ -155,5 +155,18 @@
   "external_links": "Ārējās saites",
   "edit_cover_image": "Rediģēt galveno attēlu",
   "edit_avatar_image": "Rediģēt uzņēmuma logo",
-  "delete": "Dzēst"
+  "delete": "Dzēst",
+  "profile_status_title": "Profila statuss",
+  "profile_status_description": "Sekojiet līdzi darbībām, kas jāveic, lai jūsu profils izskatītos pilnveidīgs un pabeigts.",
+  "completed_tasks": "{{completed}} no {{total}} {{comleted_lv}}",
+  "company_info_title": "Uzņēmuma Dati",
+  "company_info_description": "Aizpildiet visus nepieciešamos datus par jūsu uzņēmumu",
+  "profile_images_title": "Profila attēli",
+  "profile_images_description": "Pievienojiet jūsu uzņēmuma logo un profila vāka attēlu",
+  "locations_title": "Lokācijas",
+  "locations_description": "Pievienojiet jūsu salona vai salonu atrašanās vietu",
+  "opening_hours_title": "Darba stundas",
+  "opening_hours_description": "Pievienojiet jūsu darba laiku",
+  "social_links_title": "Sociālās saites",
+  "social_links_description": "Pievienojiet jūsu mājaslapu, vai sociālās saites"
 }

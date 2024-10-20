@@ -166,7 +166,8 @@ const BusinessProfileMainScreen: React.FC<{
   const businessContext = useContext(BusinessContext);
   const userContext = useContext(UserContext);
   if (!businessContext || !userContext) return;
-  const { businessData } = businessContext;
+  const { businessData, completedSelections, totalSelections } =
+    businessContext;
   const { user } = userContext;
 
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -344,9 +345,11 @@ const BusinessProfileMainScreen: React.FC<{
           <BodySection>
             <Space top={16} />
             <ProfileStatusComponent
-              quantity={5}
-              completed={0}
-              onPress={() => {}}
+              quantity={totalSelections}
+              completed={completedSelections}
+              onPress={() => {
+                navigation.navigate("BusinessProfileStatus");
+              }}
             />
             <ListItem
               title={t("business_profile_business_info_title")}

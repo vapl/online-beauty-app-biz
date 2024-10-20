@@ -15,11 +15,16 @@ import { useRef, useState } from "react";
 import { Animated } from "react-native";
 import { BusinessContext } from "../../context/BusinessProvider";
 import { useThemeContext } from "../../context/useThemeContext";
+import BusinessProfileStatusScreen from "../../screens/business-profile-screens/business-profile-status.screen";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import Text from "../../components/text.component";
+import { useTranslation } from "react-i18next";
 
 const Stack = createNativeStackNavigator<BusinessProfileParamList>();
 
 const BusinessProfileStack: React.FC = () => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation<HomeTabsNavigationProp>();
 
   const [headerShown, setHeaderShown] = useState<boolean>(false);
@@ -45,11 +50,6 @@ const BusinessProfileStack: React.FC = () => {
         name="BusinessProfileMain"
         options={{
           headerTransparent: true,
-          headerStyle: {
-            // backgroundColor: `${
-            //   headerShown ? theme.colors.background : "transparent"
-            // }`,
-          },
           headerBlurEffect: headerShown
             ? isDarkTheme
               ? "dark"
@@ -88,6 +88,18 @@ const BusinessProfileStack: React.FC = () => {
         component={BusinessInfoScreen}
         options={{
           title: "",
+        }}
+      />
+      <Stack.Screen
+        name="BusinessProfileStatus"
+        component={BusinessProfileStatusScreen}
+        options={{
+          title: "",
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerTransparent: false,
+          headerShadowVisible: true,
         }}
       />
       <Stack.Screen

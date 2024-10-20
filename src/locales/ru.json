@@ -155,5 +155,18 @@
   "external_links": "Внешние ссылки",
   "edit_cover_image": "Редактировать обложку",
   "edit_avatar_image": "Редактировать лого бизнеса",
-  "delete": "Удалить"
+  "delete": "Удалить",
+  "profile_status_title": "Статус профиля",
+  "profile_status_description": "Следите за действиями, которые нужно выполнить, чтобы ваш профиль был завершён и полон.",
+  "completed_tasks": "{{completed}} из {{total}} выполнено",
+  "company_info_title": "Данные компании",
+  "company_info_description": "Заполните все необходимые данные о вашей компании",
+  "profile_images_title": "Изображения профиля",
+  "profile_images_description": "Добавьте логотип компании и изображение обложки профиля",
+  "locations_title": "Локации",
+  "locations_description": "Добавьте местоположение вашего салона или бизнеса",
+  "opening_hours_title": "Часы работы",
+  "opening_hours_description": "Добавьте часы работы вашего бизнеса",
+  "social_links_title": "Социальные сети",
+  "social_links_description": "Добавьте ваш сайт или ссылки на социальные сети"
 }

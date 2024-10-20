@@ -65,8 +65,11 @@ export type RootStackParamList = {
 
 // Business profile param list
 export type BusinessProfileParamList = {
-  BusinessProfileMain: undefined;
+  BusinessProfileMain:
+    | { completedSelections: number; totalSelections: number }
+    | undefined;
   BusinessInfo: undefined;
+  BusinessProfileStatus: undefined;
   BusinessLocations: undefined;
   EditBusinessLocation: undefined;
   BusinessPortfolio: undefined;
@@ -192,9 +195,13 @@ export type BusinessProfileMainNavigationProp = StackNavigationProp<
   BusinessProfileParamList,
   "BusinessProfileMain"
 >;
-export type EditBusinessDataNavigationProp = StackNavigationProp<
+export type BusinessInfoNavigationProp = StackNavigationProp<
   BusinessProfileParamList,
   "BusinessInfo"
+>;
+export type BusinessProfileStatusNavigationProp = StackNavigationProp<
+  BusinessProfileParamList,
+  "BusinessProfileStatus"
 >;
 export type BusinessLocationsNavigationProp = StackNavigationProp<
   BusinessProfileParamList,
@@ -359,9 +366,13 @@ export type BusinessProfileMainScreenProps = {
   navigation: BusinessProfileMainNavigationProp;
   route: RouteProp<BusinessProfileParamList, "BusinessProfileMain">;
 };
-export type EditBusinessDataScreenProps = {
-  navigation: EditBusinessDataNavigationProp;
+export type BusinessInfoScreenProps = {
+  navigation: BusinessInfoNavigationProp;
   route: RouteProp<BusinessProfileParamList, "BusinessInfo">;
+};
+export type BusinessProfileStatusScreenProps = {
+  navigation: BusinessProfileStatusNavigationProp;
+  route: RouteProp<BusinessProfileParamList, "BusinessProfileStatus">;
 };
 export type BusinessLocationsScreenProps = {
   navigation: BusinessLocationsNavigationProp;

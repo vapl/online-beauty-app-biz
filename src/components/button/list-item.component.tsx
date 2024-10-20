@@ -22,11 +22,19 @@ const ContentWrapper = styled(View)`
   width: 70%;
 `;
 
-const LeftIconContainer = styled(View)`
+const LeftIconContainer = styled(View)<ListItemProps>`
   height: 40px;
   width: 40px;
-  border-radius: 50%;
-  background-color: ${(props) => props.theme.colors.grey[60]};
+  border-radius: ${(props) =>
+    props.leftIconContainerBorderRadius
+      ? `${props.leftIconContainerBorderRadius}px`
+      : "50%"};
+  background-color: ${(props) =>
+    props.lefIconContainerBackground || props.theme.colors.grey[60]};
+  border: ${(props) =>
+    props.leftIconContainerBorder
+      ? `1px solid ${props.theme.colors.grey[60]}`
+      : "none"};
   justify-content: center;
   align-items: center;
   margin-right: ${(props) => props.theme.space.md}px;
@@ -38,6 +46,9 @@ interface ListItemProps {
   iconLeft?: React.ReactNode;
   topLine?: boolean;
   botLine?: boolean;
+  lefIconContainerBackground?: string;
+  leftIconContainerBorder?: boolean;
+  leftIconContainerBorderRadius?: number;
   onPress?: () => void;
 }
 
@@ -47,13 +58,25 @@ const ListItem: React.FC<ListItemProps> = ({
   iconLeft,
   topLine = false,
   botLine = true,
+  lefIconContainerBackground,
+  leftIconContainerBorder = false,
+  leftIconContainerBorderRadius,
   onPress = () => {},
 }) => {
   const theme = useTheme();
   return (
     <TouchableOpacity onPress={onPress}>
       <ItemContainer topLine={topLine} botLine={botLine}>
-        {iconLeft && <LeftIconContainer>{iconLeft}</LeftIconContainer>}
+        {iconLeft && (
+          <LeftIconContainer
+            title={title}
+            lefIconContainerBackground={lefIconContainerBackground}
+            leftIconContainerBorder={leftIconContainerBorder}
+            leftIconContainerBorderRadius={leftIconContainerBorderRadius}
+          >
+            {iconLeft}
+          </LeftIconContainer>
+        )}
         <ContentWrapper>
           <Text fontVariant="buttonMedium">{title}</Text>
           {subtitle && (

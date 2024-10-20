@@ -76,9 +76,11 @@ const ProfileStatusComponent: React.FC<ProfileStatusProps> = ({
           </Text>
           <HeaderRightWrapper>
             <Text fontVariant="bodySmall">
-              {`${completed} / ${quantity} ${t(
-                "business_profile_status_finished"
-              )}`}
+              {t("completed_tasks", {
+                completed: completed,
+                total: quantity,
+                comleted_lv: completed > 1 ? "izpildīti" : "izpildīts",
+              })}
             </Text>
             <Ionicons
               name="chevron-forward-outline"

@@ -90,7 +90,7 @@ const AccountSetupBusinessNameScreen: React.FC<
   useEffect(() => {
     if (businessData) {
       setBusinessName(businessData.businessName || "");
-      setWebpage(businessData.website || "");
+      setWebpage(businessData.socialLinks?.website || "");
     }
   }, [businessData]);
 
@@ -104,7 +104,7 @@ const AccountSetupBusinessNameScreen: React.FC<
       if (user) {
         await updateBusinessInfo(user.uid, {
           businessName: businessName,
-          website: webPage,
+          socialLinks: { website: webPage },
         });
         navigation.navigate("AccountSetupServices");
       } else {
