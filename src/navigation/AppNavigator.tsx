@@ -1,37 +1,21 @@
-import React, { useContext, useEffect, useState } from "react";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import AppStack from "./AppStack";
+import React, { useContext } from "react";
+import { NavigationContainer } from "@react-navigation/native";
 import AuthStack from "./AuthStack";
-import AccountVerificationBanner from "../components/complete-setup-banner.component";
-import styled, { useTheme } from "styled-components/native";
+import { useTheme } from "styled-components/native";
 import * as Linking from "expo-linking";
 import OnboardingBusinessSetupStack from "./OnboardingBusinessSetupStack";
 import { UserContext } from "../context/UserProvider";
 import LoadingSpinner from "../components/loading-spinner.component";
 import DrawerNavigator from "./drawer-navigator/DrawerNavigator";
-import { getUserData } from "../services/userService";
-import Text from "../components/text.component";
-
-interface UserData {
-  firstLogin?: boolean;
-  name?: string;
-  surname?: string;
-  email?: string;
-  phone?: string;
-  userLogo?: string;
-  verified?: boolean;
-}
 
 const AppNavigator: React.FC = () => {
-  const theme = useTheme();
   const userContext = useContext(UserContext);
 
   if (!userContext) return null;
-  const { isAuthenticated, isLoading, isEmailVerified, firstLogin, user } =
-    userContext;
+  const { isAuthenticated, isLoading, isFirstLogin } = userContext;
   // const [userData, setUserData] = useState<UserData | null>(null);
 
-  if (isLoading) return <LoadingSpinner />;
+  <LoadingSpinner isLoading={isLoading} />;
 
   const linking = {
     prefixes: [Linking.createURL("/"), "exp://"],
@@ -43,11 +27,19 @@ const AppNavigator: React.FC = () => {
     },
   };
 
+  if (isLoading) {
+    return <LoadingSpinner isLoading={true} />;
+  }
+
   return (
     <NavigationContainer linking={linking}>
       {isAuthenticated ? (
         <>
-          {firstLogin ? <OnboardingBusinessSetupStack /> : <DrawerNavigator />}
+          {isFirstLogin ? (
+            <OnboardingBusinessSetupStack />
+          ) : (
+            <DrawerNavigator />
+          )}
         </>
       ) : (
         <AuthStack />

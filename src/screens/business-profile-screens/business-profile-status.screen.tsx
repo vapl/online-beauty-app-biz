@@ -7,7 +7,6 @@ import {
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../../components/inputs/input.component";
 import Text from "../../components/text.component";
 import { UserContext } from "../../context/UserProvider";
 import { BusinessContext } from "../../context/BusinessProvider";
@@ -15,6 +14,8 @@ import Space from "../../components/spacer.component";
 import ListItem from "../../components/button/list-item.component";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Button from "../../components/button/button.component";
+import { getLocations } from "../../services/business/locationService";
+import { Location } from "../../types/firestore-types/locationTypes";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -46,34 +47,54 @@ const BusinessProfileStatusScreen: React.FC<
   const navigation = useNavigation<BusinessProfileStatusNavigationProp>();
   const userContext = useContext(UserContext);
   const businessContext = useContext(BusinessContext);
+  const [location, setLocation] = useState<Location | undefined>(undefined);
 
   if (!businessContext) return null;
   let { businessData, totalSelections, completedSelections } = businessContext;
 
-  const isBusinessDataFilled: boolean = !!businessData?.businessName;
+  useEffect(() => {
+    const fetchLocation = async () => {
+      if (!businessData?.businessId) return;
+      const locationData = await getLocations(businessData?.businessId);
+
+      if (locationData && locationData.length > 0) {
+        const primaryLoaction = locationData[0];
+
+        setLocation({
+          ...primaryLoaction,
+          name: primaryLoaction.name,
+        });
+      }
+    };
+    fetchLocation();
+  }, [!businessData?.businessId]);
+
+  const isBusinessDataFilled: boolean =
+    !!businessData?.businessName &&
+    !!businessData.phone &&
+    !!businessData.email &&
+    !!businessData?.legalAddress?.address;
   const areImagesFilled: boolean =
     !!businessData?.images?.businessLogo && !!businessData.images.coverImage;
   const isLocationFilled: boolean =
-    !!businessData?.location?.address &&
-    !!businessData.location.country &&
-    !!businessData.location.city;
+    !!location?.name &&
+    !!location.address &&
+    !!location.city &&
+    !!location.postalCode;
   const isOpeningHOursFilled =
-    !!businessData?.openingHours?.monday?.start ||
-    !!businessData?.openingHours?.tuesday?.start ||
-    !!businessData?.openingHours?.wednesday?.start ||
-    !!businessData?.openingHours?.thursday?.start ||
-    !!businessData?.openingHours?.friday?.start ||
-    !!businessData?.openingHours?.saturday?.start ||
-    !!businessData?.openingHours?.sunday?.start;
+    !!location?.openingHours?.monday?.start ||
+    !!location?.openingHours?.tuesday?.start ||
+    !!location?.openingHours?.wednesday?.start ||
+    !!location?.openingHours?.thursday?.start ||
+    !!location?.openingHours?.friday?.start ||
+    !!location?.openingHours?.saturday?.start ||
+    !!location?.openingHours?.sunday?.start;
   const areSocialLinksFilled: boolean =
     !!businessData?.socialLinks?.website ||
     !!businessData?.socialLinks?.facebook ||
-    !!businessData?.socialLinks?.instagram ||
-    !!businessData?.socialLinks?.X ||
-    !!businessData?.socialLinks?.linkedin;
+    !!businessData?.socialLinks?.instagram;
 
   interface ItemProps {
-    id: number;
     title: string;
     subtitle: string;
     completed: boolean;
@@ -81,31 +102,30 @@ const BusinessProfileStatusScreen: React.FC<
 
   const items: ItemProps[] = [
     {
-      id: 1,
       title: t("company_info_title"),
       subtitle: t("company_info_description"),
       completed: isBusinessDataFilled,
     },
     {
-      id: 2,
       title: t("profile_images_title"),
       subtitle: t("profile_images_description"),
       completed: areImagesFilled,
     },
+    ...(!businessData?.onsiteService
+      ? [
+          {
+            title: t("locations_title"),
+            subtitle: t("locations_description"),
+            completed: isLocationFilled,
+          },
+        ]
+      : []),
     {
-      id: 3,
-      title: t("locations_title"),
-      subtitle: t("locations_description"),
-      completed: isLocationFilled,
-    },
-    {
-      id: 4,
       title: t("opening_hours_title"),
       subtitle: t("opening_hours_description"),
       completed: isOpeningHOursFilled,
     },
     {
-      id: 5,
       title: t("social_links_title"),
       subtitle: t("social_links_description"),
       completed: areSocialLinksFilled,
@@ -142,17 +162,17 @@ const BusinessProfileStatusScreen: React.FC<
           showsVerticalScrollIndicator={false}
         >
           <ScreenContainer>
-            <Space top={32} />
+            <Space height={32} />
             <Header>
               <Text fontVariant="h3">{t("profile_status_title")}</Text>
               <Text fontVariant="bodyMedium">
                 {t("profile_status_description")}
               </Text>
             </Header>
-            <Space top={32} />
-            {items.map((item) => (
+            <Space height={32} />
+            {items.map((item, key) => (
               <ListItem
-                key={item.id}
+                key={key}
                 title={item.title}
                 subtitle={item.subtitle}
                 iconLeft={
@@ -166,6 +186,7 @@ const BusinessProfileStatusScreen: React.FC<
                     <View />
                   )
                 }
+                onPress={() => {}}
                 lefIconContainerBackground={theme.colors.background}
                 leftIconContainerBorderRadius={8}
                 leftIconContainerBorder={true}

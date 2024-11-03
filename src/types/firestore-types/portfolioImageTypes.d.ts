@@ -1,7 +1,9 @@
-interface PortfolioImage {
+export interface PortfolioImage {
   imageId: string; // Unikāls attēla ID
-  targetId: string; // Atsauce uz businessId, locationId vai employeeId
-  targetType: "business" | "location" | "employee"; // Mērķa tips: biznesa, lokācijas vai darbinieka attēls
+  businessId: string;
+  uploadedBy: string;
+  targetLocationId: string;
+  targetEmployeeId: string;
   imageUrl: string; // Attēla URL
   caption?: string; // Pēc izvēles: attēla apraksts
   uploadedAt: FirebaseFirestore.Timestamp; // Firestore.Timestamp datuma formāts (piemēram, '2024-11-01T12:34:56Z')

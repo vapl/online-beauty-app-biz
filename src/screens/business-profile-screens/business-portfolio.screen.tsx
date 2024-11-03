@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { ServicesScreenProps } from "../../types/navigationTypes";
 import { BackgroundColor } from "../../components/background-color.component";
 
 const BusinessPortfolioScreen: React.FC = () => {

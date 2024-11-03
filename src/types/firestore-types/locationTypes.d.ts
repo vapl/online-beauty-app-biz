@@ -1,13 +1,16 @@
-interface Location {
-  locationId: string; // Unikāls lokācijas ID
-  name: string; // Lokācijas nosaukums (piemēram, salons)
-  address: string; // Pilna adrese
-  city: string; // Pilsēta
-  postalCode: string; // Pasta indekss
-  openingHours: OpeningHours; // Darba laiks, sadalīts pa dienām
+export interface Location {
+  locationId?: string; // Unikāls lokācijas ID
+  name?: string; // Lokācijas nosaukums (piemēram, salons)
+  address?: string; // Pilna adrese
+  appartment?: string;
+  city?: string; // Pilsēta
+  postalCode?: string; // Pasta indekss
+  country?: string;
+  region?: string;
+  openingHours?: OpeningHours; // Darba laiks, sadalīts pa dienām
 }
 
-interface OpeningHours {
+export interface OpeningHours {
   monday?: TimeRange;
   tuesday?: TimeRange;
   wednesday?: TimeRange;
@@ -17,7 +20,7 @@ interface OpeningHours {
   sunday?: TimeRange;
 }
 
-interface TimeRange {
+export interface TimeRange {
   start: string; // Darba laika sākums (formātā "HH:mm")
   end: string; // Darba laika beigas (formātā "HH:mm")
 }

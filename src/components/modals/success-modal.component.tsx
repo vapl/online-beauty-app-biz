@@ -64,7 +64,7 @@ const SuccessModal: React.FC<successModalProps> = ({
             >
               {messageTitle}
             </Text>
-            <Space top={theme.space.lg} />
+            <Space height={theme.space.lg} />
             <Text
               fontVariant="bodyLarge"
               textColor={theme.colors.white}

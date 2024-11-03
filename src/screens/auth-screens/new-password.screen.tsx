@@ -185,7 +185,7 @@ const NewPasswordScreen: React.FC<NewPasswordScreenProps> = () => {
                   />
                 </View>
               </FormWrapper>
-              <Space top={16} />
+              <Space height={16} />
             </ScrollView>
           </KeyboardAvoidingView>
         </ScreenContainer>

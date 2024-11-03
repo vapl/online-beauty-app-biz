@@ -8,15 +8,17 @@ import {
 } from "react-native";
 import { HelperText, TextInput } from "react-native-paper";
 import { useTranslation } from "react-i18next";
-import CountryPicker, {
-  CountryCode,
-  DARK_THEME,
-} from "react-native-country-picker-modal";
+import PhoneInput from "react-native-phone-input";
+import CountryPicker, { CountryCode } from "react-native-country-picker-modal";
 import { darkTheme } from "../../infrastructure/theme/theme";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 interface StyledInputProps {
   hasError?: boolean;
   disabled?: boolean;
+  borderRadius?: number;
+  maxLength?: number;
+  numberOfLines?: number;
 }
 
 const StyledInput = styled(TextInput).attrs<StyledInputProps>((props) => ({
@@ -36,10 +38,12 @@ const StyledInput = styled(TextInput).attrs<StyledInputProps>((props) => ({
     borderColor: props.theme.colors.status.error,
   },
   outlineStyle: {
-    borderRadius: 27,
+    borderRadius: props.borderRadius || 27,
     paddingTop: 0,
   },
   editable: !props.disabled,
+  maxLength: props.maxLength,
+  numberOfLines: props.numberOfLines,
 }))`
   flex-grow: 1;
   padding-left: ${(props) => props.theme.space.md}px;
@@ -48,21 +52,8 @@ const StyledInput = styled(TextInput).attrs<StyledInputProps>((props) => ({
     props.disabled
       ? props.theme.colors.grey[20]
       : props.theme.colors.background};
-  ${(props) => props.theme.typography.bodyLarge};
+  ${(props) => props.theme.typography.bodyMedium};
 `;
-
-const CountryCodePicker = styled(CountryPicker).attrs((props) => ({
-  withModal: true,
-  withAlphaFilter: false,
-  withCallingCode: true,
-  withCallingCodeButton: true,
-  withFlag: true,
-  withEmoji: true,
-  withFilter: true,
-  containerButtonStyle: {
-    justifyContent: "center",
-  },
-}))``;
 
 const InputWrapper = styled(View)`
   flex-direction: row;
@@ -75,7 +66,7 @@ const CountryCodePickerWrapper = styled(View)`
   align-items: center;
   border: 1px ${(props) => props.theme.colors.primary.dark} solid;
   border-radius: 27px;
-  height: 50px;
+  min-height: 50px;
   padding-left: 16px;
 `;
 
@@ -102,6 +93,8 @@ interface InputProps {
   iconRight?: string;
   required?: boolean;
   multiline?: boolean;
+  numberOfLines?: number;
+  maxLength?: number;
   secureTextEntry?: boolean;
   autoCorrect?: boolean;
   countryCodePicker?: boolean;
@@ -142,6 +135,18 @@ interface InputProps {
   disabled?: boolean;
   editable?: boolean;
   autoFocus?: boolean;
+  borderRadius?: number;
+  inputMode?:
+    | "none"
+    | "text"
+    | "decimal"
+    | "numeric"
+    | "tel"
+    | "search"
+    | "email"
+    | "url";
+  enableEditIcon?: boolean;
+  [key: string]: any;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -152,10 +157,13 @@ const Input: React.FC<InputProps> = ({
   keyboardType = "default",
   autoCapitalize = "none",
   textContentType = "none",
+  inputMode = "text",
   label,
   required,
   errorMessage,
   multiline = false,
+  numberOfLines,
+  maxLength,
   iconLeft = "",
   iconRight = "close",
   onSubmitEditing,
@@ -163,21 +171,33 @@ const Input: React.FC<InputProps> = ({
   countryCodePicker = false,
   setCallingCode,
   disabled = false,
-  editable = false,
+  editable = true,
   autoFocus,
+  borderRadius,
+  onFocus,
+  onBlur,
+  enableEditIcon = false,
+  ...props
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [isMultiline, setIsMultiline] = useState<boolean>(false);
   const [secureText, setSecureText] = useState<boolean>(secureTextEntry);
-  const [countryCode, setCountryCode] = useState<CountryCode>("LV");
   const [pickerVisible, setPickerVisible] = useState<boolean>(false);
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [isEditable, setIsEditable] = useState<boolean>(
+    editable && !enableEditIcon
+  );
 
   const inputRef = useRef<RNTextInput>(null);
 
+  const phoneInputRef = useRef<PhoneInput>(null);
+  const [countryCode, setCountryCode] = useState<CountryCode>("LV");
+  const [callingCode, setCallingCodeState] = useState<string>("371");
+  const [phoneNumber, setPhoneNumber] = useState<string>(value);
+
   const handleEditIconPress = () => {
-    setIsDisabled(false);
+    setIsEditable(true);
     setTimeout(() => {
       if (inputRef.current) {
         inputRef.current.focus();
@@ -195,6 +215,10 @@ const Input: React.FC<InputProps> = ({
       setSecureText(false);
     }
   }, [secureText]);
+
+  useEffect(() => {
+    setIsMultiline(multiline);
+  }, [multiline]);
 
   const getRightIcon = () => {
     if (isFocused && value !== "" && !secureTextEntry) {
@@ -214,12 +238,17 @@ const Input: React.FC<InputProps> = ({
       );
     }
 
-    if (!secureTextEntry && !isFocused && editable) {
+    if (enableEditIcon && !isFocused && !isEditable) {
       return (
         <TextInput.Icon
-          icon={!isFocused && editable ? "pencil" : "close"}
+          icon={() => (
+            <Ionicons
+              name={!isFocused && !isEditable ? "pencil" : "close"}
+              color={theme.colors.secondary.dark}
+              size={24}
+            />
+          )}
           onPress={handleEditIconPress}
-          color={theme.colors.primary.dark}
         />
       );
     }
@@ -231,14 +260,48 @@ const Input: React.FC<InputProps> = ({
     setSecureText(!secureText);
   };
 
+  useEffect(() => {
+    // Atjaunina sākotnējo valsts kodu
+    if (phoneInputRef.current) {
+      phoneInputRef.current.setValue(`+${callingCode}`);
+    }
+  }, [callingCode]);
+
   const handleCountrySelect = (country: {
     cca2: CountryCode;
     callingCode: string[];
   }) => {
     setCountryCode(country.cca2);
-    if (setCallingCode) {
-      setCallingCode(country.callingCode[0]);
+    const fullNumber = `+${country.callingCode[0]}${phoneNumber}`;
+    const newCallingCode = country.callingCode[0];
+    onChangeText(fullNumber);
+    setCallingCodeState(newCallingCode);
+
+    // Iestatīt PhoneInput lauku ar jauno valsts kodu
+    if (phoneInputRef.current) {
+      phoneInputRef.current.setValue(`+${newCallingCode}`);
     }
+
+    if (setCallingCode) {
+      setCallingCode(newCallingCode);
+    }
+  };
+
+  const handlePhoneInputChange = (text: string) => {
+    onChangeText(text);
+    const fullNumber = `+${callingCode}${text}`;
+    onChangeText(fullNumber);
+  };
+
+  const pickerTheme = {
+    backgroundColor:
+      theme === darkTheme
+        ? darkTheme.colors.background
+        : theme.colors.background,
+    onBackgroundTextColor:
+      theme === darkTheme ? darkTheme.colors.text : theme.colors.text,
+    fontSize: 18, // Var pielāgot pēc nepieciešamības
+    flagSize: 32, // Var pielāgot pēc nepieciešamības
   };
 
   return (
@@ -246,22 +309,50 @@ const Input: React.FC<InputProps> = ({
       <ErrorWrapper>
         <InputWrapper>
           {countryCodePicker && (
-            <CountryCodePickerWrapper>
-              <CountryCodePicker
-                theme={theme === darkTheme ? DARK_THEME : undefined}
+            <>
+              <CountryCodePickerWrapper>
+                <PhoneInput
+                  ref={phoneInputRef}
+                  onPressFlag={() => setPickerVisible(true)}
+                  initialValue={value}
+                  textProps={{ placeholder: "Enter phone number" }}
+                  textStyle={{
+                    color: theme.colors.primary.dark,
+                  }}
+                  initialCountry={countryCode.toLowerCase()}
+                  onChangePhoneNumber={handlePhoneInputChange}
+                  style={{
+                    // flexGrow: 1,
+                    minWidth: 75,
+                    ...theme.typography.bodySmall,
+                  }}
+                />
+                <ChevronIconWrapper>
+                  <TextInput.Icon
+                    icon="chevron-down"
+                    onPress={() => setPickerVisible(true)}
+                  />
+                </ChevronIconWrapper>
+              </CountryCodePickerWrapper>
+              <CountryPicker
                 countryCode={countryCode}
+                theme={pickerTheme}
+                withCallingCodeButton={false}
+                withFilter
+                withFlag
+                withCallingCode
+                withAlphaFilter
+                withEmoji={false}
+                withFlagButton={false}
                 onSelect={handleCountrySelect}
                 visible={pickerVisible}
                 onClose={() => setPickerVisible(false)}
+                translation="common"
               />
-              <Pressable onPress={() => setPickerVisible(true)}>
-                <ChevronIconWrapper>
-                  <TextInput.Icon icon="chevron-down" />
-                </ChevronIconWrapper>
-              </Pressable>
-            </CountryCodePickerWrapper>
+            </>
           )}
           <StyledInput
+            inputMode={inputMode}
             theme={theme}
             value={value}
             label={required ? label : label}
@@ -272,6 +363,8 @@ const Input: React.FC<InputProps> = ({
                 : onChangeText
             }
             multiline={multiline}
+            maxLength={maxLength}
+            borderRadius={borderRadius}
             autoCorrect={autoCorrect}
             secureTextEntry={secureTextEntry ? secureText : false}
             keyboardType={
@@ -284,30 +377,45 @@ const Input: React.FC<InputProps> = ({
             autoCapitalize={autoCapitalize}
             textContentType={secureTextEntry ? "password" : textContentType}
             onFocus={() => {
+              if (onFocus) onFocus();
               setIsFocused(true);
             }}
             onBlur={() => {
-              setIsDisabled(true);
+              if (onBlur) onBlur();
+              if (enableEditIcon) {
+                setIsEditable(false);
+              }
               setIsFocused(false);
             }}
             autoFocus={autoFocus}
-            render={(props) => <RNTextInput {...props} ref={inputRef} />}
-            contextMenuHidden={true}
+            render={(props) => (
+              <RNTextInput
+                {...props}
+                ref={inputRef}
+                editable={isEditable}
+                selectTextOnFocus={false}
+                numberOfLines={numberOfLines}
+              />
+            )}
+            contextMenuHidden={false}
             error={!!errorMessage}
             onSubmitEditing={onSubmitEditing} // Prop for handling submit on return key
             returnKeyType={returnKeyType} // Prop for setting return key type
             left={
-              !isFocused && value === "" ? (
+              !isFocused && value === "" && iconLeft ? (
                 <TextInput.Icon icon={iconLeft} />
               ) : null
             }
-            style={
-              !isFocused && value === ""
-                ? { paddingLeft: 0 }
-                : { paddingLeft: 16 }
-            }
+            style={{
+              paddingLeft:
+                !isFocused && value === "" ? 0 : isMultiline ? 0 : 16,
+              ...(!isFocused && isMultiline
+                ? { maxHeight: 200, minHeight: 150 }
+                : { paddingLeft: 8 }),
+              ...(isMultiline ? { minHeight: 150 } : {}),
+            }}
             right={getRightIcon()}
-            disabled={editable ? isDisabled : disabled}
+            disabled={disabled}
           />
         </InputWrapper>
         {errorMessage && (

@@ -313,7 +313,7 @@ const RecoveryConfirmationScreen: React.FC<
                   />
                 </View>
               </FormWrapper>
-              <Space top={16} />
+              <Space height={16} />
             </ScrollView>
           </KeyboardAvoidingView>
         </ScreenContainer>

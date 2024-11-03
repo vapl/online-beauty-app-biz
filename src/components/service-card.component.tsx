@@ -22,6 +22,7 @@ const CardContainer = styled(TouchableOpacity)<{ selected: boolean }>`
   height: 220px;
   width: 48%;
   border-radius: 10px;
+  padding: 16px;
   justify-content: center;
   align-items: center;
 `;
@@ -77,7 +78,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       <IconContainer>
         <Image
           source={icon}
-          style={{ width: 60, height: 60 }}
+          style={{ width: 60, height: 60, tintColor: theme.colors.text }}
           resizeMode="contain"
         />
       </IconContainer>

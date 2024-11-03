@@ -25,12 +25,21 @@ import ProfileStatusComponent from "../../components/profile-status.component";
 import Space from "../../components/spacer.component";
 import * as ImagePicker from "expo-image-picker";
 import {
-  addBusinessImages,
-  deleteBusinessImages,
-} from "../../services/businessService";
+  deleteBusinessImage,
+  getBusinessImages,
+} from "../../services/business/imageService";
 import { UserContext } from "../../context/UserProvider";
 import LoadingSpinner from "../../components/loading-spinner.component";
 import CustomModal from "../../components/modals/custom-modal.component";
+import {
+  addUpdateBusinessImage,
+  addUpdatePortfolioImages,
+} from "../../services/business/imageService";
+import { handleError } from "../../utils/errorHandler";
+import { getReview } from "../../services/business/reviewsService";
+import Toast from "react-native-root-toast";
+import showToast from "../../utils/toastConfig";
+import SectionHeader from "../../components/section-header.component";
 
 type ImageType = "coverImage" | "businessLogo" | "portfolioImages";
 
@@ -162,16 +171,54 @@ const BusinessProfileMainScreen: React.FC<{
   const navigation = useNavigation<BusinessProfileMainNavigationProp>();
   const [imageType, setImageType] = useState<ImageType>("businessLogo");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [businessId, setBusinessId] = useState<string>("");
   const [modalIsVisible, setModalIsVisible] = useState<boolean>(false);
+  const [averageBusinessRating, setAverageBusinessRating] = useState<number>(0);
   const businessContext = useContext(BusinessContext);
   const userContext = useContext(UserContext);
   if (!businessContext || !userContext) return;
-  const { businessData, completedSelections, totalSelections } =
-    businessContext;
-  const { user } = userContext;
+  const {
+    businessData,
+    portfolioImages,
+    completedSelections,
+    totalSelections,
+  } = businessContext;
+  const { user, userProfile } = userContext;
 
   const scrollX = useRef(new Animated.Value(0)).current;
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!userProfile?.businessId) return;
+    setBusinessId(userProfile.businessId);
+  }, [userProfile?.businessId]);
+
+  useEffect(() => {
+    const fetchReview = async () => {
+      try {
+        if (businessId) {
+          const businessReviews = await getReview(businessId, "business");
+          const locationReviews = await getReview(businessId, "location");
+          const employeeReviews = await getReview(businessId, "employee");
+          const ratings = [
+            ...businessReviews.map((review) => review.rating),
+            ...locationReviews.map((review) => review.rating),
+            ...employeeReviews.map((review) => review.rating),
+          ];
+
+          const averageRating =
+            ratings.length > 0
+              ? ratings.reduce((acc, rating) => acc + rating, 0) /
+                ratings.length
+              : 0;
+          setAverageBusinessRating(Number(averageRating.toFixed(1)));
+        }
+      } catch (error) {
+        handleError(error, "Error fetching review");
+      }
+    };
+    fetchReview();
+  }, [businessId]);
 
   useEffect(() => {
     const listener = scrollY.addListener(({ value }) => {
@@ -192,84 +239,96 @@ const BusinessProfileMainScreen: React.FC<{
     extrapolate: "clamp",
   });
 
+  // Funkcija, lai konvertētu attēla URI uz Blob
+  const uriToBlob = async (uri: string): Promise<Blob> => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    return blob;
+  };
+
   const pickImage = async (type: ImageType) => {
-    // permission to access to library
+    // Pieprasām piekļuvi bilžu bibliotēkai
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (permissionResult.granted === false) {
-      Alert.alert("Lūdzu piešķirt bibliotēkai");
+    if (!permissionResult.granted) {
+      Alert.alert("Lūdzu piešķirt piekļuvi bilžu bibliotēkai");
       return;
     }
 
-    // Open image picker dialog
+    // Atveram attēlu izvēles dialogu
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: imageType === "portfolioImages" ? false : true,
-      allowsMultipleSelection: imageType === "portfolioImages" ? true : false,
-      orderedSelection: true,
+      allowsEditing: type !== "portfolioImages", // Portfolio attēlus neļaujam rediģēt
+      allowsMultipleSelection: type === "portfolioImages", // Tikai portfolio atļaujam vairākus izvēlēties
       aspect: [16, 9],
       quality: 1,
     });
 
-    if (
-      !pickerResult.canceled &&
-      pickerResult.assets &&
-      pickerResult.assets.length > 0
-    ) {
-      if (user) {
-        setModalIsVisible(false);
-        setIsLoading(true);
+    if (!pickerResult.canceled && pickerResult.assets.length > 0 && user) {
+      setModalIsVisible(false);
+      setIsLoading(true);
 
-        const imageData: any = {
-          businessLogo: businessData?.images?.businessLogo || null,
-          coverImage: businessData?.images?.coverImage || null,
-          portfolioImages: businessData?.images?.portfolioImages || [],
-        };
-        switch (type) {
-          case "businessLogo":
-            imageData.businessLogo = pickerResult.assets[0].uri;
-            break;
-          case "coverImage":
-            imageData.coverImage = pickerResult.assets[0].uri;
-            break;
-          case "portfolioImages":
-            const newPortfolioImages = pickerResult.assets.map(
-              (asset) => asset.uri
-            );
-            imageData.portfolioImages = [
-              ...(imageData.portfolioImages || []),
-              ...newPortfolioImages,
-            ];
-            break;
-          default:
-            imageData.businessLogo = pickerResult.assets[0].uri;
-            break;
+      try {
+        if (type === "portfolioImages") {
+          const images = await Promise.all(
+            pickerResult.assets.map(async (asset) => {
+              return { file: await uriToBlob(asset.uri), caption: "" };
+            })
+          );
+          await addUpdatePortfolioImages(images, user.uid);
+        } else {
+          // Citos gadījumos augšupielādējam attiecīgo attēlu
+          const imageUri = pickerResult.assets[0].uri;
+          const imageBlob = await uriToBlob(imageUri);
+
+          // Saglabājam attēla URL Firestore
+          await addUpdateBusinessImage(user.uid, type, imageBlob);
         }
-
-        await addBusinessImages(user.uid, {
-          images: imageData,
-        });
+      } catch (error) {
+        console.error("Failed to upload image:", error);
+      } finally {
         setIsLoading(false);
+        showToast({
+          message: t("profile_image_success"),
+          type: "info",
+          position: "top",
+        });
       }
     }
   };
 
-  const deleteImage = (type: ImageType) => {
+  const deleteImage = async (type: "businessLogo" | "coverImage") => {
     if (!user) return;
     setModalIsVisible(false);
     setIsLoading(true);
+
     try {
-      deleteBusinessImages(user?.uid, type);
+      // Dzēšam attēlu no Firestore un Firebase Storage
+      await deleteBusinessImage(businessId, type);
     } catch (error) {
-      console.error("Failed to delete image", error);
+      console.error("Failed to delete image:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleteButtonDisabled = () => {
+    if (!businessData?.images?.businessLogo && imageType === "businessLogo") {
+      return true;
+    } else if (
+      !businessData?.images?.coverImage &&
+      imageType === "coverImage"
+    ) {
+      return true;
+    } else {
+      return false;
     }
   };
 
   return (
     <>
       <BackgroundColor>
+        {/* <SnackbarMessage status="success" visible={true} /> */}
         <ScrollView
           automaticallyAdjustKeyboardInsets
           keyboardShouldPersistTaps="handled"
@@ -286,7 +345,9 @@ const BusinessProfileMainScreen: React.FC<{
         >
           <HeroSection>
             <HeroCover>
-              {isLoading && imageType === "coverImage" && <LoadingSpinner />}
+              <LoadingSpinner
+                isLoading={isLoading && imageType === "coverImage"}
+              />
               <Image
                 source={{
                   uri:
@@ -299,18 +360,21 @@ const BusinessProfileMainScreen: React.FC<{
             </HeroCover>
             <HeroHeader>
               <HeroHeaderImageBg>
-                {isLoading && imageType === "businessLogo" && (
-                  <LoadingSpinner />
+                <LoadingSpinner
+                  isLoading={isLoading && imageType === "businessLogo"}
+                />
+                {(userProfile?.role === "owner" ||
+                  userProfile?.role === "admin") && (
+                  <HeroHeaderImageEditBg
+                    onPress={() => {
+                      setImageType("businessLogo");
+                      setModalIsVisible(true);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="pencil" size={18} />
+                  </HeroHeaderImageEditBg>
                 )}
-                <HeroHeaderImageEditBg
-                  onPress={() => {
-                    setImageType("businessLogo");
-                    setModalIsVisible(true);
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons name="pencil" size={18} />
-                </HeroHeaderImageEditBg>
                 <HeroHeaderImage
                   source={{
                     uri:
@@ -323,7 +387,7 @@ const BusinessProfileMainScreen: React.FC<{
                 <HeroHeaderRaiting>
                   <RaitingStars
                     count={5}
-                    value={businessData?.raiting ? businessData?.raiting : 0}
+                    value={averageBusinessRating ? averageBusinessRating : 0}
                     color={theme.colors.primary.light}
                   />
                 </HeroHeaderRaiting>
@@ -331,19 +395,22 @@ const BusinessProfileMainScreen: React.FC<{
                   <Text fontVariant="h4">{businessData?.businessName}</Text>
                 </HeroHeaderTitle>
               </HeroHeaderContent>
-              <HeroCoverEditBg
-                onPress={() => {
-                  setImageType("coverImage");
-                  setModalIsVisible(true);
-                }}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="pencil" size={18} />
-              </HeroCoverEditBg>
+              {(userProfile?.role === "owner" ||
+                userProfile?.role === "admin") && (
+                <HeroCoverEditBg
+                  onPress={() => {
+                    setImageType("coverImage");
+                    setModalIsVisible(true);
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="pencil" size={18} />
+                </HeroCoverEditBg>
+              )}
             </HeroHeader>
           </HeroSection>
           <BodySection>
-            <Space top={16} />
+            <Space height={16} />
             <ProfileStatusComponent
               quantity={totalSelections}
               completed={completedSelections}
@@ -361,29 +428,26 @@ const BusinessProfileMainScreen: React.FC<{
               subtitle={t("business_profile_business_locations_subtitle")}
               onPress={() => navigation.navigate("BusinessLocations")}
             />
-            <Space top={32} />
-            <SectionTitle>
-              <Text fontVariant="buttonMedium">{t("portfolio_title")}</Text>
-              <Button
-                mode={"text"}
-                label={t("text_button_more")}
-                onPress={() => {
-                  navigation.navigate("BusinessPortfolio");
-                }}
-              />
-            </SectionTitle>
+            <Space height={32} />
+            <SectionHeader
+              title={t("portfolio_title")}
+              buttonStyle="text"
+              buttonColor={theme.colors.secondary.dark}
+              buttonLabel={t("text_button_more")}
+              onPress={() => {
+                navigation.navigate("BusinessPortfolio");
+              }}
+            />
           </BodySection>
           <Animated.FlatList
-            data={businessData?.images?.portfolioImages}
+            data={portfolioImages || []}
             renderItem={({ item }) => (
               <>
-                {isLoading && imageType === "portfolioImages" && (
-                  <LoadingSpinner />
-                )}
-                <GaleryItem source={{ uri: item }} />
+                <LoadingSpinner isLoading={isLoading && item === null} />
+                <GaleryItem source={{ uri: item.imageUrl }} />
               </>
             )}
-            keyExtractor={(item) => item}
+            keyExtractor={(item) => item.imageUrl}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             onScroll={Animated.event(
@@ -397,7 +461,7 @@ const BusinessProfileMainScreen: React.FC<{
               gap: 20,
             }}
           />
-          <Space top={16} />
+          <Space height={16} />
           <BodySection>
             <PortfolioButtonsWrapper>
               <Button
@@ -418,19 +482,21 @@ const BusinessProfileMainScreen: React.FC<{
                 disabled={true}
               />
             </PortfolioButtonsWrapper>
-            <Space top={32} />
-            <SectionTitle>
-              <Text fontVariant="buttonMedium">{t("title_last_reviews")}</Text>
-            </SectionTitle>
+            <Space height={32} />
+            <SectionHeader
+              title={t("title_last_reviews")}
+              buttonColor={theme.colors.secondary.dark}
+              button={false}
+            />
             {/* REVIEWS PLACEHOLDER */}
-            <SectionTitle>
-              <Text fontVariant="buttonMedium">{t("external_links")}</Text>
-              <Button
-                mode="icon"
-                iconName="pencil"
-                iconColor={theme.colors.secondary.dark}
-              />
-            </SectionTitle>
+            <SectionHeader
+              title={t("external_links")}
+              buttonColor={theme.colors.secondary.dark}
+              button={
+                userProfile?.role === "owner" || userProfile?.role === "admin"
+              }
+              onPress={() => {}}
+            />
             <ExternalLinksWrapper>
               <Button
                 mode={"text"}
@@ -481,33 +547,38 @@ const BusinessProfileMainScreen: React.FC<{
           initialModalHeight={0.3}
           bodyStyle={{ justifyContent: "flex-end", gap: 16 }}
         >
-          <Button
-            mode={"outlined"}
-            label={t("button_add_from_phone")}
-            icon="image-outline"
-            iconColor={theme.colors.primary.dark}
-            buttonSize="lg"
-            onPress={() => {
-              if (imageType) {
-                pickImage(imageType);
-              }
-            }}
-          />
-          <Space bottom={16} />
-          <Button
-            mode={"outlined"}
-            label={t("delete")}
-            icon="trash-can-outline"
-            iconColor={theme.colors.accent.darkPink}
-            labelColor={theme.colors.accent.darkPink}
-            disabled={!businessData?.images?.businessLogo}
-            onPress={() => {
-              if (imageType) {
-                deleteImage(imageType);
-              }
-            }}
-          />
-          <Space bottom={32} />
+          <View>
+            <Button
+              mode={"outlined"}
+              label={t("button_add_from_phone")}
+              icon="image-outline"
+              iconColor={theme.colors.primary.dark}
+              buttonSize="lg"
+              onPress={() => {
+                if (imageType) {
+                  pickImage(imageType);
+                }
+              }}
+            />
+            <Space height={16} />
+            <Button
+              mode={"outlined"}
+              label={t("delete")}
+              icon="trash-can-outline"
+              iconColor={theme.colors.accent.darkPink}
+              labelColor={theme.colors.accent.darkPink}
+              disabled={handleDeleteButtonDisabled()}
+              onPress={() => {
+                if (
+                  imageType === "coverImage" ||
+                  imageType === "businessLogo"
+                ) {
+                  deleteImage(imageType);
+                }
+              }}
+            />
+          </View>
+          <Space height={16} />
         </CustomModal>
       </BackgroundColor>
     </>

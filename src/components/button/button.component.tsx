@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   // StyledIcon,
   TextButton,
@@ -58,6 +58,7 @@ const Button: React.FC<ButtonProps> = ({
   onPress = () => {},
 }) => {
   const theme = useTheme();
+  const [isPressed, setIsPressed] = useState<boolean>(false);
 
   const handleIconColor = () => {
     if (disabled) {
@@ -153,7 +154,20 @@ const Button: React.FC<ButtonProps> = ({
 
   if (mode === "icon") {
     return (
-      <TouchableOpacity onPress={onPress} activeOpacity={0.2}>
+      <TouchableOpacity
+        style={{
+          backgroundColor: isPressed ? "rgba(0, 0, 0, 0.1)" : undefined,
+          borderRadius: 50,
+          padding: 2,
+        }}
+        onPress={() => {
+          onPress();
+          setIsPressed(true);
+          setTimeout(() => {
+            setIsPressed(false);
+          }, 100);
+        }}
+      >
         <Ionicons name={iconName} size={iconSize} color={iconColor} />
       </TouchableOpacity>
     );

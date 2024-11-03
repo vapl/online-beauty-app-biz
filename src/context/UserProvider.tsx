@@ -1,17 +1,19 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { auth, firestore } from "../api/firebaseConfig";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, User as AuthUser } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { getUserData, updateUser } from "../services/userService";
+import { getUserData, updateUser } from "../services/user/userService";
 import { handleError } from "../utils/errorHandler";
+import { User } from "../types/firestore-types/userTypes";
 
 interface UserContextProps {
-  user: User | null;
-  firstLogin: boolean;
+  user: AuthUser | null;
+  userProfile: User | null;
+  isFirstLogin: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
   isEmailVerified: boolean;
-  setFirstLogin: (value: boolean) => void;
+  setisFirstLogin: (value: boolean) => void;
 }
 
 export const UserContext = createContext<UserContextProps | undefined>(
@@ -23,8 +25,9 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [firstLogin, setFirstLogin] = useState<boolean>(true);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [userProfile, setUserProfile] = useState<User | null>(null);
+  const [isFirstLogin, setisFirstLogin] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isEmailVerified, setIfEmailVerified] = useState<boolean>(false);
@@ -34,29 +37,39 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       if (currentUser) {
         setIsAuthenticated(true);
         setUser(currentUser);
+        setIsLoading(true);
 
         try {
           // Fetch user data from Firestore
-          const userData = await getUserData();
+          const userData = await getUserData(currentUser.uid);
           if (userData) {
-            setFirstLogin(userData.firstLogin ?? false);
+            setUserProfile({
+              ...userData,
+              name: userData.name ?? "Unknown user",
+              surname: userData.surname ?? "Unknown user",
+              email: userData.email ?? "Unknown User",
+            });
+            setisFirstLogin(userData.isFirstLogin ?? false);
             setIfEmailVerified(currentUser.emailVerified || false);
 
             if (currentUser.emailVerified && !userData.verified) {
               await updateUser(currentUser.uid, { verified: true });
             }
           } else {
-            console.error("No user data found.");
-            setFirstLogin(false);
+            console.error("No user profile data found.");
+            setisFirstLogin(false);
+            setUserProfile(null);
           }
         } catch (error) {
           handleError(error, "Fetching user data:");
-          setFirstLogin(true);
+          setisFirstLogin(true);
+          setUserProfile(null);
         }
       } else {
         setIsAuthenticated(false);
         setUser(null);
         setIfEmailVerified(false);
+        setUserProfile(null);
       }
       setIsLoading(false);
     });
@@ -67,11 +80,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     <UserContext.Provider
       value={{
         user,
-        firstLogin,
+        userProfile,
+        isFirstLogin,
         isAuthenticated,
         isLoading,
         isEmailVerified,
-        setFirstLogin,
+        setisFirstLogin,
       }}
     >
       {children}

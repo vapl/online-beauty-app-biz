@@ -4,6 +4,7 @@ import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { Location } from "./firestore-types/locationTypes";
 
 // Define AppStackParamList for nested navigation
 export type AppStackParamList = {
@@ -48,14 +49,8 @@ export type RootStackParamList = {
   AccountSetupBusinessName: undefined;
   AccountSetupLocation: undefined;
   AccountSetupLocationConfirmation:
-    | {
-        hasLocation: boolean;
-        address?: string;
-        city?: string;
-        country?: string;
-        parish?: string;
-        postalCode?: string;
-      }
+    | { location?: Location }
+    | { onsiteService?: boolean }
     | undefined;
   AccountSetupSurvey: undefined;
   AccountSetupServices: undefined;

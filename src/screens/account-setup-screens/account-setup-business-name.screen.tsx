@@ -19,12 +19,13 @@ import Text from "../../components/text.component";
 import StatusNav from "../../components/status-navbar.component";
 import { UserContext } from "../../context/UserProvider";
 import { BusinessContext } from "../../context/BusinessProvider";
-import {
-  getBusinessInfo,
-  updateBusinessInfo,
-} from "../../services/businessService";
+import { updateBusinessInfo } from "../../services/business/businessService";
+import { Business } from "../../types/firestore-types/businessTypes";
 import { handleError } from "../../utils/errorHandler";
 import LoadingSpinner from "../../components/loading-spinner.component";
+import { parsePhoneNumber } from "libphonenumber-js";
+import { isEmpty } from "../../utils/validationUtils";
+import { isPhoneNumberExists } from "../../services/auth/registerUser";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -69,6 +70,9 @@ const AccountSetupBusinessNameScreen: React.FC<
   const [businessNameError, setBusinessNameError] = useState<string>();
   const [webPageError, setWebPageError] = useState<string>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [phone, setPhone] = useState<string>("");
+  const [callingCode, setCallingCode] = useState<string>("371");
+  const [phoneError, setPhoneError] = useState<string | undefined>(undefined);
   const currentStep = 0;
   const totalSteps = 5;
 
@@ -80,10 +84,49 @@ const AccountSetupBusinessNameScreen: React.FC<
   if (!businessContext) return null;
   const { businessData } = businessContext;
 
+  useEffect(() => {
+    callingCode;
+  }, []);
+
   const validateWebPageName = (value: string) => {
     const regex = /^www\.[a-zA-Z0-9_-]+\.[a-zA-Z]{2,3}(\/[a-zA-Z0-9_-]+)*\/?$/;
     if (value && !regex.test(value)) {
       return t("invalid_web_page_value");
+    }
+  };
+
+  const handlePhoneChange = async (text: string) => {
+    setPhone(text);
+
+    const phoneValidationError = isEmpty(text, t("phone_required"));
+    setPhoneError(phoneValidationError);
+
+    if (!phoneValidationError) {
+      try {
+        setIsLoading(true);
+        const phoneNumber = parsePhoneNumber(text, {
+          defaultCallingCode: callingCode,
+        });
+
+        if (phoneNumber && phoneNumber?.isPossible()) {
+          const phoneExists = await isPhoneNumberExists(
+            `+${callingCode + phone}`
+          );
+
+          if (phoneExists) {
+            setPhoneError(t("phone_already_in_use"));
+          } else {
+            setPhoneError(undefined);
+          }
+        } else {
+          return setPhoneError(t("invalid_phone"));
+        }
+      } catch (error) {
+        handleError(error, "Failed to parse phone number"),
+          setPhoneError(t("invalid_phone"));
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -105,6 +148,7 @@ const AccountSetupBusinessNameScreen: React.FC<
         await updateBusinessInfo(user.uid, {
           businessName: businessName,
           socialLinks: { website: webPage },
+          phone: phone,
         });
         navigation.navigate("AccountSetupServices");
       } else {
@@ -120,7 +164,7 @@ const AccountSetupBusinessNameScreen: React.FC<
   return (
     <Background>
       <SafeArea>
-        {isLoading && <LoadingSpinner />}
+        <LoadingSpinner isLoading={isLoading} />
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
           <Header>
@@ -169,6 +213,18 @@ const AccountSetupBusinessNameScreen: React.FC<
                   required
                   onSubmitEditing={() => handleSubmit()}
                   returnKeyType="done"
+                />
+                <Input
+                  value={phone}
+                  onChangeText={handlePhoneChange}
+                  validate={isEmpty}
+                  label={t("phone_input")}
+                  iconLeft="phone"
+                  keyboardType="phone-pad"
+                  countryCodePicker={true}
+                  errorMessage={phoneError}
+                  required
+                  setCallingCode={setCallingCode}
                 />
               </InputWrapper>
             </KeyboardAvoidingView>

@@ -21,20 +21,16 @@ import { BusinessContext } from "../../context/BusinessProvider";
 import Text from "../../components/text.component";
 import StatusNav from "../../components/status-navbar.component";
 import CustomModal from "../../components/modals/custom-modal.component";
-import { updateBusinessInfo } from "../../services/businessService";
 import Input from "../../components/inputs/input.component";
 import MapView from "react-native-maps";
 import LoadingSpinner from "../../components/loading-spinner.component";
-
-const SafeArea = styled(SafeAreaView)`
-  flex: 1;
-  margin-top: ${StatusBar.currentHeight}px;
-`;
-
-const Background = styled(View)`
-  background-color: ${(props) => props.theme.colors.background};
-  flex: 1;
-`;
+import { Location } from "../../types/firestore-types/locationTypes";
+import {
+  addLocation,
+  updateLocation,
+} from "../../services/business/locationService";
+import { BackgroundColor } from "../../components/background-color.component";
+import { SafeArea } from "../../components/safe-area.component";
 
 const ScreenContainer = styled(View)`
   flex: 1;
@@ -101,14 +97,6 @@ const ModalButtonWrapper = styled(View)`
 `;
 const NextButton = styled(Button)``;
 
-interface LocationProps {
-  address: string;
-  city: string;
-  parish: string;
-  country: string;
-  postalCode: string;
-}
-
 const AccountSetupLocationConfirmationScreen: React.FC<
   AccountSetupLocationConfirmationScreenProps
 > = () => {
@@ -120,17 +108,17 @@ const AccountSetupLocationConfirmationScreen: React.FC<
     useRoute<
       RouteProp<RootStackParamList, "AccountSetupLocationConfirmation">
     >();
-  const { hasLocation, address, city, parish, country, postalCode } =
-    route.params || {};
+  const { location: routeLocation, onsiteService } =
+    (route.params as { location?: Location; onsiteService?: boolean }) || {};
 
-  const [initialLocation, setInitialLocation] = useState<LocationProps>({
-    address: address || "",
-    city: city || "",
-    parish: parish || "",
-    country: country || "",
-    postalCode: postalCode || "",
+  const [currentLocation, setCurrentLoaction] = useState<Location>({
+    address: routeLocation?.address || "",
+    city: routeLocation?.city || "",
+    region: routeLocation?.region || "",
+    country: routeLocation?.country || "",
+    postalCode: routeLocation?.postalCode || "",
   });
-  const [location, setLocation] = useState<LocationProps>(initialLocation);
+  const [location, setLocation] = useState<Location>(currentLocation);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const currentStep = 3;
@@ -141,59 +129,63 @@ const AccountSetupLocationConfirmationScreen: React.FC<
   if (!userContext || !businessContext) {
     return;
   }
-  const { user } = userContext;
+  const { user, userProfile } = userContext;
+  const { businessData } = businessContext;
 
   const [isSaveDisabled, setIsSaveDisabled] = useState<boolean>(true);
 
   const checkIfLocationChanged = () => {
     return (
-      location.address !== initialLocation.address ||
-      location.city !== initialLocation.city ||
-      location.parish !== initialLocation.parish ||
-      location.country !== initialLocation.country ||
-      location.postalCode !== initialLocation.postalCode
+      location.address !== currentLocation.address ||
+      location.city !== currentLocation.city ||
+      location.region !== currentLocation.region ||
+      location.country !== currentLocation.country ||
+      location.postalCode !== currentLocation.postalCode
     );
   };
 
   useEffect(() => {
     setIsSaveDisabled(!checkIfLocationChanged());
-  }, [location, initialLocation]);
+    if (!user) return;
+  }, [location, currentLocation]);
 
   useEffect(() => {
     if (modalVisible) {
-      setInitialLocation(location);
+      setCurrentLoaction(location);
     }
-  }, [modalVisible, initialLocation]);
+  }, [modalVisible, currentLocation]);
 
   const handleEditedLocation = useCallback(() => {
     navigation.navigate("AccountSetupLocationConfirmation", {
-      hasLocation: true,
-      ...location,
+      onsiteService: true,
+      location: currentLocation,
     });
     setModalVisible(false);
-  }, [location, navigation]);
+  }, [currentLocation, navigation]);
 
   const handleSubmit = async () => {
+    if (!user || !userProfile || !userProfile.businessId || !businessData) {
+      return; // Iziet, ja businessData nav gatavs
+    }
     setIsLoading(true);
     try {
-      if (user && user.uid) {
-        const locationData = !hasLocation
-          ? {
-              hasLocation: hasLocation,
-              address: "",
-              city: "",
-              parish: "",
-              country: "",
-              postalCode: "",
-            }
-          : {
-              hasLocation,
-              ...location,
-            };
-        await updateBusinessInfo(user.uid, { location: locationData });
+      const locationData = businessData?.onsiteService
+        ? {
+            address: "",
+            city: "",
+            region: "",
+            country: "",
+            postalCode: "",
+          }
+        : {
+            ...currentLocation,
+          };
+      const locationId = await addLocation(
+        userProfile.businessId,
+        locationData
+      );
+      if (locationId) {
         navigation.navigate("AccountSetupSurvey");
-      } else {
-        console.error("User ID is missing or user is not authenticated");
       }
     } catch (error) {
       console.error("Failed to update business info", error);
@@ -203,7 +195,7 @@ const AccountSetupLocationConfirmationScreen: React.FC<
   };
 
   return (
-    <Background>
+    <BackgroundColor>
       <SafeArea>
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
@@ -215,7 +207,7 @@ const AccountSetupLocationConfirmationScreen: React.FC<
               {t("account_setup_location_confirmation_description")}
             </Text>
           </Header>
-          {isLoading && <LoadingSpinner />}
+          <LoadingSpinner isLoading={isLoading} />
           <ScrollView
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
@@ -233,13 +225,13 @@ const AccountSetupLocationConfirmationScreen: React.FC<
               <AddressWrapper>
                 <Text fontVariant="h5">{t("business_address")}</Text>
                 <Text fontVariant="bodyMedium">
-                  {address}, {city}
+                  {location.address}, {location.city}
                 </Text>
-                <Text fontVariant="bodyMedium">LV-{postalCode}</Text>
+                <Text fontVariant="bodyMedium">LV-{location.postalCode}</Text>
                 <Text fontVariant="bodyMedium">
-                  {city}, {parish}
+                  {location.city}, {location.region}
                 </Text>
-                <Text fontVariant="bodyMedium">{country}</Text>
+                <Text fontVariant="bodyMedium">{location.country}</Text>
               </AddressWrapper>
               <MapWrapper>
                 <TitleWrapper>
@@ -276,7 +268,7 @@ const AccountSetupLocationConfirmationScreen: React.FC<
                 ...location,
                 address: "",
                 city: "",
-                parish: "",
+                region: "",
                 country: "",
                 postalCode: "",
               })
@@ -296,18 +288,18 @@ const AccountSetupLocationConfirmationScreen: React.FC<
               >
                 <ModalInputWrapper>
                   <Input
-                    value={location.address}
+                    value={currentLocation.address || ""}
                     label={t("label_address")}
                     onChangeText={(text) =>
-                      setLocation({ ...location, address: text })
+                      setCurrentLoaction({ ...currentLocation, address: text })
                     }
                     editable={true}
                     autoCapitalize="sentences"
                   />
                   <Input
-                    value={location.parish}
+                    value={currentLocation.region || ""}
                     onChangeText={(text) =>
-                      setLocation({ ...location, parish: text })
+                      setCurrentLoaction({ ...currentLocation, region: text })
                     }
                     editable={true}
                     autoCapitalize="sentences"
@@ -315,9 +307,9 @@ const AccountSetupLocationConfirmationScreen: React.FC<
                     textContentType="name"
                   />
                   <Input
-                    value={location.city}
+                    value={currentLocation.city || ""}
                     onChangeText={(text) =>
-                      setLocation({ ...location, city: text })
+                      setCurrentLoaction({ ...currentLocation, city: text })
                     }
                     editable={true}
                     autoCapitalize="sentences"
@@ -325,9 +317,12 @@ const AccountSetupLocationConfirmationScreen: React.FC<
                     textContentType="name"
                   />
                   <Input
-                    value={location.postalCode}
+                    value={currentLocation.postalCode || ""}
                     onChangeText={(text) =>
-                      setLocation({ ...location, postalCode: text })
+                      setCurrentLoaction({
+                        ...currentLocation,
+                        postalCode: text,
+                      })
                     }
                     editable={true}
                     autoCapitalize="sentences"
@@ -335,9 +330,9 @@ const AccountSetupLocationConfirmationScreen: React.FC<
                     textContentType="name"
                   />
                   <Input
-                    value={location.country}
+                    value={currentLocation.country || ""}
                     onChangeText={(text) =>
-                      setLocation({ ...location, country: text })
+                      setCurrentLoaction({ ...currentLocation, country: text })
                     }
                     editable={true}
                     autoCapitalize="sentences"
@@ -376,7 +371,7 @@ const AccountSetupLocationConfirmationScreen: React.FC<
           </FooterButtonWrapper>
         </ScreenContainer>
       </SafeArea>
-    </Background>
+    </BackgroundColor>
   );
 };
 

@@ -1,11 +1,12 @@
-interface Review {
-  reviewId: s; // Unikāls atsauksmes ID
+export interface Review {
+  reviewId: string; // Unikāls atsauksmes ID
   authorId: string; // Lietotāja ID, kurš uzrakstījis atsauksmi
   targetId: string; // Atsauce uz businessId, locationId vai employeeId
   targetType: "business" | "location" | "employee"; // Atsauksmes mērķis
   rating: number; // Atsauksmes vērtējums (parasti no 1 līdz 5)
   reviewText: string; // Atsauksmes teksts
   createdAt: FirebaseFirestore.Timestamp; // Atsauksmes izveides datums (FirebaseFirestore.Timestamp formāts, piemēram, '2024-11-01T12:34:56Z')
+  updatedAt: FirebaseFirestore.Timestamp;
 }
 
 /*/////////////////////////////////////////////////////////////

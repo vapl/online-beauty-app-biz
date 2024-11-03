@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
-import styled, { useTheme, ThemeProvider } from "styled-components/native";
-import {
-  StyleSheet,
-  StatusBar,
-  SafeAreaView,
-  ImageSourcePropType,
-} from "react-native";
+import styled, { useTheme } from "styled-components/native";
+import { StyleSheet, ImageSourcePropType } from "react-native";
 import Animated, {
   Easing,
   useSharedValue,
@@ -27,6 +22,7 @@ import onboardingBg2 from "../../../assets/images/onboarding/onboarding-2.png";
 import onboardingBg3 from "../../../assets/images/onboarding/onboarding-3.png";
 import onboardingBg4 from "../../../assets/images/onboarding/onboarding-4.png";
 import { darkTheme, lightTheme } from "../../infrastructure/theme/theme";
+import { SafeArea } from "../../components/safe-area.component";
 
 const onboardingBg1Typed: ImageSourcePropType =
   onboardingBg1 as ImageSourcePropType;
@@ -38,11 +34,6 @@ const onboardingBg4Typed: ImageSourcePropType =
   onboardingBg4 as ImageSourcePropType;
 
 //////////// Styling start ///////////////
-
-const SafeArea = styled(SafeAreaView)`
-  flex: 1;
-  margin-top: ${StatusBar.currentHeight}px;
-`;
 
 const OnboardingBackground = styled.ImageBackground`
   flex: 1;

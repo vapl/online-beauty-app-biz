@@ -285,7 +285,7 @@ const PassRecoveryScreen: React.FC = () => {
                     onPress={toggleInputOption}
                   />
                 </InputWrapper>
-                {isLoading && <LoadingSpinner />}
+                <LoadingSpinner isLoading={isLoading} />
                 <View>
                   <RegisterButton
                     label={t("send_code")}
@@ -295,7 +295,7 @@ const PassRecoveryScreen: React.FC = () => {
                   />
                 </View>
               </FormWrapper>
-              <Space top={16} />
+              <Space height={16} />
             </ScrollView>
           </KeyboardAvoidingView>
         </ScreenContainer>

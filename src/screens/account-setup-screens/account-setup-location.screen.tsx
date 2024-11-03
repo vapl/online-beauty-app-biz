@@ -19,9 +19,15 @@ import { BusinessContext } from "../../context/BusinessProvider";
 import Text from "../../components/text.component";
 import StatusNav from "../../components/status-navbar.component";
 import CustomModal from "../../components/modals/custom-modal.component";
-import { updateBusinessInfo } from "../../services/businessService";
+import { updateBusinessInfo } from "../../services/business/businessService";
 import LocationInput from "../../components/inputs/location-input.component";
 import LoadingSpinner from "../../components/loading-spinner.component";
+import { Location } from "../../types/firestore-types/locationTypes";
+import {
+  getLocations,
+  updateLocation,
+} from "../../services/business/locationService";
+import { handleError } from "../../utils/errorHandler";
 
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
@@ -60,14 +66,7 @@ const AccountSetupLocationScreen: React.FC<
   const { t, i18n } = useTranslation();
   const language = i18n.language;
   const navigation = useNavigation<AccountSetupLocationScreenNavigationProp>();
-  const [hasLocation, setHasLocation] = useState<boolean>();
-  const [location, setLocation] = useState({
-    address: "",
-    city: "",
-    parish: "",
-    country: "",
-    postalCode: "",
-  });
+  const [location, setLocation] = useState<Location | undefined>(undefined);
   const [checked, setChecked] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -77,30 +76,36 @@ const AccountSetupLocationScreen: React.FC<
   const userContext = useContext(UserContext);
   const businessContext = useContext(BusinessContext);
   if (!userContext || !businessContext) return;
-  const { user } = userContext;
+  const { user, userProfile } = userContext;
   const { businessData } = businessContext;
 
   useEffect(() => {
-    if (user && businessData?.location?.address) {
-      setLocation({
-        address: businessData?.location?.address || "",
-        city: businessData?.location?.city || "",
-        parish: businessData?.location?.parish || "",
-        country: businessData?.location?.country || "",
-        postalCode: businessData?.location?.postalCode || "",
-      });
-    }
-  }, [user, businessData?.location]);
+    const setLocationData = async () => {
+      if (!businessData?.businessId) return;
+      try {
+        const locationData = await getLocations(businessData?.businessId);
 
-  const handleLocationSelect = (selectLocation: {
-    hasLocation: boolean;
-    address: string;
-    city: string;
-    country: string;
-    parish: string;
-    postalCode: string;
-  }) => {
-    setLocation(selectLocation);
+        if (locationData && locationData.length > 0) {
+          const primaryLocation = locationData[0];
+          setLocation({
+            address: primaryLocation.address || "",
+            city: primaryLocation.city || "",
+            region: primaryLocation.region || "",
+            country: primaryLocation.country || "",
+            postalCode: primaryLocation.postalCode || "",
+          });
+        }
+      } catch (error) {
+        handleError(error, "Error fetching location data");
+      }
+    };
+    if (user && businessData) {
+      setLocationData();
+    }
+  }, [user, businessData]);
+
+  const handleLocationSelect = (address: Location) => {
+    setLocation(address);
   };
 
   const handleSubmit = async () => {
@@ -108,18 +113,19 @@ const AccountSetupLocationScreen: React.FC<
     try {
       if (user) {
         if (!checked) {
-          setHasLocation(true);
+          await updateBusinessInfo(user.uid, { onsiteService: checked });
+
           navigation.navigate("AccountSetupLocationConfirmation", {
-            ...location,
-            hasLocation: true,
+            onsiteService: checked,
+            location: location || undefined,
           });
         } else {
-          setHasLocation(false);
-          if (user && user.uid) {
-            const locationData = {
-              hasLocation: hasLocation,
-            };
-            await updateBusinessInfo(user.uid, { location: locationData });
+          if (location && businessData?.locations && userProfile?.businessId) {
+            await updateLocation(
+              userProfile?.businessId,
+              businessData?.locations[0],
+              location
+            );
             navigation.navigate("AccountSetupSurvey");
           } else {
             console.error("User ID is missing or user is not authenticated");
@@ -136,7 +142,7 @@ const AccountSetupLocationScreen: React.FC<
   return (
     <Background>
       <SafeArea>
-        {isLoading && <LoadingSpinner />}
+        <LoadingSpinner isLoading={isLoading} />
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
           <Header>
@@ -159,20 +165,20 @@ const AccountSetupLocationScreen: React.FC<
               <InputWrapper>
                 <Button
                   label={
-                    location.address ? location.address : t("label_address")
+                    location?.address ? location.address : t("label_address")
                   }
                   mode="outlined"
                   justifyContent="flex-start"
                   icon="map-marker-outline"
                   iconColor={
-                    location.address
+                    location?.address
                       ? theme.colors.primary.dark
                       : theme.colors.grey[60]
                   }
                   onPress={() => setModalVisible(true)}
                   labelStyle={theme.typography.bodyLarge}
                   labelColor={
-                    location.address
+                    location?.address
                       ? theme.colors.primary.dark
                       : theme.colors.grey[60]
                   }
@@ -205,7 +211,7 @@ const AccountSetupLocationScreen: React.FC<
               placeholder={t("label_address")}
               onPress={handleLocationSelect}
               language={language}
-              country="lv"
+              country={language}
               autoFocus={modalVisible}
             />
           </CustomModal>

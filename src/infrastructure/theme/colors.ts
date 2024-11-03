@@ -16,6 +16,7 @@ export const lightColors = {
     error: "#F44336",
     success: "#90EE90",
     warning: "#FFEB3B",
+    info: "#2196F3",
   },
   grey: {
     100: "#111111",
@@ -48,6 +49,7 @@ export const darkColors = {
     error: "#F44336",
     success: "#90EE90",
     warning: "#FFEB3B",
+    info: "#2196F3",
   },
   grey: {
     100: "#F9FAFA",
@@ -61,4 +63,9 @@ export const darkColors = {
   background: "#111111",
   text: "#FFFFFF",
   error: "#F44336",
+};
+
+export const colors = {
+  light: lightColors,
+  dark: darkColors,
 };

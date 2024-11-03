@@ -18,7 +18,7 @@ import Text from "../../components/text.component";
 import StatusNav from "../../components/status-navbar.component";
 import { UserContext } from "../../context/UserProvider";
 import { BusinessContext } from "../../context/BusinessProvider";
-import { updateBusinessInfo } from "../../services/businessService";
+import { updateBusinessInfo } from "../../services/business/businessService";
 import { handleError } from "../../utils/errorHandler";
 import LoadingSpinner from "../../components/loading-spinner.component";
 
@@ -94,7 +94,10 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
 
   useEffect(() => {
     teamVariants.forEach((variant) => {
-      if (businessData?.teamSize && businessData.teamSize === variant.variant) {
+      if (
+        businessData?.businessSize &&
+        businessData.businessSize === variant.variant
+      ) {
         setCheckedValue(variant.value);
       }
     });
@@ -112,7 +115,7 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
       );
       if (user) {
         await updateBusinessInfo(user.uid, {
-          teamSize: selectedTeamSize?.variant,
+          businessSize: selectedTeamSize?.variant,
         });
         navigation.navigate("AccountSetupLocation");
       }
@@ -126,7 +129,7 @@ const AccountSetupTeamScreen: React.FC<AccountSetupTeamScreenProps> = () => {
   return (
     <Background>
       <SafeArea>
-        {isLoading && <LoadingSpinner />}
+        <LoadingSpinner isLoading={isLoading} />
         <ScreenContainer>
           <StatusNav currentStep={currentStep} totalSteps={totalSteps} />
           <Header>

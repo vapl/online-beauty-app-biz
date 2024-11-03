@@ -1,5 +1,7 @@
-interface Employee {
+export interface Employee {
   employeeId: string; // Unikāls darbinieka ID
+  businessId: string;
+  locationId: string;
   name: string; // Darbinieka vārds
   role: "hairdresser" | "nail_specialist"; // Darbinieka loma
   workingHours: WorkingHours; // Darba laiks, sadalīts pa dienām
@@ -11,7 +13,7 @@ interface Employee {
   breaks: string[]; // Atsauces uz pārtraukumiem
 }
 
-interface WorkingHours {
+export interface WorkingHours {
   monday?: TimeRange;
   tuesday?: TimeRange;
   wednesday?: TimeRange;
@@ -21,12 +23,12 @@ interface WorkingHours {
   sunday?: TimeRange;
 }
 
-interface TimeRange {
+export interface TimeRange {
   start: string; // Darba laika sākums (formātā "HH:mm")
   end: string; // Darba laika beigas (formātā "HH:mm")
 }
 
-interface EmployeeRating {
+export interface EmployeeRating {
   averageRating: number; // Vidējais reitings (piemēram, 4.5)
   totalRatings: number; // Kopējais vērtējumu skaits (piemēram, 50)
 }

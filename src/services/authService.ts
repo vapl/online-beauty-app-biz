@@ -33,51 +33,6 @@ interface RegisterUserProps {
   businessId?: string;
 }
 
-// Register new user
-const registerUser = async (props: RegisterUserProps) => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      props.email,
-      props.password
-    );
-    const user = userCredential.user;
-
-    const userData = {
-      email: user.email,
-      name: props.name,
-      surname: props.surname,
-      phone: props.phone,
-      userRole: props.userRole || "owner",
-      profileImage: "",
-      createdAt: new Date(),
-      verified: false,
-      firstLogin: true,
-    };
-
-    await setDoc(doc(firestore, "users", user.uid), userData);
-    await sendEmailVerification(user);
-    return user;
-  } catch (error) {
-    handleError(error, "Error sending verification link: ");
-    throw error;
-  }
-};
-
-// Login user function
-const loginUser = async (email: string, password: string) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    return userCredential.user;
-  } catch (error) {
-    throw error;
-  }
-};
-
 // Sign in with Google
 const useGoogleSignIn = () => {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
@@ -122,11 +77,6 @@ const useGoogleSignIn = () => {
   }, [response]);
 
   return { promptAsync, request, response };
-};
-
-// Logout user function
-const logoutUser = () => {
-  return signOut(auth);
 };
 
 // Listener function to get authentificated user or not.
@@ -195,15 +145,13 @@ const checkIfEmailExists = async (email: string) => {
     const { exists } = result.data as { exists: boolean }; // Extract the exists field
     if (exists) return true; // Return the boolean directly for simpler checks
   } catch (error: any) {
+    handleError(error, "Error checking email");
     console.error("Error checking email:", error.message || "Unknown error");
     return false; // Assume the email doesn't exist if there's an error
   }
 };
 
 export {
-  registerUser,
-  loginUser,
-  logoutUser,
   resetPassword,
   sendVerificationEmail,
   verifyEmailLink,

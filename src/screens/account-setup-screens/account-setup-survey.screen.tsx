@@ -25,9 +25,9 @@ import Text from "../../components/text.component";
 import StatusNav from "../../components/status-navbar.component";
 import LoadingSpinner from "../../components/loading-spinner.component";
 import Input from "../../components/inputs/input.component";
-import { createSurveyData } from "../../services/surveyServices";
+import { createSurveyData } from "../../services/business/surveyService";
 import SuccessModal from "../../components/modals/success-modal.component";
-import { updateUser } from "../../services/userService";
+import { updateUser } from "../../services/user/userService";
 import { handleError } from "../../utils/errorHandler";
 
 const SafeArea = styled(SafeAreaView)`
@@ -134,8 +134,8 @@ const AccountSetupSurveyScreen: React.FC<
       if (!user) {
         throw new Error("User is not authenticated.");
       }
-      await updateUser(user.uid, { firstLogin: false });
-      userContext.firstLogin = false;
+      await updateUser(user.uid, { isFirstLogin: false });
+      userContext.setisFirstLogin(false);
     } catch (error) {
       handleError(error, "Failed to update user");
     }
@@ -223,7 +223,7 @@ const AccountSetupSurveyScreen: React.FC<
             <Header>
               <Text fontVariant="h3">{t("survey_title")}</Text>
             </Header>
-            {isLoading && <LoadingSpinner />}
+            <LoadingSpinner isLoading={isLoading} />
             <KeyboardAvoidingView
               behavior={Platform.OS === "ios" ? "padding" : "height"}
               keyboardVerticalOffset={Platform.OS === "ios" ? 130 : 0}

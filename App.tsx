@@ -1,3 +1,4 @@
+// App.js
 import "react-native-gesture-handler";
 import "intl-pluralrules";
 import React, { useState, useEffect } from "react";
@@ -6,22 +7,17 @@ import { I18nextProvider } from "react-i18next";
 import * as SplashScreen from "expo-splash-screen";
 import AppNavigator from "./src/navigation/AppNavigator";
 import i18n from "./src/i18n";
-import styled, { useTheme } from "styled-components/native";
-import { ThemeProvider } from "./src/context/useThemeContext";
-import { useThemeContext } from "./src/context/useThemeContext";
-import { AppRegistry, SafeAreaView, Switch, View } from "react-native";
+import { ThemeProvider } from "./src/context/useThemeContext"; // Pārliecinies par precīzu ceļu uz ThemeProvider
+import { AppRegistry, Platform } from "react-native";
 import changeNavigationBarColor from "react-native-navigation-bar-color";
 import { StatusBar } from "react-native";
 import LoadingSpinner from "./src/components/loading-spinner.component";
-import { UserProvider } from "./src/context/UserProvider";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppProviders from "./src/context/AppProviders";
 import ErrorBoundary from "./src/components/error-boundary.component";
 import { enableScreens } from "react-native-screens";
+import { RootSiblingParent } from "react-native-root-siblings";
 
 enableScreens();
-
-// Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
 const fetchFonts = async () => {
@@ -34,8 +30,6 @@ const fetchFonts = async () => {
 
 export default function App() {
   const [dataLoaded, setDataLoaded] = useState(false);
-  const queryClient = new QueryClient();
-  const { isDarkTheme } = useThemeContext();
 
   useEffect(() => {
     async function loadResourcesAndDataAsync() {
@@ -52,24 +46,21 @@ export default function App() {
     loadResourcesAndDataAsync();
   }, []);
 
-  useEffect(() => {
-    changeNavigationBarColor(isDarkTheme ? "black" : "white", isDarkTheme);
-  }, [isDarkTheme]);
-
   return (
-    <AppProviders>
-      <StatusBar />
-      <ThemeProvider>
-        {!dataLoaded && <LoadingSpinner />}
+    <ThemeProvider>
+      <AppProviders>
+        <StatusBar />
+        <LoadingSpinner isLoading={!dataLoaded} />
         <I18nextProvider i18n={i18n}>
           <ErrorBoundary>
-            <AppNavigator />
+            <RootSiblingParent>
+              <AppNavigator />
+            </RootSiblingParent>
           </ErrorBoundary>
         </I18nextProvider>
-      </ThemeProvider>
-    </AppProviders>
+      </AppProviders>
+    </ThemeProvider>
   );
 }
 
-// Register the main component
-AppRegistry.registerComponent("main", () => App);
+AppRegistry.registerComponent("App", () => App);

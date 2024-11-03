@@ -1,13 +1,16 @@
-interface User {
-  userId: string;
+export interface User {
+  userId?: string;
   name: string;
+  surname: string;
   email: string;
-  phone: string;
-  role: "self-employed" | "owner" | "admin" | "employee" | "customer";
-  profilePhoto: string;
+  phone?: string;
+  role?: "owner" | "admin" | "employee" | "customer";
+  profilePhoto?: string;
   businessId?: string; // Piesaistīts biznesa profils, tikai ja role ir 'self-employed' vai 'owner'
   locationId?: string; // Norādīts, ja pašnodarbinātais strādā konkrētā vietā
   subscriptionTrialEnd?: FirebaseFirestore.Timestamp; // FirebaseFirestore.Timestamp datuma formāts (piemēram, '2024-12-31T23:59:59Z')
+  verified?: boolean;
+  isFirstLogin?: boolean;
 }
 
 /*/////////////////////////////////////////////////////////////

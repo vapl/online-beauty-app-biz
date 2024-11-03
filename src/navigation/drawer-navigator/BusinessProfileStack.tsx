@@ -43,7 +43,8 @@ const BusinessProfileStack: React.FC = () => {
     <Stack.Navigator
       initialRouteName="BusinessProfileMain"
       screenOptions={{
-        headerTransparent: true,
+        headerTransparent: false,
+        contentStyle: { zIndex: 1 },
       }}
     >
       <Stack.Screen
@@ -64,6 +65,7 @@ const BusinessProfileStack: React.FC = () => {
               iconName="close"
               iconColor={headerShown ? theme.colors.text : "#FFFFFF"}
               onPress={() => navigation.navigate("HomeTabs")}
+              labelStyle={{ zIndex: 1 }}
             />
           ),
           headerRight: () => (
@@ -72,6 +74,7 @@ const BusinessProfileStack: React.FC = () => {
               iconName="ellipsis-vertical"
               iconColor={headerShown ? theme.colors.text : "#FFFFFF"}
               onPress={() => {}}
+              labelStyle={{ zIndex: 1 }}
             />
           ),
         }}
@@ -87,7 +90,32 @@ const BusinessProfileStack: React.FC = () => {
         name="BusinessInfo"
         component={BusinessInfoScreen}
         options={{
-          title: "",
+          title: t("business_info_title"),
+          headerTintColor: theme.colors.text,
+          headerTransparent: true,
+          headerBlurEffect: headerShown
+            ? isDarkTheme
+              ? "dark"
+              : "regular"
+            : undefined,
+          headerShadowVisible: true,
+          headerLargeTitle: true,
+          headerLargeTitleShadowVisible: false,
+          headerLargeStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          headerLargeTitleStyle: {
+            ...theme.typography.h3,
+            color: theme.colors.text,
+          },
+          headerLeft: () => (
+            <Button
+              mode={"icon"}
+              iconName="chevron-back"
+              iconColor={theme.colors.text}
+              onPress={() => navigation.goBack()}
+            />
+          ),
         }}
       />
       <Stack.Screen

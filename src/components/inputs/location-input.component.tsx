@@ -3,7 +3,6 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import styled from "styled-components";
 import { GOOGLE_PLACES_KEY } from "@env";
 import { TextInput } from "react-native-paper";
-import { theme } from "../../infrastructure/theme";
 import { useTheme } from "styled-components/native";
 
 const StyledGooglePlacesAutocomplete = styled(GooglePlacesAutocomplete).attrs(
@@ -53,7 +52,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
       const city =
         getAddressComponent("locality") ||
         getAddressComponent("administrative_area_level_1");
-      const parish =
+      const region =
         getAddressComponent("administrative_area_level_2") ||
         getAddressComponent("administrative_area_level_1");
       const country = getAddressComponent("country");
@@ -62,7 +61,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
       return {
         address,
         city,
-        parish,
+        region,
         country,
         postalCode,
       };
@@ -100,7 +99,7 @@ const LocationInput: React.FC<LocationInputProps> = ({
           selectionColor: theme.colors.primary.dark,
           cursorColor: theme.colors.primary.dark,
           flexGrow: 1,
-          height: 60,
+          height: 47,
           textAlignVertical: "center",
         },
         outlineStyle: {
@@ -112,8 +111,10 @@ const LocationInput: React.FC<LocationInputProps> = ({
       query={{
         key: GOOGLE_PLACES_KEY,
         language: language,
-        components: `country:${country}`,
+        components: `country:lv`,
       }}
+      listViewDisplayed={true}
+      fetchDetails={true}
     />
   );
 };

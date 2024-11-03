@@ -1,112 +1,39 @@
-import React, { useEffect, useState } from "react";
-import {
-  SafeAreaView,
-  StatusBar,
-  View,
-  KeyboardAvoidingView,
-  ScrollView,
-} from "react-native";
+import React, { useState } from "react";
+import { KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   RegisterScreenNavigationProp,
   RegisterScreenProps,
 } from "../../types/navigationTypes";
-import styled from "styled-components/native";
 import Button from "../../components/button/button.component";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Input from "../../components/inputs/input.component";
-import { parsePhoneNumber } from "libphonenumber-js";
+
 import Text from "../../components/text.component";
 import { useTheme } from "styled-components/native";
-import { registerUser } from "../../services/authService";
+import { registerUser } from "../../services/auth/registerUser";
 import { SnackbarMessage } from "../../components/snackbar.component";
-
-//////////// Styling start ///////////////
-
-const SafeArea = styled(SafeAreaView)`
-  flex: 1;
-  margin-top: ${StatusBar.currentHeight}px;
-`;
-
-const Background = styled(View)`
-  background-color: ${(props) => props.theme.colors.white};
-  flex: 1;
-`;
-
-const ScreenContainer = styled(View)`
-  flex: 1;
-  justify-content: space-between;
-  padding-left: ${(props) => props.theme.space.md}px;
-  padding-right: ${(props) => props.theme.space.md}px;
-`;
-
-const Header = styled(View)`
-  justify-content: flex-start;
-  padding-top: ${(props) => props.theme.space.xxl}px;
-  padding-bottom: ${(props) => props.theme.space.md}px;
-  gap: ${(props) => props.theme.space.xs}px;
-`;
-
-const FormWrapper = styled(View)`
-  flex: 1;
-  justify-content: space-between;
-`;
-
-const InputWrapper = styled(View)`
-  flex: 1;
-  justify-content: center;
-  align-items: stretch;
-  gap: ${(props) => props.theme.space.sm}px;
-`;
-
-const NameInput = styled(Input)``;
-const SurnameInput = styled(Input)``;
-const EmailInput = styled(Input)``;
-const PhoneInput = styled(Input)``;
-const PasswordInput = styled(Input)``;
-
-const RegisterButton = styled(Button)``;
-const SocialButton = styled(Button)``;
-
-const RegulationsWrapper = styled(View)`
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding: ${(props) => props.theme.space.sm}px 0
-    ${(props) => props.theme.space.sm}px 0;
-`;
-
-const ButtonsWrapper = styled(View)`
-  padding-top: ${(props) => props.theme.space.md}px;
-`;
-
-const DividerWrapper = styled(View)`
-  flex-direction: row;
-  align-items: center;
-  gap: ${(props) => props.theme.space.xl}px;
-  margin: ${(props) => props.theme.space.md}px 0
-    ${(props) => props.theme.space.md}px 0;
-`;
-
-const Divider = styled(View)`
-  height: 1px;
-  background-color: ${(props) => props.theme.colors.grey[40]};
-  flex-grow: 1;
-`;
-
-const DividerContent = styled.Text`
-  ${(props) => props.theme.typography.bodyLarge};
-`;
-
-const FooterContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-top: ${(props) => props.theme.space.lg}px;
-  margin-bottom: ${(props) => props.theme.space.lg}px;
-  gap: ${(props) => props.theme.space.sm}px;
-`;
-
-////////////  Styling end  ///////////////
+import {
+  ScreenContainer,
+  Header,
+  FormWrapper,
+  InputWrapper,
+  RegulationsWrapper,
+  ButtonsWrapper,
+  Divider,
+  DividerContent,
+  FooterContainer,
+  DividerWrapper,
+} from "./styles/register.styles";
+import {
+  isEmpty,
+  isValidEmail,
+  isValidPassword,
+} from "../../utils/validationUtils";
+import LoadingSpinner from "../../components/loading-spinner.component";
+import { BackgroundColor } from "../../components/background-color.component";
+import { SafeArea } from "../../components/safe-area.component";
+import Input from "../../components/inputs/input.component";
+import { loginUser } from "../../services/auth/loginUser";
 
 const RegisterScreen: React.FC<RegisterScreenProps> = () => {
   const theme = useTheme();
@@ -114,12 +41,9 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
   const navigation = useNavigation<RegisterScreenNavigationProp>();
   const [name, setName] = useState<string>("");
   const [surname, setSurname] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [nameError, setNameError] = useState<string | undefined>(undefined);
-  const [callingCode, setCallingCode] = useState<string>("371");
-  const [phoneError, setPhoneError] = useState<string | undefined>(undefined);
   const [surnameError, setSurnameError] = useState<string | undefined>(
     undefined
   );
@@ -128,120 +52,130 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
     undefined
   );
   const [snackBarMessage, setSnackBarMessage] = useState<string>("");
+  const [snackBarStatus, setSnackBarStatus] = useState<
+    "success" | "error" | "warning"
+  >("warning");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    callingCode;
-  }, []);
+  const handleNameChange = (text: string) => {
+    setName(text);
 
-  const validateName = (value: string) => {
-    if (value.trim() === "") {
-      return "*" + t("name_required");
+    const nameValidationError = isEmpty(text, t("name_required"));
+    if (name.trim().length < 2) {
+      setNameError(nameValidationError);
+      return nameValidationError;
     }
-    return undefined;
   };
+  const handleSurnameChange = (text: string) => {
+    setSurname(text);
 
-  const validateSurname = (value: string) => {
-    if (value.trim() === "") {
-      return "*" + t("surname_required");
-    }
-    return undefined;
-  };
-
-  const validatePhone = (value: string) => {
-    if (value.trim() === "") {
-      return "*" + t("phone_required");
-    }
-
-    const phoneNumber = parsePhoneNumber(value, {
-      defaultCallingCode: callingCode,
-    });
-    if (phoneNumber && phoneNumber?.isValid()) {
-      return undefined;
-    } else {
-      return t("invalid_phone");
+    const surnameValidationError = isEmpty(text, t("surname_required"));
+    if (surname.trim().length < 2) {
+      setSurnameError(surnameValidationError);
+      return surnameValidationError;
     }
   };
 
-  const validateEmail = (value: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (value.trim() === "") {
-      return "*" + t("email_required");
-    } else if (!regex.test(value)) {
-      return t("invalid_email");
-    }
-    return undefined;
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+
+    const isEmailEmpty = isEmpty(text, t("email_required"));
+    const emailValidationError = isValidEmail(text, t("invalid_email"));
+
+    let error = "";
+
+    if (isEmailEmpty) error = isEmailEmpty;
+    if (emailValidationError) error = emailValidationError;
+
+    setEmailError(error);
+    return error;
   };
 
-  const validatePassword = (value: string) => {
-    const regex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+  const handlePasswordChange = (text: string) => {
+    setPassword(text);
 
-    if (value.trim() === "") {
-      return "*" + t("password_required");
-    } else if (value.length < 8 || !regex.test(value)) {
-      return t("password_regex_pattern");
-    }
-    return undefined;
+    const passwordEmptyError = isEmpty(text, t("password_required"));
+    const passwordRegexError = isValidPassword(
+      text,
+      t("password_regex_pattern")
+    );
+
+    let error = "";
+
+    if (passwordEmptyError) error = passwordEmptyError;
+    if (passwordRegexError) error = passwordRegexError;
+
+    setPasswordError(error);
+    return error;
   };
 
   const handleSubmit = async () => {
-    const nameValidationError = validateName(name);
-    const surnameValidationError = validateSurname(surname);
-    const emailValidationError = validateEmail(email);
-    const phoneValidationError = validatePhone(phone);
-    const passwordValidationError = validatePassword(password);
+    setSnackBarMessage("");
 
-    setNameError(nameValidationError);
-    setSurnameError(surnameValidationError);
-    setEmailError(emailValidationError);
-    setPhoneError(phoneValidationError);
-    setPasswordError(passwordValidationError);
+    // Validate data before state
+    const currentNameerror = handleNameChange(name);
+    const currentSurnameError = handleSurnameChange(surname);
+    const currentEmailerror = handleEmailChange(email);
+    const currentPasswordError = handlePasswordChange(password);
 
     if (
-      !emailValidationError &&
-      !passwordValidationError &&
-      !nameValidationError &&
-      !surnameValidationError &&
-      !phoneValidationError
+      !currentNameerror &&
+      !currentSurnameError &&
+      !currentEmailerror &&
+      !currentPasswordError
     ) {
       // Register functionality with firebase
       try {
-        await registerUser({
-          email,
-          password,
-          name,
-          surname,
-          phone: callingCode + phone,
-        });
+        setIsLoading(true);
 
-        setSnackBarMessage(t("successfull_registration_message"));
+        const loginNewUser = await registerUser(
+          {
+            email,
+            name,
+            surname,
+          },
+          password
+        );
+        setIsLoading(false);
 
-        setName("");
-        setSurname("");
-        setEmail("");
-        setPhone("");
-        setPassword("");
-        setTimeout(() => {
-          setSnackBarMessage("");
-        }, 5000);
+        if (loginNewUser) {
+          setSnackBarMessage(t("successfull_registration_message"));
+          setSnackBarStatus("success");
+          setTimeout(() => {
+            loginUser(email, password);
+          }, 5000);
+        }
       } catch (error: any) {
         if (error.code === "auth/email-already-in-use") {
-          setEmailError(t("email_already_in_use"));
+          setIsLoading(false);
+          setSnackBarStatus("error");
+          setSnackBarMessage(t("register_error_message"));
           return;
         }
       }
+      setName("");
+      setSurname("");
+      setEmail("");
+      setPassword("");
+      setTimeout(() => {
+        setSnackBarMessage("");
+      }, 5000);
     }
     return;
   };
 
   return (
-    <Background>
+    <BackgroundColor>
+      <LoadingSpinner isLoading={isLoading} />
       <SafeArea>
         <SnackbarMessage
-          status={"success"}
-          label="OK"
-          duration={5000}
+          status={snackBarStatus}
+          label={snackBarStatus === "error" ? t("login") : "OK"}
+          duration={7000}
           visible={!!snackBarMessage}
+          onPress={() => {
+            navigation.navigate("Login");
+          }}
         >
           {snackBarMessage}
         </SnackbarMessage>
@@ -260,10 +194,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
             >
               <KeyboardAvoidingView contentContainerStyle={{ flexGrow: 1 }}>
                 <InputWrapper>
-                  <NameInput
+                  <Input
                     value={name}
-                    onChangeText={setName}
-                    validate={validateName}
+                    onChangeText={handleNameChange}
+                    validate={isEmpty}
                     autoCapitalize="sentences"
                     label={t("name_input")}
                     iconLeft="account"
@@ -272,10 +206,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                     errorMessage={nameError}
                     required
                   />
-                  <SurnameInput
+                  <Input
                     value={surname}
-                    onChangeText={setSurname}
-                    validate={validateSurname}
+                    onChangeText={handleSurnameChange}
+                    validate={isEmpty}
                     autoCapitalize="sentences"
                     label={t("surname_input")}
                     iconLeft="account"
@@ -283,36 +217,24 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                     errorMessage={surnameError}
                     required
                   />
-                  <EmailInput
+                  <Input
                     value={email}
-                    onChangeText={setEmail}
+                    onChangeText={handleEmailChange}
                     label={t("email")}
                     iconLeft="email"
-                    validate={validateEmail}
+                    validate={isEmpty}
                     keyboardType="email-address"
                     errorMessage={emailError}
                     textContentType="none"
                     required
                   />
-                  <PhoneInput
-                    value={phone}
-                    onChangeText={setPhone}
-                    validate={validatePhone}
-                    label={t("phone_input")}
-                    iconLeft="phone"
-                    keyboardType="phone-pad"
-                    countryCodePicker={true}
-                    errorMessage={phoneError}
-                    required
-                    setCallingCode={setCallingCode}
-                  />
-                  <PasswordInput
+                  <Input
                     value={password}
-                    onChangeText={setPassword}
+                    onChangeText={handlePasswordChange}
+                    validate={isEmpty}
                     label={t("password")}
                     iconLeft="lock"
                     iconRight="eye"
-                    validate={validatePassword}
                     secureTextEntry={true}
                     errorMessage={passwordError}
                     required
@@ -341,7 +263,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
               </KeyboardAvoidingView>
             </ScrollView>
             <ButtonsWrapper>
-              <RegisterButton
+              <Button
                 label={t("register")}
                 mode="contained"
                 onPress={handleSubmit}
@@ -351,7 +273,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
                 <DividerContent>{t("or")}</DividerContent>
                 <Divider />
               </DividerWrapper>
-              <SocialButton
+              <Button
                 label={t("onboarding_button_join_google")}
                 mode="outlined"
                 icon="google"
@@ -371,7 +293,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = () => {
           </FooterContainer>
         </ScreenContainer>
       </SafeArea>
-    </Background>
+    </BackgroundColor>
   );
 };
 

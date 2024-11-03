@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { View, SafeAreaView, Image } from "react-native";
 import {
   DrawerContentScrollView,
-  DrawerItem,
   DrawerContentComponentProps,
   DrawerItemList,
 } from "@react-navigation/drawer";
@@ -12,13 +11,13 @@ import Button from "./button/button.component";
 import { useTranslation } from "react-i18next";
 import { useThemeContext } from "../context/useThemeContext";
 import { UserContext } from "../context/UserProvider";
-import { logoutUser } from "../services/authService";
 import { BusinessContext } from "../context/BusinessProvider";
-import { getUserData } from "../services/userService";
+import { getUserData } from "../services/user/userService";
 import { Icon } from "react-native-paper";
 import LanguagePicker from "./language-picker.component";
 import { useNavigation } from "@react-navigation/native";
 import { BusinessProfileStackNavigationProp } from "../types/navigationTypes";
+import { logoutUser } from "../services/auth/loginUser";
 
 const SafeView = styled(SafeAreaView)`
   flex: 1;
@@ -47,7 +46,7 @@ interface UserData {
   email?: string;
   phone?: string;
   userLogo?: string;
-  firstLogin?: boolean;
+  isFirstLogin?: boolean;
 }
 
 const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
@@ -66,7 +65,7 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user) return;
-      const userData = await getUserData();
+      const userData = await getUserData(user.uid);
       setUserData(userData);
     };
     fetchUserData();
@@ -78,7 +77,7 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
         <ListItem
           {...props}
           title={`${businessData?.businessName}`}
-          subtitle={`${businessData?.location?.address}, ${businessData?.location?.city}, ${businessData?.location?.postalCode}`}
+          subtitle={`${businessData?.legalAddress}, ${businessData?.legalAddress?.city}, ${businessData?.legalAddress?.postalCode}`}
           botLine={true}
           topLine={false}
           iconLeft={
@@ -103,7 +102,9 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
             label={t("button_logout_text")}
             icon="logout"
             iconColor={theme.colors.secondary.dark}
-            onPress={logoutUser}
+            onPress={() => {
+              logoutUser();
+            }}
           />
           <Button
             mode="icon"

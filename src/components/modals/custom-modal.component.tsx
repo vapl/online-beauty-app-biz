@@ -78,7 +78,7 @@ const ModalFooter = styled.View`
 interface CustomModalProps {
   visible: boolean;
   onClose: () => void;
-  onPress: () => void;
+  onPress?: () => void;
   title?: string;
   rightButtonLabel?: string;
   children: React.ReactNode;
@@ -213,9 +213,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
                 )}
               </ModalHeader>
             )}
-            <ModalBody style={bodyStyle}>
-              <View>{children}</View>
-            </ModalBody>
+            <ModalBody style={bodyStyle}>{children}</ModalBody>
             {showFooter && <ModalFooter>{footerButtons}</ModalFooter>}
           </ModalContent>
         </ModalContainer>

@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 // @ts-ignore
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, Timestamp } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
 import { getStorage } from "firebase/storage";
 import {
@@ -33,4 +33,4 @@ const firestore = getFirestore(app);
 const functions = getFunctions(app);
 const storage = getStorage(app);
 
-export { app, auth, firestore, functions, storage };
+export { app, auth, firestore, functions, storage, Timestamp };

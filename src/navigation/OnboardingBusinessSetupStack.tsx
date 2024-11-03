@@ -11,7 +11,7 @@ import AccountSetupLocationScreen from "../screens/account-setup-screens/account
 import AccountSetupLocationConfirmationScreen from "../screens/account-setup-screens/account-setup-location-confirmation.screen";
 import AccountSetupSurveyScreen from "../screens/account-setup-screens/account-setup-survey.screen";
 import { UserContext } from "../context/UserProvider";
-import { updateUser } from "../services/userService";
+import { updateUser } from "../services/user/userService";
 import { handleError } from "../utils/errorHandler";
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -28,8 +28,8 @@ const OnboardingBusinessSetupStack: React.FC = () => {
     if (!user) return;
 
     try {
-      userContext.setFirstLogin(false);
-      await updateUser(user.uid, { firstLogin: false });
+      userContext.setisFirstLogin(false);
+      await updateUser(user.uid, { isFirstLogin: false });
     } catch (error) {
       handleError(error, "Fetching user data:");
     }
@@ -63,6 +63,7 @@ const OnboardingBusinessSetupStack: React.FC = () => {
               fontVariant="buttonMedium"
               textColor={theme.colors.secondary.dark}
               textAlign="right"
+              pressable={true}
               onPress={handleSkipSettings}
             >
               {t("skip")}
@@ -79,6 +80,7 @@ const OnboardingBusinessSetupStack: React.FC = () => {
             <Text
               fontVariant="buttonMedium"
               textColor={theme.colors.secondary.dark}
+              pressable={true}
               textAlign="right"
               onPress={handleSkipSettings}
             >
@@ -96,6 +98,7 @@ const OnboardingBusinessSetupStack: React.FC = () => {
             <Text
               fontVariant="buttonMedium"
               textColor={theme.colors.secondary.dark}
+              pressable={true}
               textAlign="right"
               onPress={handleSkipSettings}
             >
@@ -113,6 +116,7 @@ const OnboardingBusinessSetupStack: React.FC = () => {
             <Text
               fontVariant="buttonMedium"
               textColor={theme.colors.secondary.dark}
+              pressable={true}
               textAlign="right"
               onPress={handleSkipSettings}
             >
@@ -130,6 +134,7 @@ const OnboardingBusinessSetupStack: React.FC = () => {
             <Text
               fontVariant="buttonMedium"
               textColor={theme.colors.secondary.dark}
+              pressable={true}
               textAlign="right"
               onPress={handleSkipSettings}
             >
@@ -147,6 +152,7 @@ const OnboardingBusinessSetupStack: React.FC = () => {
             <Text
               fontVariant="buttonMedium"
               textColor={theme.colors.secondary.dark}
+              pressable={true}
               textAlign="right"
               onPress={handleSkipSettings}
             >

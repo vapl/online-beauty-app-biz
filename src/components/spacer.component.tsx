@@ -1,28 +1,21 @@
-import React from 'react';
-import { View } from 'react-native';
-import styled from 'styled-components/native';
+import React from "react";
+import { View } from "react-native";
+import styled from "styled-components/native";
 
 interface SpacingProps {
-  left?: number;
-  top?: number;
-  right?: number;
-  bottom?: number;
+  height?: number;
+  width?: number;
 }
 
-const Space: React.FC<SpacingProps> = ({
-  left = 0,
-  top = 0,
-  right = 0,
-  bottom = 0,
-}) => {
-  return <StyledView left={left} top={top} right={right} bottom={bottom} />;
+const Space: React.FC<SpacingProps> = ({ height = 0, width = 0 }) => {
+  return <StyledView height={height / 2} width={width / 2} />;
 };
 
 const StyledView = styled(View)<SpacingProps>`
-  margin-left: ${({ left }) => left}px;
-  margin-top: ${({ top }) => top}px;
-  margin-right: ${({ right }) => right}px;
-  margin-bottom: ${({ bottom }) => bottom}px;
+  margin-left: ${({ width }) => (width ? width / 2 : 0)}px;
+  margin-top: ${({ height }) => (height ? height / 2 : 0)}px;
+  margin-right: ${({ width }) => (width ? width / 2 : 0)}px;
+  margin-bottom: ${({ height }) => (height ? height / 2 : 0)}px;
 `;
 
 export default Space;

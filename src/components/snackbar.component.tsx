@@ -3,8 +3,6 @@ import { Snackbar as Snack } from "react-native-paper";
 import styled, { useTheme } from "styled-components/native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-//////////// Styling start ///////////////
-
 const SnackBarContainer = styled.View`
   position: absolute;
   top: 0;
@@ -41,15 +39,13 @@ const StyledIcon = styled(Icon).attrs<{ textColor: string }>(() => ({
   align-self: flex-start;
 `;
 
-const TextWrapper = styled.Text.attrs<{ textColor: string }>(() => ({}))`
+const TextWrapper = styled.Text<{ textColor: string }>`
   color: ${(props) => props.textColor};
 `;
 
-//////////// Styling end ///////////////
-
-interface SnackProps {
+export interface SnackProps {
   status: "error" | "success" | "warning";
-  children?: string;
+  content?: string; // Mainām no `children` uz `content`
   label?: string;
   visible?: boolean;
   duration?: number;
@@ -63,9 +59,9 @@ interface StatusStylesProps {
 }
 
 export const SnackbarMessage: React.FC<SnackProps> = ({
-  children,
+  content = "Notification", // Nodrošina noklusējuma tekstu, ja `content` ir tukšs
   status = "success",
-  label = "UNDO",
+  label = "OK",
   visible = false,
   duration,
   onPress,
@@ -79,9 +75,9 @@ export const SnackbarMessage: React.FC<SnackProps> = ({
   }, [visible]);
 
   const handlePress = useCallback(() => {
-    setIsVisible(false);
     if (onPress) {
       onPress();
+      return;
     }
   }, [onPress]);
 
@@ -121,7 +117,7 @@ export const SnackbarMessage: React.FC<SnackProps> = ({
         >
           <Row>
             <StyledIcon textColor={textColor} name={icon} />
-            <TextWrapper textColor={textColor}>{children}</TextWrapper>
+            <TextWrapper textColor={textColor}>{content}</TextWrapper>
           </Row>
         </Snackbar>
       </SnackBarContainer>

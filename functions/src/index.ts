@@ -6,61 +6,6 @@ import * as nodemailer from "nodemailer";
 
 admin.initializeApp();
 
-// interface RegisterUserProps {
-//   email: string;
-//   password: string;
-//   name: string;
-//   surname: string;
-//   userType: "client" | "specialist";
-// }
-
-// // Register user function
-// export const registerUser = functions.https.onCall(
-//   async (data: RegisterUserProps) => {
-//     const { email, password, name, surname, userType } = data;
-//     console.log("Registering user with email:", email);
-
-//     try {
-//       // Create the user with Firebase Authentication
-//       const userCredential = await admin.auth().createUser({ email, password });
-//       const user = userCredential;
-
-//       console.log("User created successfully with UID:", user.uid);
-
-//       // Prepare user data to save in Firestore
-//       const userData = {
-//         email: user.email,
-//         name: name,
-//         surname: surname,
-//         userType: userType,
-//         profileImage: "",
-//         createdAt: admin.firestore.FieldValue.serverTimestamp(),
-//       };
-
-//       // Save user data in Firestore under the 'users' collection using UID as the document ID
-//       await admin.firestore().collection("users").doc(user.uid).set(userData);
-
-//       console.log("User data saved in Firestore.");
-
-//       return { uid: user.uid, email: user.email };
-//     } catch (error: any) {
-//       if (error.code === "auth/email-already-exists") {
-//         throw new functions.https.HttpsError(
-//           "already-exists",
-//           "The email is already in use by another account"
-//         );
-//       } else if (error.code === "auth/invalid-password") {
-//         throw new functions.https.HttpsError(
-//           "invalid-argument",
-//           "The email is already in use by another account"
-//         );
-//       } else {
-//         throw new functions.https.HttpsError("internal", error.message);
-//       }
-//     }
-//   }
-// );
-
 // Configure the email transporter
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -134,6 +79,33 @@ export const checkIfEmailExists = functions
       throw new functions.https.HttpsError(
         "internal",
         "Unable to check email.",
+        error.message
+      );
+    }
+  });
+
+export const checkPhoneNumberExists = functions
+  .region("europe-west1")
+  .https.onCall(async (data) => {
+    const { phone } = data;
+    console.log("Received phone number:", phone);
+    try {
+      const userRef = admin
+        .firestore()
+        .collection("users")
+        .where("phone", "==", phone);
+      const querySnapshot = await userRef.get();
+      console.log(
+        "Query result:",
+        querySnapshot.empty ? "No phone found" : "Phone exists"
+      );
+      return {
+        exists: !querySnapshot.empty,
+      };
+    } catch (error: any) {
+      throw new functions.https.HttpsError(
+        "internal",
+        "Unable to check phone.",
         error.message
       );
     }

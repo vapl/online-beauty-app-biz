@@ -1,11 +1,11 @@
-import { auth, firestore } from "../api/firebaseConfig";
+import { auth, firestore } from "../../api/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { User } from "firebase/auth";
-import { handleError } from "../utils/errorHandler";
+import { handleError } from "../../utils/errorHandler";
 import { createContext } from "react";
 
 interface UserData {
-  firstLogin?: boolean;
+  isFirstLogin?: boolean;
   name?: string;
   surname?: string;
   email?: string;
@@ -15,7 +15,7 @@ interface UserData {
 }
 
 // Get user data
-export const getUserData = async (): Promise<UserData | null> => {
+export const getUserData = async (uid: string): Promise<UserData | null> => {
   const user: User | null = auth.currentUser; // Iegūst pašreizējo autentificēto lietotāju
   if (!user) {
     console.log("No user is logged in");

@@ -5,16 +5,18 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { UserContext } from "./UserProvider";
-import {
-  getBusinessInfo,
-  getBusinessInfoRealtime,
-} from "../services/businessService";
-import { BusinessInfoProps } from "../types/business";
+import { loadBusinessInfoWithRealtimeUpdates } from "../services/business/businessService";
+import { Business } from "../types/firestore-types/businessTypes";
+import { Location } from "../types/firestore-types/locationTypes";
+import { getLocations } from "../services/business/locationService";
+import { PortfolioImage } from "../types/firestore-types/portfolioImageTypes";
+import { getFilteredPortfolioImages } from "../services/business/imageService";
 
 interface BusinessContextProps {
-  businessData: BusinessInfoProps | null;
+  businessData: Business | null;
+  portfolioImages: PortfolioImage[] | null;
+  locationData: Location | Location[] | null;
   isLoading: boolean;
   isError: boolean;
   completedSelections: number;
@@ -29,63 +31,106 @@ export const BusinessProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const userContext = useContext(UserContext);
-  const [businessData, setBusinessData] = useState<BusinessInfoProps | null>(
-    null
-  );
+  const { isLoading: userLoading, userProfile, user } = userContext || {};
+  const [businessData, setBusinessData] = useState<Business | null>(null);
+  const [locationData, setLocationData] = useState<
+    Location | Location[] | null
+  >(null);
+  const [portfolioImages, setPortfolioImages] = useState<
+    PortfolioImage[] | null
+  >(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [completedSelections, setCompletedSelections] = useState<number>(0);
   const [totalSelections, setTotalSelections] = useState<number>(5);
 
-  const user = userContext?.user ?? null;
+  useEffect(() => {
+    const userId = userContext?.user?.uid;
+    if (!userId) return;
 
-  const queryFn = async (): Promise<BusinessInfoProps | null> => {
-    if (!user) return null;
-    const info = await getBusinessInfo(user.uid);
-    return info ?? null;
-  };
+    if (!userProfile || !userProfile.businessId) {
+      console.warn("User profile or business ID is missing.");
+      return;
+    }
+    const { businessId } = userProfile;
+
+    if (!businessId) {
+      console.warn("Business ID is missing after profile load.");
+      return;
+    }
+
+    const loadData = async () => {
+      setIsLoading(true);
+      setIsError(false);
+
+      try {
+        const unsubscribe = loadBusinessInfoWithRealtimeUpdates(
+          userId,
+          (data) => {
+            setBusinessData(data || null);
+          }
+        );
+
+        // Get business locations
+        const locations = await getLocations(businessId);
+        setLocationData(locations);
+        if (!locations) setIsError(true);
+
+        // Get filtered portfolio images
+        if (!userProfile?.role) return;
+        const filteredPortfolioImages = await getFilteredPortfolioImages(
+          userId,
+          businessId
+        );
+        setPortfolioImages(filteredPortfolioImages);
+        if (filteredPortfolioImages.length === 0) setIsError(true);
+
+        return unsubscribe;
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [userContext?.userProfile]);
 
   useEffect(() => {
-    if (!user) return;
+    if (
+      businessData &&
+      Array.isArray(locationData) &&
+      locationData.length > 0
+    ) {
+      calculateProfileCompletion(businessData, locationData[0]);
+    }
+  }, [businessData, locationData]);
 
-    setIsLoading(true);
-    setIsError(false);
-
-    const unsubscribe = getBusinessInfoRealtime(user.uid, (data) => {
-      setBusinessData(data);
-      calculateProfileCompletion(data); // Pārbaudi cik pabeigts profils
-      setIsLoading(false);
-    });
-    return () => {
-      if (unsubscribe) unsubscribe();
+  // Profila pabeigtības aprēķins
+  const calculateProfileCompletion = (
+    data: Business,
+    locationData?: Location
+  ) => {
+    const checks = {
+      hasImages: !!data.images?.businessLogo && !!data.images.coverImage,
+      hasLegalInformation:
+        !!data.businessName &&
+        !!data.phone &&
+        !!data.email &&
+        data.legalAddress?.address,
+      hasLocation: data.onsiteService ? true : !!data.locations?.length,
+      hasOpeningHours: data.onsiteService ? true : !!locationData?.openingHours,
+      hasSocialLinks:
+        !!data.socialLinks?.website ||
+        !!data.socialLinks?.facebook ||
+        !!data.socialLinks?.instagram,
+      hasServices: (data.services?.length ?? 0) >= 5,
     };
-  }, [user]);
 
-  // Funkcija, kas aprēķina pabeigtības procentus
-  const calculateProfileCompletion = (data: BusinessInfoProps | null) => {
-    const items = [
-      !!data?.businessName,
-      !!data?.images?.businessLogo && !!data.images.coverImage,
-      !!data?.location?.address &&
-        !!data.location.country &&
-        !!data.location.city,
-      !!data?.openingHours?.monday?.start ||
-        !!data?.openingHours?.tuesday?.start ||
-        !!data?.openingHours?.wednesday?.start ||
-        !!data?.openingHours?.thursday?.start ||
-        !!data?.openingHours?.friday?.start ||
-        !!data?.openingHours?.saturday?.start ||
-        !!data?.openingHours?.sunday?.start,
-      !!data?.socialLinks?.website ||
-        !!data?.socialLinks?.facebook ||
-        !!data?.socialLinks?.instagram ||
-        !!data?.socialLinks?.X ||
-        !!data?.socialLinks?.linkedin,
-    ];
-
-    const completed = items.filter(Boolean).length;
+    const completed = Object.values(checks).filter(Boolean).length;
     setCompletedSelections(completed);
-    setTotalSelections(items.length);
+    setTotalSelections(Object.keys(checks).length);
   };
 
   return (
@@ -96,6 +141,8 @@ export const BusinessProvider: React.FC<{ children: ReactNode }> = ({
         isError,
         completedSelections,
         totalSelections,
+        locationData,
+        portfolioImages,
       }}
     >
       {children}
